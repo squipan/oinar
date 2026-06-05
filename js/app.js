@@ -23,6 +23,7 @@ const i18n = {
     'nav_orders': 'Orders',
     'nav_clients': 'Clients',
     'nav_tasks': 'Tasks',
+    'nav_inventory': 'Inventory',
     'nav_settings': 'Settings',
     'nav_logout': 'Logout',
     'top_overview': 'Business Overview',
@@ -53,20 +54,164 @@ const i18n = {
     'platform_fee': 'Platform Fee',
     'calc_profit': 'Calculated Profit',
     'save_order': 'Save Order',
-    'cancel': 'Cancel'
+    'cancel': 'Cancel',
+    'all_time': 'All Time',
+    'this-month': 'This Month',
+    'last-month': 'Last Month',
+    'this-year': 'This Year',
+    'metric_order_profit': 'Order Profit',
+    'metric_inventory_cost': 'Inventory Cost',
+    'metric_net_profit': 'Net Profit',
+    'metric_total_clients': 'Total Clients',
+    'title_for_printing': 'For Printing',
+    'title_active_orders': 'Active Orders',
+    'title_past_orders': 'Past Orders',
+    'title_active_tasks': 'Active Tasks',
+    'title_completed_tasks': 'Completed Tasks',
+    'title_purchase_log': 'Purchase Log',
+    'title_misprint_log': 'Misprint Log',
+    'th_client': 'Client',
+    'th_priority': 'Priority',
+    'th_items': 'Items',
+    'th_deadline': 'Deadline',
+    'th_printing_done': 'Printing Done?',
+    'th_shipped': 'Shipped',
+    'th_purchase_date': 'Purchase Date',
+    'th_actions': 'Actions',
+    'th_total_spent': 'Total Spent:',
+    'th_date': 'Date',
+    'th_item': 'Item',
+    'th_qty_wasted': 'Qty Wasted',
+    'th_note': 'Note',
+    'th_total_cost': 'Total Cost',
+    'label_business_name': 'Business Name',
+    'label_email_address': 'Email Address',
+    'label_phone_number': 'Phone Number',
+    'label_mercari_profile': 'Mercari Profile',
+    'label_open': 'Open',
+    'settings_price_config': 'Item Prices (¥)',
+    'btn_save_settings': 'Save Settings',
+    'options': 'Options',
+    'label_atsugami_add': 'Add backing reinforcement',
+    'label_express_add': 'Add Express delivery',
+    'label_platform': 'Platform',
+    'label_comments': 'Comments',
+    'label_due_date': 'Due Date',
+    'label_priority': 'Priority',
+    'label_save_task': 'Save Task',
+    'title_log_misprint': 'Log Misprint',
+    'label_qty_wasted': 'Qty Wasted',
+    'label_note': 'Note',
+    'label_save': 'Save',
+    'title_client_details': 'Client Details',
+    'label_buyer_name': 'Buyer Name',
+    'label_purchase_date': 'Purchase Date',
+    'label_total_orders': 'Total Orders',
+    'label_total_sales': 'Total Sales',
+    'label_total_profit': 'Total Profit',
+    'label_save_client': 'Save Client',
+    'label_loading_data': 'Loading data...',
+    'noshi': 'Noshi Envelopes',
+    'nagagata': 'Long Envelope (Nagagata 4)',
+    'pochi': 'Pochi Envelopes',
+    'atsugami': 'Hard Board Reinforcement',
+    'sealA': 'Sticker A',
+    'sealB': 'Sticker B',
+    'badge_express': 'Express',
+    'status_ready': 'Ready',
+    'status_pending': 'Pending',
+    'status_finished': 'Finished',
+    'status_todo': 'To Do',
+    'status_done': 'Done',
+    'priority_high': 'High',
+    'priority_medium': 'Medium',
+    'priority_low': 'Low',
+    'no_purchase_records': 'No purchase records.',
+    'no_waste_recorded': 'No waste recorded.',
+    'no_clients_found': 'No clients found.',
+    'no_tasks_yet': 'No completed tasks yet.',
+    'all_orders_shipped': 'All orders shipped! 🎉',
+    'no_shipped_orders_yet': 'No shipped orders yet.',
+    'label_new_purchase_log': 'New Purchase Log:',
+    'label_item_name_placeholder': 'Item Name (e.g. Noshi, Ink)',
+    'label_total_cost_placeholder': 'Total Cost ¥',
+    'label_add': 'Add',
+    'label_cancel': 'Cancel',
+    'client_year_placeholder': 'Year',
+    'client_month_placeholder': 'Month',
+    'client_day_placeholder': 'Day',
+    'label_date': 'Date',
+    'label_buyer': 'Buyer',
+    'Pending': 'Pending',
+    'Ready for Shipping': 'Ready for Shipping',
+    'Finished': 'Finished',
+    'To Do': 'To Do',
+    'Done': 'Done',
+    'High': 'High',
+    'Medium': 'Medium',
+    'Low': 'Low',
+    'platform_fee_label': '{platform} Fee (-{rate}%)',
+    'save_settings_alert': 'Settings saved! ✓',
+    'delete_purchase_confirm': 'Delete this purchase log? / この購入履歴を削除しますか？',
+    'delete_item_confirm': 'Delete this item? / このアイテムを削除しますか？',
+    'delete_task_confirm': 'Delete this task? / このタスクを削除しますか？',
+    'delete_waste_confirm': 'Delete this waste record? / この廃棄記録を削除しますか？',
+    'delete_client_confirm': 'Delete this client? / この顧客を削除しますか？',
+    // New Keys
+    'login_subtitle': 'Wedding Stationery Management',
+    'login_email_label': 'Email Address',
+    'login_email_placeholder': 'your@email.com',
+    'login_password_label': 'Password',
+    'login_password_placeholder': '••••••••',
+    'label_add_item': 'Add Item',
+    'label_options': 'Options',
+    'label_add_option': 'Add',
+    'label_express_option': 'Express (+¥300)',
+    'label_platform': 'Platform',
+    'platform_yahoo': 'Yahoo Flea Market',
+    'label_comments': 'Comments',
+    'label_comments_placeholder': 'Optional notes...',
+    'label_buyer_placeholder': 'e.g. Yamada Hanako',
+    'label_note_placeholder': 'e.g. Misprint, Paper jam...',
+    'settings_business_name_label': 'Business Name',
+    'settings_business_name_placeholder': 'Oinar Wedding',
+    'settings_email_placeholder': 'hello@oinar.com',
+    'settings_phone_label': 'Phone Number',
+    'settings_phone_placeholder': '+81 90 0000 0000',
+    'settings_mercari_label': 'Mercari Profile',
+    'settings_item_prices_title': 'Item Prices (¥)',
+    'save_settings_btn': 'Save Settings',
+    'save_task': 'Save Task',
+    'save_client': 'Save Client',
+    'settings_total_orders': 'Total Orders',
+    'settings_total_sales': 'Total Sales (¥)',
+    'settings_total_profit': 'Total Profit (¥)',
+    'no_tasks_to_do': 'No tasks to do! 🎉',
+    'task_title_template': 'Pack & ship order for {buyer}',
+    'period_all': 'All Time',
+    'period_this_month': 'This Month',
+    'period_last_month': 'Last Month',
+    'period_this_year': 'This Year',
+    'label_qty_wasted': 'Qty Wasted',
+    'label_save': 'Save',
+    'label_yes': 'Yes',
+    'login_failed': 'Login failed.',
+    'invalid_credentials': 'Invalid email or password.',
+    'client_auto_tracked': 'Auto-tracked'
   },
   jp: {
     'login_btn': 'ダッシュボードへ',
     'nav_dashboard': 'ダッシュボード',
-    'nav_orders': '注文 (Orders)',
-    'nav_clients': '顧客 (Clients)',
-    'nav_tasks': 'タスク (Tasks)',
-    'nav_settings': '設定 (Settings)',
+    'nav_orders': '注文',
+    'nav_clients': '顧客',
+    'nav_tasks': 'タスク',
+    'nav_inventory': '在庫',
+    'nav_settings': '設定',
     'nav_logout': 'ログアウト',
     'top_overview': 'ビジネス概要',
     'btn_new_order': '新規注文',
-    'dash_profit': '実質利益 (Total Profit)',
-    'dash_sales': '合計金額 (Total Sales)',
+    'dash_profit': '実質利益',
+    'dash_sales': '合計金額',
     'dash_tasks': '残りタスク',
     'dash_orders': '総注文数',
     'recent_tasks': '最近のタスク',
@@ -91,9 +236,157 @@ const i18n = {
     'platform_fee': '手数料 (10%)',
     'calc_profit': '実質利益',
     'save_order': '保存する',
-    'cancel': 'キャンセル'
+    'cancel': 'キャンセル',
+    'all_time': '全期間',
+    'this-month': '今月',
+    'last-month': '先月',
+    'this-year': '今年',
+    'metric_order_profit': '注文利益',
+    'metric_inventory_cost': '在庫コスト',
+    'metric_net_profit': '純利益',
+    'metric_total_clients': '顧客数',
+    'title_for_printing': '印刷待ち',
+    'title_active_orders': '発送待ち中',
+    'title_past_orders': '発送済み',
+    'title_active_tasks': '未完了タスク',
+    'title_completed_tasks': '完了済みタスク',
+    'title_purchase_log': '購入履歴',
+    'title_misprint_log': 'ミスプリント記録',
+    'th_client': '顧客',
+    'th_priority': '優先度',
+    'th_items': '枚数',
+    'th_deadline': '発送期日',
+    'th_printing_done': '印刷完了',
+    'th_shipped': '発送済',
+    'th_purchase_date': '購入日',
+    'th_actions': '操作',
+    'th_total_spent': '支出合計:',
+    'th_date': '日付',
+    'th_item': '品目',
+    'th_qty_wasted': '枚数',
+    'th_note': 'メモ',
+    'th_total_cost': '購入金額',
+    'label_business_name': '屋号',
+    'label_email_address': 'メールアドレス',
+    'label_phone_number': '電話番号',
+    'label_mercari_profile': 'メルカリプロフィール',
+    'label_open': '開く',
+    'settings_price_config': '単価設定 (¥)',
+    'btn_save_settings': '設定を保存',
+    'options': 'オプション',
+    'label_atsugami_add': '厚紙補強を追加',
+    'label_express_add': '速達を追加',
+    'label_platform': 'プラットフォーム',
+    'label_comments': 'コメント',
+    'label_due_date': '期限日',
+    'label_priority': '優先度',
+    'label_save_task': 'タスクを保存',
+    'title_log_misprint': 'ミスプリント記録',
+    'label_qty_wasted': '枚数',
+    'label_note': 'メモ',
+    'label_save': '保存する',
+    'title_client_details': '顧客情報',
+    'label_buyer_name': '顧客名',
+    'label_purchase_date': '購入日',
+    'label_total_orders': '総注文数',
+    'label_total_sales': '総売上金額',
+    'label_total_profit': '総利益額',
+    'label_save_client': '顧客情報を保存',
+    'label_loading_data': 'データを読み込み中…',
+    'noshi': 'のし袋',
+    'nagagata': '長形４号',
+    'pochi': 'ポチ袋',
+    'atsugami': '厚紙補強',
+    'sealA': 'シールA',
+    'sealB': 'シールB',
+    'badge_express': '速達',
+    'status_ready': '発送待ち',
+    'status_pending': '進行中',
+    'status_finished': '完了',
+    'status_todo': '未完了',
+    'status_done': '完了',
+    'priority_high': '高',
+    'priority_medium': '中',
+    'priority_low': '低',
+    'no_purchase_records': '購入履歴はありません。',
+    'no_waste_recorded': 'ミスプリント記録はありません。',
+    'no_clients_found': '登録されている顧客はいません。',
+    'no_tasks_yet': '完了済みのタスクはありません。',
+    'all_orders_shipped': 'すべての注文が発送済みです 🎉',
+    'no_shipped_orders_yet': '発送済みの注文はありません。',
+    'label_new_purchase_log': '新規購入履歴:',
+    'label_item_name_placeholder': '品目名 (例: のし袋、インク)',
+    'label_total_cost_placeholder': '購入金額 ¥',
+    'label_add': '追加',
+    'label_cancel': 'キャンセル',
+    'client_year_placeholder': '年',
+    'client_month_placeholder': '月',
+    'client_day_placeholder': '日',
+    'label_date': '日付',
+    'label_buyer': '購入者',
+    'Pending': '進行中',
+    'Ready for Shipping': '発送待ち',
+    'Finished': '完了',
+    'To Do': '未完了',
+    'Done': '完了',
+    'High': '高',
+    'Medium': '中',
+    'Low': '低',
+    'platform_fee_label': '{platform} 手数料 (-{rate}%)',
+    'save_settings_alert': '設定が保存されました！ ✓',
+    'delete_purchase_confirm': 'この購入履歴を削除しますか？',
+    'delete_item_confirm': 'このアイテムを削除しますか？',
+    'delete_task_confirm': 'このタスクを削除しますか？',
+    'delete_waste_confirm': 'この廃棄記録を削除しますか？',
+    'delete_client_confirm': 'この顧客を削除しますか？',
+    // New Keys
+    'login_subtitle': 'ペーパーアイテム管理ダッシュボード',
+    'login_email_label': 'メールアドレス',
+    'login_email_placeholder': 'your@email.com',
+    'login_password_label': 'パスワード',
+    'login_password_placeholder': '••••••••',
+    'label_add_item': '品目追加',
+    'label_options': 'オプション',
+    'label_add_option': '追加',
+    'label_express_option': '速達 (+¥300)',
+    'label_platform': 'プラットフォーム',
+    'platform_yahoo': 'Yahoo フリマ',
+    'label_comments': 'コメント',
+    'label_comments_placeholder': '任意のメモ...',
+    'label_buyer_placeholder': '例: 山田花子',
+    'label_note_placeholder': '例: 印刷ミス、紙詰まり...',
+    'settings_business_name_label': '屋号',
+    'settings_business_name_placeholder': 'Oinar Wedding',
+    'settings_email_placeholder': 'hello@oinar.com',
+    'settings_phone_label': '電話番号',
+    'settings_phone_placeholder': '+81 90 0000 0000',
+    'settings_mercari_label': 'メルカリプロフィール',
+    'settings_item_prices_title': '単価設定 (¥)',
+    'save_settings_btn': '設定を保存',
+    'save_task': 'タスクを保存',
+    'save_client': '顧客情報を保存',
+    'settings_total_orders': '総注文数',
+    'settings_total_sales': '総売上金額 (¥)',
+    'settings_total_profit': '総利益額 (¥)',
+    'no_tasks_to_do': '未完了のタスクはありません。',
+    'task_title_template': '{buyer} の注文を梱包・発送する',
+    'period_all': '全期間',
+    'period_this_month': '今月',
+    'period_last_month': '先月',
+    'period_this_year': '今年',
+    'label_qty_wasted': '枚数',
+    'label_save': '保存する',
+    'label_yes': 'はい',
+    'login_failed': 'ログインに失敗しました。',
+    'invalid_credentials': 'メールアドレスまたはパスワードが正しくありません。',
+    'client_auto_tracked': '自動追跡'
   }
 };
+
+function t(key) {
+  const lang = getLanguage();
+  return i18n[lang] && i18n[lang][key] !== undefined ? i18n[lang][key] : key;
+}
 
 // ---- Loading overlay ----
 function showLoadingOverlay(visible) {
@@ -175,16 +468,22 @@ function applyLanguage(lang) {
   const elements = document.querySelectorAll('[data-i18n]');
   elements.forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (i18n[lang] && i18n[lang][key]) {
-      if (el.tagName === 'INPUT' && el.type === 'submit') {
-        el.value = i18n[lang][key];
+    if (i18n[lang] && i18n[lang][key] !== undefined) {
+      const translation = i18n[lang][key];
+      if (el.tagName === 'INPUT' && (el.type === 'submit' || el.type === 'button')) {
+        el.value = translation;
+      } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = translation;
       } else {
-        el.textContent = i18n[lang][key];
+        el.textContent = translation;
       }
     }
   });
   const toggleBtn = document.getElementById('lang-toggle');
   if (toggleBtn) toggleBtn.textContent = lang === 'en' ? '日本語' : 'English';
+
+  updatePriceLabels();
+  setupClientDatePicker();
 }
 
 function formatCurrency(amount) {
@@ -194,7 +493,9 @@ function formatCurrency(amount) {
 function formatDate(dateStr) {
   if (!dateStr) return '—';
   const d = new Date(dateStr + 'T00:00:00');
-  return new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
+  const lang = getLanguage();
+  const locale = lang === 'jp' ? 'ja-JP' : 'en-US';
+  return new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
 }
 
 // --- AUTH ---
@@ -208,12 +509,12 @@ async function login(e) {
   try {
     await auth.signInWithEmailAndPassword(email, password);
   } catch (err) {
-    let msg = 'ログイン失敗 / Login failed.';
+    let msg = t('login_failed');
     if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-      msg = 'メールまたはパスワードが違います / Invalid email or password.';
+      msg = t('invalid_credentials');
     }
     alert(msg);
-    btn.value = 'Access Dashboard'; btn.disabled = false;
+    btn.value = t('login_btn'); btn.disabled = false;
   }
 }
 
@@ -426,16 +727,17 @@ function populateDashboardYears() {
   sel.querySelectorAll('option[data-year]').forEach(o => o.remove());
 
   // Add a divider then sorted year options (newest first)
+  const lang = getLanguage();
   const divider = document.createElement('option');
   divider.disabled = true;
-  divider.textContent = '── By Year ──';
+  divider.textContent = lang === 'jp' ? '── 年別 ──' : '── By Year ──';
   divider.setAttribute('data-year', 'divider');
   sel.appendChild(divider);
 
   [...years].sort((a, b) => b - a).forEach(yr => {
     const opt = document.createElement('option');
     opt.value = `year-${yr}`;
-    opt.textContent = `${yr}年`;
+    opt.textContent = lang === 'jp' ? `${yr}年` : `${yr}`;
     opt.setAttribute('data-year', yr);
     sel.appendChild(opt);
   });
@@ -505,16 +807,16 @@ function renderRecentTasks() {
   }
 
   if (activeTasks.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">No items to print! 🎉 / 印刷待ちのタスクはありません。</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_tasks_yet')}</td></tr>`;
     return;
   }
 
-  activeTasks.forEach(t => {
-    const order = getAll('orders').find(o => o.id === t.projectId);
-    const clientName = order ? order.buyerName : t.title;
+  activeTasks.forEach(tRow => {
+    const order = getAll('orders').find(o => o.id === tRow.projectId);
+    const clientName = order ? order.buyerName : tRow.title;
     // Express orders always show High priority
     const isExpress = order && order.express;
-    const displayPriority = isExpress ? 'High' : t.priority;
+    const displayPriority = isExpress ? 'High' : tRow.priority;
     let priorityClass = 'status-todo';
     if (displayPriority === 'High') priorityClass = 'status-pending';
     if (displayPriority === 'Low') priorityClass = 'status-completed';
@@ -530,12 +832,12 @@ function renderRecentTasks() {
       const sealA = items.sealA || 0;
       const sealB = items.sealB || 0;
       totalItems = noshi + nagagata + pochi + sealA + sealB;
-      if (noshi > 0) itemDetails.push(`のし袋×${noshi}`);
-      if (nagagata > 0) itemDetails.push(`長形×${nagagata}`);
-      if (pochi > 0) itemDetails.push(`ポチ×${pochi}`);
-      if (sealA > 0) itemDetails.push(`シールA×${sealA}`);
-      if (sealB > 0) itemDetails.push(`シールB×${sealB}`);
-      if (items.atsugami) itemDetails.push('厚紙');
+      if (noshi > 0) itemDetails.push(`${t('noshi')}×${noshi}`);
+      if (nagagata > 0) itemDetails.push(`${t('nagagata')}×${nagagata}`);
+      if (pochi > 0) itemDetails.push(`${t('pochi')}×${pochi}`);
+      if (sealA > 0) itemDetails.push(`${t('sealA')}×${sealA}`);
+      if (sealB > 0) itemDetails.push(`${t('sealB')}×${sealB}`);
+      if (items.atsugami) itemDetails.push(t('atsugami'));
     }
     const itemsDisplay = totalItems > 0
       ? `<strong style="font-size:1.05rem;">${totalItems}</strong><div style="font-size:0.7rem; color:var(--text-light); margin-top:0.1rem; line-height:1.3;">${itemDetails.join(', ')}</div>`
@@ -543,18 +845,18 @@ function renderRecentTasks() {
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td data-label="顧客 (Client)">
-        <strong>${clientName}</strong>${isExpress ? ' <span style="display:inline-block; margin-left:0.3rem; background:#e53e3e; color:white; font-size:0.6rem; font-weight:700; padding:0.1rem 0.35rem; border-radius:4px; letter-spacing:0.5px;">⚡ 速達</span>' : ''}
+      <td data-label="${t('th_client')}">
+        <strong>${clientName}</strong>${isExpress ? ` <span style="display:inline-block; margin-left:0.3rem; background:#e53e3e; color:white; font-size:0.6rem; font-weight:700; padding:0.1rem 0.35rem; border-radius:4px; letter-spacing:0.5px;">⚡ ${t('badge_express')}</span>` : ''}
         <div class="mobile-only-meta" style="font-size: 0.72rem; color: var(--text-light); margin-top: 0.15rem;">
-          優先度: <span class="badge ${priorityClass}" style="font-size: 0.65rem; padding: 0.1rem 0.35rem;">${displayPriority || 'Medium'}</span>
+          ${t('th_priority')}: <span class="badge ${priorityClass}" style="font-size: 0.65rem; padding: 0.1rem 0.35rem;">${t(displayPriority) || t('Medium')}</span>
         </div>
       </td>
-      <td class="col-priority" data-label="優先度 (Priority)"><span class="badge ${priorityClass}">${displayPriority || 'Medium'}</span></td>
-      <td data-label="商品数 (Items)">${itemsDisplay}</td>
-      <td data-label="発送期日 (Deadline)">${formatDate(t.dueDate)}</td>
-      <td data-label="印刷完了 (Printing Done?)" style="text-align: center;">
-         <button class="btn btn-outline" style="font-size:0.8rem; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; gap: 0.4rem;" onclick="completePrintingTask('${t.id}')">
-           <i class="fas fa-check"></i> Yes
+      <td class="col-priority" data-label="${t('th_priority')}"><span class="badge ${priorityClass}">${t(displayPriority) || t('Medium')}</span></td>
+      <td data-label="${t('th_items')}">${itemsDisplay}</td>
+      <td data-label="${t('th_deadline')}">${formatDate(tRow.dueDate)}</td>
+      <td data-label="${t('th_printing_done')}" style="text-align: center;">
+         <button class="btn btn-outline" style="font-size:0.8rem; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; gap: 0.4rem;" onclick="completePrintingTask('${tRow.id}')">
+           <i class="fas fa-check"></i> ${t('label_yes')}
          </button>
       </td>
     `;
@@ -623,7 +925,7 @@ function loadOrders() {
   if (activeTbody) {
     activeTbody.innerHTML = '';
     if (activeOrders.length === 0) {
-      activeTbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 2rem; color: var(--text-light);">すべての注文が発送済みです / All orders shipped! 🎉</td></tr>`;
+      activeTbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('all_orders_shipped')}</td></tr>`;
     } else {
       activeOrders.forEach(o => renderOrderRow(o, activeTbody, false)); // false = active
     }
@@ -634,7 +936,7 @@ function loadOrders() {
   if (pastTbody) {
     pastTbody.innerHTML = '';
     if (pastOrders.length === 0) {
-      pastTbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 2rem; color: var(--text-light);">No shipped orders yet.</td></tr>`;
+      pastTbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_shipped_orders_yet')}</td></tr>`;
     } else {
       pastOrders.forEach(o => renderOrderRow(o, pastTbody, true)); // true = past
     }
@@ -659,16 +961,16 @@ function renderOrderRow(o, tbody, isPastOrder = false) {
     }
     if (dynamicPriority === 'High') priorityClass = 'status-pending';
     if (dynamicPriority === 'Low') priorityClass = 'status-completed';
-    priorityHtml = `<td class="col-priority" data-label="優先度 (Priority)"><span class="badge ${priorityClass}">${dynamicPriority}</span></td>`;
+    priorityHtml = `<td class="col-priority" data-label="${t('th_priority')}"><span class="badge ${priorityClass}">${t(dynamicPriority)}</span></td>`;
   }
 
   let itemsStr = [];
-  if (o.items.noshi > 0) itemsStr.push(`のし袋 x${o.items.noshi}`);
-  if (o.items.nagagata > 0) itemsStr.push(`長形４号 x${o.items.nagagata}`);
-  if (o.items.pochi > 0) itemsStr.push(`ポチ袋 x${o.items.pochi}`);
-  if (o.items.atsugami) itemsStr.push(`厚紙補強`);
-  if (o.items.sealA > 0) itemsStr.push(`シールA x${o.items.sealA}`);
-  if (o.items.sealB > 0) itemsStr.push(`シールB x${o.items.sealB}`);
+  if (o.items.noshi > 0) itemsStr.push(`${t('noshi')} x${o.items.noshi}`);
+  if (o.items.nagagata > 0) itemsStr.push(`${t('nagagata')} x${o.items.nagagata}`);
+  if (o.items.pochi > 0) itemsStr.push(`${t('pochi')} x${o.items.pochi}`);
+  if (o.items.atsugami) itemsStr.push(`${t('atsugami')}`);
+  if (o.items.sealA > 0) itemsStr.push(`${t('sealA')} x${o.items.sealA}`);
+  if (o.items.sealB > 0) itemsStr.push(`${t('sealB')} x${o.items.sealB}`);
 
   const isShipped = o.shipped;
   const isExpress = o.express;
@@ -683,32 +985,32 @@ function renderOrderRow(o, tbody, isPastOrder = false) {
   const tr = document.createElement('tr');
   tr.style.cssText = rowStyle;
   tr.innerHTML = `
-    <td class="col-date" data-label="日付 (Date)">${formatDate(o.date)}</td>
-    <td data-label="購入者 (Buyer)">
+    <td class="col-date" data-label="${t('order_date')}">${formatDate(o.date)}</td>
+    <td data-label="${t('order_buyer')}">
       <strong>${o.buyerName}</strong>
-      ${isExpress ? '<span style="display:inline-block; margin-left:0.4rem; background:#e53e3e; color:white; font-size:0.65rem; font-weight:700; padding:0.15rem 0.4rem; border-radius:4px; letter-spacing:0.5px;">⚡ 速達</span>' : ''}
-      <span class="badge ${statusClass} mobile-only-inline" style="display:inline-block; margin-left:0.3rem; font-size:0.65rem; padding:0.15rem 0.4rem; vertical-align:middle;">${o.status === 'Ready for Shipping' || o.status === '発送待ち' ? 'Ready' : o.status}</span>
+      ${isExpress ? `<span style="display:inline-block; margin-left:0.4rem; background:#e53e3e; color:white; font-size:0.65rem; font-weight:700; padding:0.15rem 0.4rem; border-radius:4px; letter-spacing:0.5px;">⚡ ${t('badge_express')}</span>` : ''}
+      <span class="badge ${statusClass} mobile-only-inline" style="display:inline-block; margin-left:0.3rem; font-size:0.65rem; padding:0.15rem 0.4rem; vertical-align:middle;">${o.status === 'Ready for Shipping' || o.status === '発送待ち' ? t('status_ready') : t(o.status)}</span>
       <br><small style="color:var(--text-light)">${o.platform}</small>
       <div class="mobile-only-meta">
-        注文: ${o.date.replace(/^\d{4}-/, '')} | 期日: ${o.deadline.replace(/^\d{4}-/, '')}
-        ${!isPastOrder ? ` | 優先度: <span class="badge ${priorityClass}" style="font-size:0.65rem; padding:0.1rem 0.35rem;">${dynamicPriority}</span>` : ''}
+        ${t('order_date')}: ${o.date.replace(/^\d{4}-/, '')} | ${t('order_deadline')}: ${o.deadline.replace(/^\d{4}-/, '')}
+        ${!isPastOrder ? ` | ${t('th_priority')}: <span class="badge ${priorityClass}" style="font-size:0.65rem; padding:0.1rem 0.35rem;">${t(dynamicPriority)}</span>` : ''}
       </div>
     </td>
-    <td data-label="Shipped" style="text-align:center;">
+    <td data-label="${t('th_shipped')}" style="text-align:center;">
       <label style="display:flex; align-items:center; gap:0.4rem; margin:0; cursor:pointer;">
         <input type="checkbox" ${isShipped ? 'checked' : ''} 
           onchange="toggleShipped('${o.id}')"
           style="width:18px; height:18px; cursor:pointer;">
-        <span class="col-shipped-text" style="font-size:0.85rem; color:var(--text-secondary);">Shipped</span>
+         <span class="col-shipped-text" style="font-size:0.85rem; color:var(--text-secondary);">${t('th_shipped')}</span>
       </label>
     </td>
-    <td data-label="商品 (Items)" style="font-size:0.85rem; line-height: 1.3;">${itemsStr.join(', ') || '—'}</td>
-    <td data-label="売上 (Amount)" style="font-weight:600; color:var(--text-primary);">${formatCurrency(o.purchaseAmount)}</td>
-    <td data-label="利益 (Profit)" style="font-weight:700; color:var(--status-active-text);">${formatCurrency(o.profit)}</td>
-    <td class="col-status" data-label="状態 (Status)"><span class="badge ${statusClass}">${o.status}</span></td>
+    <td data-label="${t('order_items')}" style="font-size:0.85rem; line-height: 1.3;">${itemsStr.join(', ') || '—'}</td>
+    <td data-label="${t('order_amount')}" style="font-weight:600; color:var(--text-primary);">${formatCurrency(o.purchaseAmount)}</td>
+    <td data-label="${t('order_profit')}" style="font-weight:700; color:var(--status-active-text);">${formatCurrency(o.profit)}</td>
+    <td class="col-status" data-label="${t('order_status')}"><span class="badge ${statusClass}">${t(o.status)}</span></td>
     ${priorityHtml}
-    <td class="col-deadline" data-label="期日 (Deadline)">${formatDate(o.deadline)}</td>
-    <td data-label="操作 (Actions)">
+    <td class="col-deadline" data-label="${t('order_deadline')}">${formatDate(o.deadline)}</td>
+    <td data-label="${t('th_actions')}">
       <div class="action-btns">
         <button class="btn btn-text" onclick="editOrder('${o.id}')"><i class="fas fa-edit"></i></button>
         <button class="btn btn-text" style="color:var(--accent);" onclick="removeOrder('${o.id}')"><i class="fas fa-trash"></i></button>
@@ -768,8 +1070,11 @@ function calculateOrderMath() {
   const fee = Math.floor(purchaseAmount * feeRate);
   const feeLabel = document.getElementById('calc-fee-label');
   if (feeLabel) {
-    const platformName = platform === 'Yahoo' ? 'Yahoo フリマ' : platform;
-    feeLabel.textContent = `${platformName} Fee (-${Math.round(feeRate * 100)}%)`;
+    const lang = getLanguage();
+    const platformName = platform === 'Yahoo' ? (lang === 'jp' ? 'Yahoo フリマ' : 'Yahoo Flea Market') : platform;
+    const rateText = Math.round(feeRate * 100);
+    const tmpl = t('platform_fee_label');
+    feeLabel.textContent = tmpl.replace('{platform}', platformName).replace('{rate}', rateText);
   }
   const profit = purchaseAmount > 0 ? (purchaseAmount - fee - actualShipping) : 0;
 
@@ -844,10 +1149,12 @@ function handleOrderSubmit(e) {
     savedOrder = addItem('orders', order);
     deductStock(order.items);
     trackClientFromOrder(order.buyerName, order.purchaseAmount, order.profit, order.date, order.items);
+    const lang = getLanguage();
     const priority = calcTaskPriority(orderDate, deadline, express);
-    const expressLabel = express ? '【速達】' : '';
+    const expressLabel = express ? (lang === 'jp' ? '【速達】' : '[Express] ') : '';
+    const taskTitle = t('task_title_template').replace('{buyer}', order.buyerName);
     addItem('tasks', {
-      title: `${expressLabel}${order.buyerName} の注文を梱包・発送する`,
+      title: `${expressLabel}${taskTitle}`,
       dueDate: deadline,
       status: 'To Do',
       priority,
@@ -864,22 +1171,22 @@ function handleOrderSubmit(e) {
 }
 
 function removeOrder(id) {
-  if (confirm('Delete order?')) { deleteItem('orders', id); loadOrders(); loadDashboardData(); loadClients(); }
+  if (confirm(t('delete_item_confirm'))) { deleteItem('orders', id); loadOrders(); loadDashboardData(); loadClients(); }
 }
 
 // --- TASKS ---
 function loadTasks() {
   const tasks = getAll('tasks');
-  const activeTasks = tasks.filter(t => t.status !== 'Done' && t.status !== '完了');
-  const completedTasks = tasks.filter(t => t.status === 'Done' || t.status === '完了');
+  const activeTasks = tasks.filter(tRow => tRow.status !== 'Done' && tRow.status !== '完了');
+  const completedTasks = tasks.filter(tRow => tRow.status === 'Done' || tRow.status === '完了');
 
   const activeTbody = document.getElementById('tasks-tbody');
   if (activeTbody) {
     activeTbody.innerHTML = '';
     if (activeTasks.length === 0) {
-      activeTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">No tasks to do! 🎉 / 未完了のタスクはありません。</td></tr>`;
+      activeTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_tasks_to_do')}</td></tr>`;
     } else {
-      activeTasks.forEach(t => renderTaskRow(t, activeTbody, false));
+      activeTasks.forEach(tRow => renderTaskRow(tRow, activeTbody, false));
     }
   }
 
@@ -887,20 +1194,20 @@ function loadTasks() {
   if (completedTbody) {
     completedTbody.innerHTML = '';
     if (completedTasks.length === 0) {
-      completedTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">No completed tasks yet.</td></tr>`;
+      completedTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_tasks_yet')}</td></tr>`;
     } else {
-      completedTasks.forEach(t => renderTaskRow(t, completedTbody, true));
+      completedTasks.forEach(tRow => renderTaskRow(tRow, completedTbody, true));
     }
   }
 }
 
-function renderTaskRow(t, tbody, isCompleted = false) {
-  const isDone = t.status === 'Done' || t.status === '完了';
+function renderTaskRow(tRow, tbody, isCompleted = false) {
+  const isDone = tRow.status === 'Done' || tRow.status === '完了';
   const statusClass = isDone ? 'status-completed' : 'status-todo';
   
   let priorityClass = 'status-todo'; // Medium
-  if (t.priority === 'High' || t.priority === '高') priorityClass = 'status-pending';
-  else if (t.priority === 'Low' || t.priority === '低') priorityClass = 'status-completed';
+  if (tRow.priority === 'High' || tRow.priority === '高') priorityClass = 'status-pending';
+  else if (tRow.priority === 'Low' || tRow.priority === '低') priorityClass = 'status-completed';
 
   let rowStyle = '';
   if (isCompleted) {
@@ -910,21 +1217,21 @@ function renderTaskRow(t, tbody, isCompleted = false) {
   const tr = document.createElement('tr');
   tr.style.cssText = rowStyle;
   tr.innerHTML = `
-    <td data-label="タスク (Task)">
-      <strong>${t.title}</strong>
+    <td data-label="${t('nav_tasks')}">
+      <strong>${tRow.title}</strong>
       <div class="mobile-only-meta" style="font-size: 0.72rem; color: var(--text-light); margin-top: 0.15rem; line-height: 1.2;">
-        期日: ${t.dueDate} | 優先度: <span class="badge ${priorityClass}" style="font-size: 0.65rem; padding: 0.1rem 0.35rem;">${t.priority}</span>
+        ${t('th_deadline')}: ${tRow.dueDate} | ${t('th_priority')}: <span class="badge ${priorityClass}" style="font-size: 0.65rem; padding: 0.1rem 0.35rem;">${t(tRow.priority)}</span>
       </div>
     </td>
-    <td class="col-priority" data-label="優先度 (Priority)">
-      <span class="badge ${priorityClass}">${t.priority}</span>
+    <td class="col-priority" data-label="${t('th_priority')}">
+      <span class="badge ${priorityClass}">${t(tRow.priority)}</span>
     </td>
-    <td class="col-deadline" data-label="期日 (Due)">${formatDate(t.dueDate)}</td>
-    <td class="col-status" data-label="状態 (Status)"><span class="badge ${statusClass}">${t.status}</span></td>
-    <td data-label="操作 (Actions)">
+    <td class="col-deadline" data-label="${t('th_deadline')}">${formatDate(tRow.dueDate)}</td>
+    <td class="col-status" data-label="${t('order_status')}"><span class="badge ${statusClass}">${t(tRow.status)}</span></td>
+    <td data-label="${t('th_actions')}">
       <div class="action-btns">
-        <button class="btn btn-text" onclick="editTask('${t.id}')"><i class="fas fa-edit"></i></button>
-        <button class="btn btn-text" style="color:var(--accent);" onclick="removeTask('${t.id}')"><i class="fas fa-trash"></i></button>
+        <button class="btn btn-text" onclick="editTask('${tRow.id}')"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-text" style="color:var(--accent);" onclick="removeTask('${tRow.id}')"><i class="fas fa-trash"></i></button>
       </div>
     </td>
   `;
@@ -948,7 +1255,7 @@ function handleTaskSubmit(e) {
 }
 
 function removeTask(id) {
-  if (confirm('Delete task?')) { deleteItem('tasks', id); loadTasks(); loadDashboardData(); }
+  if (confirm(t('delete_task_confirm'))) { deleteItem('tasks', id); loadTasks(); loadDashboardData(); }
 }
 
 function syncAutoTrackedClients() {
@@ -1013,7 +1320,7 @@ function loadClients() {
   tbody.innerHTML = '';
 
   if (clients.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-light);">No clients found. / 登録されている顧客はいません。</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_clients_found')}</td></tr>`;
     return;
   }
 
@@ -1025,15 +1332,15 @@ function loadClients() {
   });
 
   clients.forEach(c => {
-    const source = c.isFromOrder ? '<span style="font-size:0.7rem; color:var(--text-light); display:block;">Auto-tracked</span>' : '';
+    const source = c.isFromOrder ? `<span style="font-size:0.7rem; color:var(--text-light); display:block;">${t('client_auto_tracked')}</span>` : '';
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td data-label="購入者 (Buyer)"><strong>${c.name}</strong>${source}</td>
-      <td data-label="購入日 (Date)">${formatDate(c.date)}</td>
-      <td data-label="注文数 (Orders)">${c.orders || 0}</td>
-      <td data-label="売上 (Sales)" style="font-weight:600; color:var(--text-primary);">${formatCurrency(c.sales || 0)}</td>
-      <td data-label="利益 (Profit)" style="font-weight:700; color:var(--status-active-text);">${formatCurrency(c.profit || 0)}</td>
-      <td data-label="操作 (Actions)">
+      <td data-label="${t('order_buyer')}"><strong>${c.name}</strong>${source}</td>
+      <td data-label="${t('th_purchase_date')}">${formatDate(c.date)}</td>
+      <td data-label="${t('dash_orders')}">${c.orders || 0}</td>
+      <td data-label="${t('dash_sales')}" style="font-weight:600; color:var(--text-primary);">${formatCurrency(c.sales || 0)}</td>
+      <td data-label="${t('order_profit')}" style="font-weight:700; color:var(--status-active-text);">${formatCurrency(c.profit || 0)}</td>
+      <td data-label="${t('th_actions')}">
         <div class="action-btns">
           <button class="btn btn-text" onclick="editClient('${c.id}')"><i class="fas fa-edit"></i></button>
           <button class="btn btn-text" style="color:var(--accent);" onclick="removeClient('${c.id}')"><i class="fas fa-trash-alt"></i></button>
@@ -1068,7 +1375,7 @@ function handleClientSubmit(e) {
 }
 
 function removeClient(id) {
-  if (confirm('Delete client? / この顧客を削除しますか？')) {
+  if (confirm(t('delete_client_confirm'))) {
     deleteItem('clients', id);
     loadClients();
   }
@@ -1113,7 +1420,7 @@ function loadInventory() {
   const items = db.inventory || [];
 
   if (items.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:1.5rem; color:var(--text-light);">No purchase records. / 購入履歴はありません。</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:1.5rem; color:var(--text-light);">${t('no_purchase_records')}</td></tr>`;
     const qtyEl = document.getElementById('inv-total-qty');
     const costEl = document.getElementById('inv-total-cost');
     if (qtyEl) qtyEl.textContent = '0';
@@ -1138,11 +1445,11 @@ function loadInventory() {
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td data-label="Date / 日付">${formatDate(item.date)}</td>
-      <td data-label="Item / 品目"><strong>${item.name}</strong></td>
-      <td data-label="Qty / 数量" style="font-weight:600;">${item.qty || 0}</td>
-      <td data-label="Total Cost / 購入金額" style="font-weight:600;">${formatCurrency(item.price || 0)}</td>
-      <td data-label="Actions / 操作">
+      <td data-label="${t('th_date')}">${formatDate(item.date)}</td>
+      <td data-label="${t('th_item')}"><strong>${item.name}</strong></td>
+      <td data-label="${t('qty')}" style="font-weight:600;">${item.qty || 0}</td>
+      <td data-label="${t('th_total_cost')}" style="font-weight:600;">${formatCurrency(item.price || 0)}</td>
+      <td data-label="${t('th_actions')}">
         <button class="btn btn-text" style="color:var(--accent); padding:0.25rem;" onclick="removeInventoryItem('${item.id}')"><i class="fas fa-trash-alt"></i></button>
       </td>
     `;
@@ -1158,7 +1465,7 @@ function loadInventory() {
 }
 
 function removeInventoryItem(id) {
-  if (!confirm('Delete this purchase log? / この購入履歴を削除しますか？')) return;
+  if (!confirm(t('delete_purchase_confirm'))) return;
   const db = getDB();
   db.inventory = db.inventory.filter(i => i.id !== id);
   saveDB(db);
@@ -1224,22 +1531,22 @@ function loadWasteLog() {
   if (!tbody) return;
   tbody.innerHTML = '';
   if (waste.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No waste recorded.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-light);">${t('no_waste_recorded')}</td></tr>`;
     return;
   }
   waste.forEach(w => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="col-date" data-label="日付 (Date)">${formatDate(w.date)}</td>
-      <td data-label="素材 (Item)">
-        <strong>${w.item}</strong>
+      <td class="col-date" data-label="${t('th_date')}">${formatDate(w.date)}</td>
+      <td data-label="${t('th_item')}">
+        <strong>${t(w.item)}</strong>
         <div class="mobile-only-meta" style="font-size: 0.72rem; color: var(--text-light); margin-top: 0.15rem;">
-          日付: ${w.date}
+          ${t('th_date')}: ${w.date}
         </div>
       </td>
-      <td data-label="枚数 (Qty)" style="font-weight:600;">${w.qty}</td>
-      <td data-label="メモ (Note)" style="font-size:0.9rem; color:var(--text-secondary);">${w.note || '—'}</td>
-      <td data-label="操作 (Actions)">
+      <td data-label="${t('qty')}" style="font-weight:600;">${w.qty}</td>
+      <td data-label="${t('th_note')}" style="font-size:0.9rem; color:var(--text-secondary);">${w.note || '—'}</td>
+      <td data-label="${t('th_actions')}">
         <div class="action-btns">
           <button class="btn btn-text" style="color:var(--accent);" onclick="removeWaste('${w.id}')"><i class="fas fa-trash"></i></button>
         </div>
@@ -1271,7 +1578,7 @@ function handleWasteSubmit(e) {
 }
 
 function removeWaste(id) {
-  if (confirm('Delete this waste record?')) { deleteItem('waste', id); loadInventory(); }
+  if (confirm(t('delete_waste_confirm'))) { deleteItem('waste', id); loadInventory(); }
 }
 
 // --- SETTINGS ---
@@ -1316,17 +1623,19 @@ function saveSettings() {
   savePrices(updatedPrices);
   PRICES = updatedPrices;
   updatePriceLabels();
-  alert('Settings saved! ✓');
+  alert(t('save_settings_alert'));
 }
 
 function updatePriceLabels() {
+  const lang = getLanguage();
+  const perPiece = lang === 'en' ? ' / pc' : ' / 枚';
   const labels = {
-    'label-price-noshi': `のし袋 (${formatCurrency(PRICES.noshi)})`,
-    'label-price-nagagata': `長形４号 (${formatCurrency(PRICES.nagagata)})`,
-    'label-price-pochi': `ポチ袋 (${formatCurrency(PRICES.pochi)})`,
-    'label-price-atsugami': `厚紙補強 (${formatCurrency(PRICES.atsugami)})`,
-    'label-price-sealA': `シールA (${formatCurrency(PRICES.sealA)} / 枚)`,
-    'label-price-sealB': `シールB (${formatCurrency(PRICES.sealB)} / 枚)`,
+    'label-price-noshi': `${t('noshi')} (${formatCurrency(PRICES.noshi)})`,
+    'label-price-nagagata': `${t('nagagata')} (${formatCurrency(PRICES.nagagata)})`,
+    'label-price-pochi': `${t('pochi')} (${formatCurrency(PRICES.pochi)})`,
+    'label-price-atsugami': `${t('atsugami')} (${formatCurrency(PRICES.atsugami)})`,
+    'label-price-sealA': `${t('sealA')} (${formatCurrency(PRICES.sealA)}${perPiece})`,
+    'label-price-sealB': `${t('sealB')} (${formatCurrency(PRICES.sealB)}${perPiece})`,
   };
   Object.entries(labels).forEach(([id, text]) => {
     const el = document.getElementById(id);
@@ -1349,20 +1658,41 @@ function setupClientDatePicker() {
   if (!yearSel || !monthSel || !daySel) return;
 
   const currentYear = new Date().getFullYear();
+  const lang = getLanguage();
+  const yearSuffix = lang === 'jp' ? '年' : '';
+  const monthSuffix = lang === 'jp' ? '月' : '';
+  const daySuffix = lang === 'jp' ? '日' : '';
+
+  const selectedYear = yearSel.value;
+  const selectedMonth = monthSel.value;
+  const selectedDay = daySel.value;
+
+  yearSel.innerHTML = `<option value="" data-i18n="client_year_placeholder">${t('client_year_placeholder')}</option>`;
+  monthSel.innerHTML = `<option value="" data-i18n="client_month_placeholder">${t('client_month_placeholder')}</option>`;
+  daySel.innerHTML = `<option value="" data-i18n="client_day_placeholder">${t('client_day_placeholder')}</option>`;
+
   for (let y = currentYear; y >= currentYear - 5; y--) {
-    yearSel.innerHTML += `<option value="${y}">${y}年</option>`;
+    yearSel.innerHTML += `<option value="${y}">${y}${yearSuffix}</option>`;
   }
   for (let m = 1; m <= 12; m++) {
-    monthSel.innerHTML += `<option value="${String(m).padStart(2, '0')}">${m}月</option>`;
+    monthSel.innerHTML += `<option value="${String(m).padStart(2, '0')}">${m}${monthSuffix}</option>`;
   }
   for (let d = 1; d <= 31; d++) {
-    daySel.innerHTML += `<option value="${String(d).padStart(2, '0')}">${d}日</option>`;
+    daySel.innerHTML += `<option value="${String(d).padStart(2, '0')}">${d}${daySuffix}</option>`;
   }
+
+  yearSel.value = selectedYear;
+  monthSel.value = selectedMonth;
+  daySel.value = selectedDay;
 
   const sync = () => {
     const y = yearSel.value, m = monthSel.value, d = daySel.value;
     hidden.value = (y && m && d) ? `${y}-${m}-${d}` : '';
   };
+  // Ensure we don't attach multiple event listeners if called repeatedly
+  yearSel.removeEventListener('change', sync);
+  monthSel.removeEventListener('change', sync);
+  daySel.removeEventListener('change', sync);
   yearSel.addEventListener('change', sync);
   monthSel.addEventListener('change', sync);
   daySel.addEventListener('change', sync);
