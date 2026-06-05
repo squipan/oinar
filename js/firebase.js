@@ -114,7 +114,8 @@ async function loadAllDataFromFirestore() {
       invoices:  [],
       inventory: userData.inventory || { noshi: 0, nagagata: 0, pochi: 0, sealA: 0, sealB: 0 },
       waste,
-      prices:    userData.prices    || { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10 }
+      prices:    userData.prices    || { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10 },
+      miscItems: userData.miscItems || []
     };
   } catch (err) {
     console.error('[FS] Load failed:', err);

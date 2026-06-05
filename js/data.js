@@ -28,7 +28,8 @@ function saveDB(db) {
     user: db.user,
     language: db.language,
     inventory: db.inventory,
-    prices: db.prices
+    prices: db.prices,
+    miscItems: db.miscItems || []
   });
 }
 
