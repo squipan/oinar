@@ -121,10 +121,19 @@
 
                         <div class="metric-grid">
                             <div class="metric-card">
-                                <div class="metric-title" data-i18n="dash_profit">Total Profit</div>
-                                <div class="metric-value" id="metric-profit" style="color: var(--primary-hover);">¥0
-                                </div>
+                                <div class="metric-title">Order Profit / 注文利益</div>
+                                <div class="metric-value" id="metric-profit">¥0</div>
                                 <i class="fas fa-piggy-bank metric-icon"></i>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title">Inventory Cost / 在庫コスト</div>
+                                <div class="metric-value" id="metric-inventory-cost">¥0</div>
+                                <i class="fas fa-boxes metric-icon"></i>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title" style="font-weight:700;">Net Profit / 純利益</div>
+                                <div class="metric-value" id="metric-net-profit" style="color: var(--status-active-text); font-weight:800;">¥0</div>
+                                <i class="fas fa-calculator metric-icon"></i>
                             </div>
                             <div class="metric-card">
                                 <div class="metric-title" data-i18n="dash_sales">Total Sales</div>
@@ -342,117 +351,29 @@
                         <div id="misc-add-form" style="display:none; gap:0.6rem; align-items:center; flex-wrap:wrap; margin-bottom:1.2rem; padding:0.8rem 1rem; background:var(--status-todo-bg); border-radius:8px;">
                             <span style="font-size:0.9rem; font-weight:600; color:var(--text-primary);">New Item:</span>
                             <input type="text" id="misc-new-name" placeholder="Name (e.g. ゆうパケットポスト)" style="flex:2; min-width:160px; padding:0.45rem 0.7rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
-                            <input type="number" id="misc-new-price" placeholder="Price ¥" min="0" style="width:90px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
+                            <input type="number" id="misc-new-price" placeholder="Cost ¥" min="0" style="width:90px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
                             <input type="number" id="misc-new-qty" placeholder="Qty" min="0" style="width:75px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
                             <button class="btn btn-primary" style="font-size:0.85rem; padding:0.45rem 0.9rem;" onclick="addMiscItem()"><i class="fas fa-plus"></i> Add</button>
                             <button class="btn btn-outline" style="font-size:0.85rem; padding:0.45rem 0.9rem;" onclick="toggleMiscAddForm()">Cancel</button>
                         </div>
 
-                        <!-- Stock Cards -->
-                        <div class="metric-grid" style="margin-bottom:2rem;">
-                            <div class="metric-card" id="stock-card-noshi">
-                                <div class="metric-title">のし袋</div>
-                                <div class="metric-value" id="stock-noshi">0</div>
-                                <i class="fas fa-envelope metric-icon"></i>
-                                <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('noshi', -10)">-10</button>
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('noshi', 10)">+10</button>
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('noshi', 50)">+50</button>
-                                    <input type="number" placeholder="±qty" id="restock-noshi"
-                                        style="width:60px; padding:0.3rem; font-size:0.8rem;">
-                                    <button class="btn btn-primary" style="font-size:0.8rem; padding:0.4rem 0.6rem;"
-                                        onclick="restockItem('noshi')">追加</button>
-                                </div>
-                            </div>
-                            <div class="metric-card" id="stock-card-nagagata">
-                                <div class="metric-title">長形４号</div>
-                                <div class="metric-value" id="stock-nagagata">0</div>
-                                <i class="fas fa-envelope-open metric-icon"></i>
-                                <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('nagagata', -10)">-10</button>
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('nagagata', 10)">+10</button>
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('nagagata', 50)">+50</button>
-                                    <input type="number" placeholder="±qty" id="restock-nagagata"
-                                        style="width:60px; padding:0.3rem; font-size:0.8rem;">
-                                    <button class="btn btn-primary" style="font-size:0.8rem; padding:0.4rem 0.6rem;"
-                                        onclick="restockItem('nagagata')">追加</button>
-                                </div>
-                            </div>
-                            <div class="metric-card" id="stock-card-pochi">
-                                <div class="metric-title">ポチ袋</div>
-                                <div class="metric-value" id="stock-pochi">0</div>
-                                <i class="fas fa-wallet metric-icon"></i>
-                                <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('pochi', -10)">-10</button>
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('pochi', 10)">+10</button>
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('pochi', 50)">+50</button>
-                                    <input type="number" placeholder="±qty" id="restock-pochi"
-                                        style="width:60px; padding:0.3rem; font-size:0.8rem;">
-                                    <button class="btn btn-primary" style="font-size:0.8rem; padding:0.4rem 0.6rem;"
-                                        onclick="restockItem('pochi')">追加</button>
-                                </div>
-                            </div>
-                            <div class="metric-card" id="stock-card-sealA">
-                                <div class="metric-title">シールA</div>
-                                <div class="metric-value" id="stock-sealA">0</div>
-                                <i class="fas fa-star metric-icon"></i>
-                                <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('sealA', -10)">-10</button>
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('sealA', 10)">+10</button>
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('sealA', 50)">+50</button>
-                                    <input type="number" placeholder="±qty" id="restock-sealA"
-                                        style="width:60px; padding:0.3rem; font-size:0.8rem;">
-                                    <button class="btn btn-primary" style="font-size:0.8rem; padding:0.4rem 0.6rem;"
-                                        onclick="restockItem('sealA')">追加</button>
-                                </div>
-                            </div>
-                            <div class="metric-card" id="stock-card-sealB">
-                                <div class="metric-title">シールB</div>
-                                <div class="metric-value" id="stock-sealB">0</div>
-                                <i class="fas fa-star-half-alt metric-icon"></i>
-                                <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('sealB', -10)">-10</button>
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('sealB', 10)">+10</button>
-                                    <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;"
-                                        onclick="adjustStock('sealB', 50)">+50</button>
-                                    <input type="number" placeholder="±qty" id="restock-sealB"
-                                        style="width:60px; padding:0.3rem; font-size:0.8rem;">
-                                    <button class="btn btn-primary" style="font-size:0.8rem; padding:0.4rem 0.6rem;"
-                                        onclick="restockItem('sealB')">追加</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Shopping List / Misc Items -->
+                        <!-- Unified Inventory List -->
                         <div class="card" style="margin-bottom:2rem;">
                             <div class="card-header">
-                                <span class="card-title">ショッピングリスト / Shopping List</span>
+                                <span class="card-title">在庫リスト / Inventory List</span>
                             </div>
                             <div class="table-responsive">
                                 <table>
                                     <thead>
                                         <tr>
                                             <th>Item / 品目</th>
-                                            <th>Price / 単価</th>
+                                            <th>Cost / 単価 (Cost)</th>
                                             <th>Qty / 数量</th>
-                                            <th>Actions</th>
+                                            <th>Total / 合計</th>
+                                            <th>Actions / 操作</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="misc-items-tbody"></tbody>
+                                    <tbody id="inventory-items-tbody"></tbody>
                                 </table>
                             </div>
                         </div>

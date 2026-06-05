@@ -472,6 +472,17 @@ function loadDashboardData() {
   const totalClients = filteredAllClients.length;
 
   document.getElementById('metric-profit').textContent = formatCurrency(totalProfit);
+  
+  const inv = getDB().inventory || [];
+  const totalInventoryCost = inv.reduce((sum, item) => sum + ((item.qty || 0) * (item.price || 0)), 0);
+  const netProfit = totalProfit - totalInventoryCost;
+
+  const costEl = document.getElementById('metric-inventory-cost');
+  if (costEl) costEl.textContent = formatCurrency(totalInventoryCost);
+
+  const netEl = document.getElementById('metric-net-profit');
+  if (netEl) netEl.textContent = formatCurrency(netProfit);
+
   document.getElementById('metric-sales').textContent = formatCurrency(totalSales);
   document.getElementById('metric-tasks').textContent = remainingTasks;
   document.getElementById('metric-orders').textContent = totalOrders;
@@ -1094,58 +1105,98 @@ function trackClientFromOrder(buyerName, amount, profit, orderDate, items) {
 
 // --- INVENTORY ---
 function loadInventory() {
-  const inv = getDB().inventory || {};
-  document.getElementById('stock-noshi').textContent = inv.noshi || 0;
-  document.getElementById('stock-nagagata').textContent = inv.nagagata || 0;
-  document.getElementById('stock-pochi').textContent = inv.pochi || 0;
-  document.getElementById('stock-sealA').textContent = inv.sealA || 0;
-  document.getElementById('stock-sealB').textContent = inv.sealB || 0;
-  loadWasteLog();
-  loadMiscItems();
-}
-
-function getMiscItems() {
-  const db = getDB();
-  if (!db.miscItems) db.miscItems = [];
-  return db.miscItems;
-}
-
-function saveMiscItems(items) {
-  const db = getDB();
-  db.miscItems = items;
-  saveDB(db);
-}
-
-function loadMiscItems() {
-  const tbody = document.getElementById('misc-items-tbody');
+  const tbody = document.getElementById('inventory-items-tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
 
-  const items = getMiscItems();
+  const db = getDB();
+  const items = db.inventory || [];
 
   if (items.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:1.2rem; color:var(--text-light);">No items yet. Click "Add Item" to add to your shopping list.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:1.5rem; color:var(--text-light);">No items in inventory. / 在庫アイテムはありません。</td></tr>`;
+    loadWasteLog();
     return;
   }
 
   items.forEach(item => {
+    const totalCost = (item.qty || 0) * (item.price || 0);
+    const deleteBtn = !item.isCore 
+      ? `<button class="btn btn-text" style="color:var(--accent); padding:0.25rem;" onclick="removeInventoryItem('${item.id}')"><i class="fas fa-trash-alt"></i></button>`
+      : '';
+
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td data-label="Item / 品目"><strong>${item.name}</strong></td>
-      <td data-label="Price / 単価" style="color:var(--text-secondary);">${item.price ? formatCurrency(item.price) : '—'}</td>
-      <td data-label="Qty / 数量" id="misc-qty-${item.id}" style="font-weight:600; font-size:1.05rem;">${item.qty || 0}</td>
-      <td data-label="Actions">
+      <td data-label="Cost / 単価 (Cost)">
+        <div style="display:flex; align-items:center; gap:0.3rem;">
+          <span>¥</span>
+          <input type="number" value="${item.price || 0}" style="width:75px; padding:0.3rem; font-size:0.85rem; border:1px solid var(--border-color); border-radius:6px;" onchange="updateInventoryPrice('${item.id}', this.value)" min="0">
+        </div>
+      </td>
+      <td data-label="Qty / 数量" id="inv-qty-${item.id}" style="font-weight:600;">${item.qty || 0}</td>
+      <td data-label="Total / 合計" style="color:var(--text-secondary);">${formatCurrency(totalCost)}</td>
+      <td data-label="Actions / 操作">
         <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
-          <button class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.5rem;" onclick="adjustMiscItem('${item.id}', -1)">-1</button>
-          <button class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.5rem;" onclick="adjustMiscItem('${item.id}', 1)">+1</button>
-          <input type="number" id="misc-input-${item.id}" placeholder="qty" style="width:55px; padding:0.3rem; font-size:0.8rem;">
-          <button class="btn btn-primary" style="font-size:0.8rem; padding:0.3rem 0.5rem;" onclick="setMiscItem('${item.id}')">Set</button>
-          <button class="btn btn-text" style="color:var(--accent); font-size:0.9rem; padding:0.3rem 0.5rem;" onclick="removeMiscItem('${item.id}')"><i class="fas fa-trash"></i></button>
+          <button class="btn btn-outline" style="font-size:0.8rem; padding:0.25rem 0.5rem;" onclick="adjustInventoryQty('${item.id}', -1)">-1</button>
+          <button class="btn btn-outline" style="font-size:0.8rem; padding:0.25rem 0.5rem;" onclick="adjustInventoryQty('${item.id}', 1)">+1</button>
+          <button class="btn btn-outline" style="font-size:0.8rem; padding:0.25rem 0.5rem;" onclick="adjustInventoryQty('${item.id}', 10)">+10</button>
+          <input type="number" id="inv-input-${item.id}" placeholder="Set" style="width:50px; padding:0.25rem; font-size:0.8rem; height:26px;">
+          <button class="btn btn-primary" style="font-size:0.8rem; padding:0.25rem 0.5rem; height:26px; line-height:1;" onclick="setInventoryQty('${item.id}')">Set</button>
+          ${deleteBtn}
         </div>
       </td>
     `;
     tbody.appendChild(tr);
   });
+
+  loadWasteLog();
+}
+
+function updateInventoryPrice(id, priceVal) {
+  const db = getDB();
+  const item = db.inventory.find(i => i.id === id);
+  if (item) {
+    item.price = parseInt(priceVal) || 0;
+    saveDB(db);
+    loadInventory();
+    loadDashboardData();
+  }
+}
+
+function adjustInventoryQty(id, delta) {
+  const db = getDB();
+  const item = db.inventory.find(i => i.id === id);
+  if (item) {
+    item.qty = Math.max(0, (item.qty || 0) + delta);
+    saveDB(db);
+    loadInventory();
+    loadDashboardData();
+  }
+}
+
+function setInventoryQty(id) {
+  const input = document.getElementById(`inv-input-${id}`);
+  if (!input) return;
+  const qty = parseInt(input.value);
+  if (isNaN(qty) || qty < 0) return;
+  const db = getDB();
+  const item = db.inventory.find(i => i.id === id);
+  if (item) {
+    item.qty = qty;
+    saveDB(db);
+    input.value = '';
+    loadInventory();
+    loadDashboardData();
+  }
+}
+
+function removeInventoryItem(id) {
+  if (!confirm('Delete this item from inventory? / このアイテムを在庫から削除しますか？')) return;
+  const db = getDB();
+  db.inventory = db.inventory.filter(i => i.id !== id);
+  saveDB(db);
+  loadInventory();
+  loadDashboardData();
 }
 
 function toggleMiscAddForm() {
@@ -1165,80 +1216,45 @@ function addMiscItem() {
   if (!name) { nameInput.focus(); return; }
   const qty = parseInt(qtyInput.value) || 0;
   const price = parseInt(priceInput.value) || 0;
-  const items = getMiscItems();
-  items.push({ id: Date.now().toString(), name, qty, price });
-  saveMiscItems(items);
+  
+  const db = getDB();
+  if (!db.inventory) db.inventory = [];
+  
+  db.inventory.push({
+    id: 'misc_' + Date.now().toString(),
+    name,
+    qty,
+    price,
+    isCore: false
+  });
+  
+  saveDB(db);
   nameInput.value = '';
   qtyInput.value = '';
   if (priceInput) priceInput.value = '';
-  loadMiscItems();
-}
-
-function removeMiscItem(id) {
-  if (!confirm('Delete this item?')) return;
-  const items = getMiscItems().filter(i => i.id !== id);
-  saveMiscItems(items);
-  loadMiscItems();
-}
-
-function adjustMiscItem(id, delta) {
-  const items = getMiscItems();
-  const item = items.find(i => i.id === id);
-  if (!item) return;
-  item.qty = Math.max(0, (item.qty || 0) + delta);
-  saveMiscItems(items);
-  const el = document.getElementById(`misc-qty-${id}`);
-  if (el) el.textContent = item.qty;
-}
-
-function setMiscItem(id) {
-  const input = document.getElementById(`misc-input-${id}`);
-  const qty = parseInt(input.value);
-  if (isNaN(qty) || qty < 0) return;
-  const items = getMiscItems();
-  const item = items.find(i => i.id === id);
-  if (!item) return;
-  item.qty = qty;
-  saveMiscItems(items);
-  input.value = '';
-  const el = document.getElementById(`misc-qty-${id}`);
-  if (el) el.textContent = item.qty;
-}
-
-function adjustStock(item, amount) {
-  const db = getDB();
-  if (!db.inventory) db.inventory = { noshi: 0, nagagata: 0, pochi: 0, sealA: 0, sealB: 0 };
-  db.inventory[item] = (db.inventory[item] || 0) + amount;
-  saveDB(db);
+  
+  toggleMiscAddForm();
   loadInventory();
-}
-
-function restockItem(item) {
-  const input = document.getElementById(`restock-${item}`);
-  const qty = parseInt(input.value) || 0;
-  if (qty !== 0) { adjustStock(item, qty); input.value = ''; }
-}
-
-function setStock(item) {
-  const input = document.getElementById(`restock-${item}`);
-  const qty = parseInt(input.value);
-  if (isNaN(qty) || qty < 0) { alert('Please enter a valid number (0 or more).'); return; }
-  const db = getDB();
-  if (!db.inventory) db.inventory = { noshi: 0, nagagata: 0, pochi: 0, sealA: 0, sealB: 0 };
-  db.inventory[item] = qty;
-  saveDB(db);
-  input.value = '';
-  loadInventory();
+  loadDashboardData();
 }
 
 function deductStock(items) {
   const db = getDB();
-  if (!db.inventory) db.inventory = { noshi: 0, nagagata: 0, pochi: 0, sealA: 0, sealB: 0 };
-  if (items.noshi > 0) db.inventory.noshi = Math.max(0, (db.inventory.noshi || 0) - items.noshi);
-  if (items.nagagata > 0) db.inventory.nagagata = Math.max(0, (db.inventory.nagagata || 0) - items.nagagata);
-  if (items.pochi > 0) db.inventory.pochi = Math.max(0, (db.inventory.pochi || 0) - items.pochi);
-  if (items.sealA > 0) db.inventory.sealA = Math.max(0, (db.inventory.sealA || 0) - items.sealA);
-  if (items.sealB > 0) db.inventory.sealB = Math.max(0, (db.inventory.sealB || 0) - items.sealB);
+  const inv = db.inventory || [];
+  
+  const deduct = (id, amt) => {
+    const item = inv.find(i => i.id === id);
+    if (item && amt > 0) {
+      item.qty = Math.max(0, (item.qty || 0) - amt);
+    }
+  };
+
+  deduct('noshi', items.noshi);
+  deduct('nagagata', items.nagagata);
+  deduct('pochi', items.pochi);
+  deduct('sealA', items.sealA);
+  deduct('sealB', items.sealB);
+
   saveDB(db);
 }
 
