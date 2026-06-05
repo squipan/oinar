@@ -347,33 +347,42 @@
                             </div>
                         </div>
 
-                        <!-- Inline add form for misc items (hidden by default) -->
+                        <!-- Inline add form for inventory purchases (hidden by default) -->
                         <div id="misc-add-form" style="display:none; gap:0.6rem; align-items:center; flex-wrap:wrap; margin-bottom:1.2rem; padding:0.8rem 1rem; background:var(--status-todo-bg); border-radius:8px;">
-                            <span style="font-size:0.9rem; font-weight:600; color:var(--text-primary);">New Item:</span>
-                            <input type="text" id="misc-new-name" placeholder="Name (e.g. ゆうパケットポスト)" style="flex:2; min-width:160px; padding:0.45rem 0.7rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
-                            <input type="number" id="misc-new-price" placeholder="Cost ¥" min="0" style="width:90px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
-                            <input type="number" id="misc-new-qty" placeholder="Qty" min="0" style="width:75px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
-                            <button class="btn btn-primary" style="font-size:0.85rem; padding:0.45rem 0.9rem;" onclick="addMiscItem()"><i class="fas fa-plus"></i> Add</button>
+                            <span style="font-size:0.9rem; font-weight:600; color:var(--text-primary);">New Purchase Log:</span>
+                            <input type="date" id="inv-new-date" style="width:145px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
+                            <input type="text" id="inv-new-name" placeholder="Item Name (e.g. のし袋, Printer Ink)" style="flex:2; min-width:160px; padding:0.45rem 0.7rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
+                            <input type="number" id="inv-new-qty" placeholder="Qty" min="1" style="width:75px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
+                            <input type="number" id="inv-new-price" placeholder="Total Cost ¥" min="0" style="width:110px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
+                            <button class="btn btn-primary" style="font-size:0.85rem; padding:0.45rem 0.9rem;" onclick="addInventoryPurchase()"><i class="fas fa-plus"></i> Add</button>
                             <button class="btn btn-outline" style="font-size:0.85rem; padding:0.45rem 0.9rem;" onclick="toggleMiscAddForm()">Cancel</button>
                         </div>
 
-                        <!-- Unified Inventory List -->
+                        <!-- Purchase Log List -->
                         <div class="card" style="margin-bottom:2rem;">
                             <div class="card-header">
-                                <span class="card-title">在庫リスト / Inventory List</span>
+                                <span class="card-title">購入履歴 / Purchase Log</span>
                             </div>
                             <div class="table-responsive">
                                 <table>
                                     <thead>
                                         <tr>
+                                            <th>Date / 日付</th>
                                             <th>Item / 品目</th>
-                                            <th>Cost / 単価 (Cost)</th>
                                             <th>Qty / 数量</th>
-                                            <th>Total / 合計</th>
+                                            <th>Total Cost / 購入金額</th>
                                             <th>Actions / 操作</th>
                                         </tr>
                                     </thead>
                                     <tbody id="inventory-items-tbody"></tbody>
+                                    <tfoot>
+                                        <tr style="font-weight:bold; background:var(--status-todo-bg);">
+                                            <td colspan="2" style="text-align:right;">Total Spent / 支出合計:</td>
+                                            <td id="inv-total-qty">0</td>
+                                            <td id="inv-total-cost">¥0</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>

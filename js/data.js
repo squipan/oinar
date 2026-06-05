@@ -18,29 +18,52 @@ let _db = {
 // Called by app.js after Firestore data is fetched
 function initDB(data) {
   if (data) {
-    if (data.inventory && !Array.isArray(data.inventory)) {
-      const rawInv = data.inventory;
-      const arrayInv = [
-        { id: 'noshi', name: 'のし袋 / Noshi Envelopes', qty: rawInv.noshi || 0, price: 0, isCore: true },
-        { id: 'nagagata', name: '長形４号 / Long Envelope (Nagagata 4)', qty: rawInv.nagagata || 0, price: 0, isCore: true },
-        { id: 'pochi', name: 'ポチ袋 / Pochi Envelopes', qty: rawInv.pochi || 0, price: 0, isCore: true },
-        { id: 'sealA', name: 'シールA / Sticker A', qty: rawInv.sealA || 0, price: 0, isCore: true },
-        { id: 'sealB', name: 'シールB / Sticker B', qty: rawInv.sealB || 0, price: 0, isCore: true }
-      ];
-      const misc = data.miscItems || [];
-      misc.forEach(m => {
-        arrayInv.push({ id: m.id, name: m.name, qty: m.qty || 0, price: m.price || 0, isCore: false });
-      });
-      data.inventory = arrayInv;
-      data.miscItems = [];
-    } else if (!data.inventory) {
-      data.inventory = [
-        { id: 'noshi', name: 'のし袋 / Noshi Envelopes', qty: 0, price: 0, isCore: true },
-        { id: 'nagagata', name: '長形４号 / Long Envelope (Nagagata 4)', qty: 0, price: 0, isCore: true },
-        { id: 'pochi', name: 'ポチ袋 / Pochi Envelopes', qty: 0, price: 0, isCore: true },
-        { id: 'sealA', name: 'シールA / Sticker A', qty: 0, price: 0, isCore: true },
-        { id: 'sealB', name: 'シールB / Sticker B', qty: 0, price: 0, isCore: true }
-      ];
+    if (data.inventory) {
+      if (!Array.isArray(data.inventory)) {
+        const rawInv = data.inventory;
+        const arrayInv = [];
+        const today = new Date().toISOString().split('T')[0];
+        
+        if (rawInv.noshi > 0) arrayInv.push({ id: 'noshi_' + Date.now(), date: today, name: 'のし袋 / Noshi Envelopes', qty: rawInv.noshi, price: 0 });
+        if (rawInv.nagagata > 0) arrayInv.push({ id: 'nagagata_' + Date.now(), date: today, name: '長形４号 / Long Envelope (Nagagata 4)', qty: rawInv.nagagata, price: 0 });
+        if (rawInv.pochi > 0) arrayInv.push({ id: 'pochi_' + Date.now(), date: today, name: 'ポチ袋 / Pochi Envelopes', qty: rawInv.pochi, price: 0 });
+        if (rawInv.sealA > 0) arrayInv.push({ id: 'sealA_' + Date.now(), date: today, name: 'シールA / Sticker A', qty: rawInv.sealA, price: 0 });
+        if (rawInv.sealB > 0) arrayInv.push({ id: 'sealB_' + Date.now(), date: today, name: 'シールB / Sticker B', qty: rawInv.sealB, price: 0 });
+        
+        const misc = data.miscItems || [];
+        misc.forEach(m => {
+          arrayInv.push({
+            id: m.id || 'misc_' + Date.now() + Math.random().toString(36).substr(2, 5),
+            date: today,
+            name: m.name,
+            qty: m.qty || 0,
+            price: m.price || 0
+          });
+        });
+        data.inventory = arrayInv;
+        data.miscItems = [];
+      } else {
+        const converted = [];
+        const today = new Date().toISOString().split('T')[0];
+        data.inventory.forEach(item => {
+          if (item.hasOwnProperty('isCore')) {
+            if ((item.qty || 0) > 0 || (item.price || 0) > 0) {
+              converted.push({
+                id: item.id,
+                date: today,
+                name: item.name,
+                qty: item.qty || 0,
+                price: (item.price || 0) * (item.qty || 1)
+              });
+            }
+          } else {
+            converted.push(item);
+          }
+        });
+        data.inventory = converted;
+      }
+    } else {
+      data.inventory = [];
     }
   }
   _db = data;

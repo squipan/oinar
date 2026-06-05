@@ -474,7 +474,7 @@ function loadDashboardData() {
   document.getElementById('metric-profit').textContent = formatCurrency(totalProfit);
   
   const inv = getDB().inventory || [];
-  const totalInventoryCost = inv.reduce((sum, item) => sum + ((item.qty || 0) * (item.price || 0)), 0);
+  const totalInventoryCost = inv.reduce((sum, item) => sum + (item.price || 0), 0);
   const netProfit = totalProfit - totalInventoryCost;
 
   const costEl = document.getElementById('metric-inventory-cost');
@@ -1113,85 +1113,52 @@ function loadInventory() {
   const items = db.inventory || [];
 
   if (items.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:1.5rem; color:var(--text-light);">No items in inventory. / 在庫アイテムはありません。</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:1.5rem; color:var(--text-light);">No purchase records. / 購入履歴はありません。</td></tr>`;
+    const qtyEl = document.getElementById('inv-total-qty');
+    const costEl = document.getElementById('inv-total-cost');
+    if (qtyEl) qtyEl.textContent = '0';
+    if (costEl) costEl.textContent = formatCurrency(0);
     loadWasteLog();
     return;
   }
 
+  // Sort by date descending
+  items.sort((a, b) => {
+    const dateDiff = (b.date || '').localeCompare(a.date || '');
+    if (dateDiff !== 0) return dateDiff;
+    return (b.id || '').localeCompare(a.id || '');
+  });
+
+  let totalQty = 0;
+  let totalCost = 0;
+
   items.forEach(item => {
-    const totalCost = (item.qty || 0) * (item.price || 0);
-    const deleteBtn = !item.isCore 
-      ? `<button class="btn btn-text" style="color:var(--accent); padding:0.25rem;" onclick="removeInventoryItem('${item.id}')"><i class="fas fa-trash-alt"></i></button>`
-      : '';
+    totalQty += (item.qty || 0);
+    totalCost += (item.price || 0);
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
+      <td data-label="Date / 日付">${formatDate(item.date)}</td>
       <td data-label="Item / 品目"><strong>${item.name}</strong></td>
-      <td data-label="Cost / 単価 (Cost)">
-        <div style="display:flex; align-items:center; gap:0.3rem;">
-          <span>¥</span>
-          <input type="number" value="${item.price || 0}" style="width:75px; padding:0.3rem; font-size:0.85rem; border:1px solid var(--border-color); border-radius:6px;" onchange="updateInventoryPrice('${item.id}', this.value)" min="0">
-        </div>
-      </td>
-      <td data-label="Qty / 数量" id="inv-qty-${item.id}" style="font-weight:600;">${item.qty || 0}</td>
-      <td data-label="Total / 合計" style="color:var(--text-secondary);">${formatCurrency(totalCost)}</td>
+      <td data-label="Qty / 数量" style="font-weight:600;">${item.qty || 0}</td>
+      <td data-label="Total Cost / 購入金額" style="font-weight:600;">${formatCurrency(item.price || 0)}</td>
       <td data-label="Actions / 操作">
-        <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
-          <button class="btn btn-outline" style="font-size:0.8rem; padding:0.25rem 0.5rem;" onclick="adjustInventoryQty('${item.id}', -1)">-1</button>
-          <button class="btn btn-outline" style="font-size:0.8rem; padding:0.25rem 0.5rem;" onclick="adjustInventoryQty('${item.id}', 1)">+1</button>
-          <button class="btn btn-outline" style="font-size:0.8rem; padding:0.25rem 0.5rem;" onclick="adjustInventoryQty('${item.id}', 10)">+10</button>
-          <input type="number" id="inv-input-${item.id}" placeholder="Set" style="width:50px; padding:0.25rem; font-size:0.8rem; height:26px;">
-          <button class="btn btn-primary" style="font-size:0.8rem; padding:0.25rem 0.5rem; height:26px; line-height:1;" onclick="setInventoryQty('${item.id}')">Set</button>
-          ${deleteBtn}
-        </div>
+        <button class="btn btn-text" style="color:var(--accent); padding:0.25rem;" onclick="removeInventoryItem('${item.id}')"><i class="fas fa-trash-alt"></i></button>
       </td>
     `;
     tbody.appendChild(tr);
   });
 
+  const qtyEl = document.getElementById('inv-total-qty');
+  const costEl = document.getElementById('inv-total-cost');
+  if (qtyEl) qtyEl.textContent = totalQty;
+  if (costEl) costEl.textContent = formatCurrency(totalCost);
+
   loadWasteLog();
 }
 
-function updateInventoryPrice(id, priceVal) {
-  const db = getDB();
-  const item = db.inventory.find(i => i.id === id);
-  if (item) {
-    item.price = parseInt(priceVal) || 0;
-    saveDB(db);
-    loadInventory();
-    loadDashboardData();
-  }
-}
-
-function adjustInventoryQty(id, delta) {
-  const db = getDB();
-  const item = db.inventory.find(i => i.id === id);
-  if (item) {
-    item.qty = Math.max(0, (item.qty || 0) + delta);
-    saveDB(db);
-    loadInventory();
-    loadDashboardData();
-  }
-}
-
-function setInventoryQty(id) {
-  const input = document.getElementById(`inv-input-${id}`);
-  if (!input) return;
-  const qty = parseInt(input.value);
-  if (isNaN(qty) || qty < 0) return;
-  const db = getDB();
-  const item = db.inventory.find(i => i.id === id);
-  if (item) {
-    item.qty = qty;
-    saveDB(db);
-    input.value = '';
-    loadInventory();
-    loadDashboardData();
-  }
-}
-
 function removeInventoryItem(id) {
-  if (!confirm('Delete this item from inventory? / このアイテムを在庫から削除しますか？')) return;
+  if (!confirm('Delete this purchase log? / この購入履歴を削除しますか？')) return;
   const db = getDB();
   db.inventory = db.inventory.filter(i => i.id !== id);
   saveDB(db);
@@ -1204,34 +1171,43 @@ function toggleMiscAddForm() {
   if (!form) return;
   form.style.display = form.style.display === 'none' ? 'flex' : 'none';
   if (form.style.display === 'flex') {
-    document.getElementById('misc-new-name').focus();
+    const dateInput = document.getElementById('inv-new-date');
+    if (dateInput && !dateInput.value) {
+      dateInput.value = new Date().toISOString().split('T')[0];
+    }
+    const nameInput = document.getElementById('inv-new-name');
+    if (nameInput) nameInput.focus();
   }
 }
 
-function addMiscItem() {
-  const nameInput = document.getElementById('misc-new-name');
-  const qtyInput = document.getElementById('misc-new-qty');
-  const priceInput = document.getElementById('misc-new-price');
+function addInventoryPurchase() {
+  const dateInput = document.getElementById('inv-new-date');
+  const nameInput = document.getElementById('inv-new-name');
+  const qtyInput = document.getElementById('inv-new-qty');
+  const priceInput = document.getElementById('inv-new-price');
+  
+  const date = dateInput.value || new Date().toISOString().split('T')[0];
   const name = (nameInput.value || '').trim();
   if (!name) { nameInput.focus(); return; }
-  const qty = parseInt(qtyInput.value) || 0;
+  const qty = parseInt(qtyInput.value) || 1;
   const price = parseInt(priceInput.value) || 0;
   
   const db = getDB();
   if (!db.inventory) db.inventory = [];
   
   db.inventory.push({
-    id: 'misc_' + Date.now().toString(),
+    id: 'pur_' + Date.now().toString() + Math.random().toString(36).substr(2, 5),
+    date,
     name,
     qty,
-    price,
-    isCore: false
+    price // total cost
   });
   
   saveDB(db);
+  
   nameInput.value = '';
   qtyInput.value = '';
-  if (priceInput) priceInput.value = '';
+  priceInput.value = '';
   
   toggleMiscAddForm();
   loadInventory();
@@ -1239,23 +1215,7 @@ function addMiscItem() {
 }
 
 function deductStock(items) {
-  const db = getDB();
-  const inv = db.inventory || [];
-  
-  const deduct = (id, amt) => {
-    const item = inv.find(i => i.id === id);
-    if (item && amt > 0) {
-      item.qty = Math.max(0, (item.qty || 0) - amt);
-    }
-  };
-
-  deduct('noshi', items.noshi);
-  deduct('nagagata', items.nagagata);
-  deduct('pochi', items.pochi);
-  deduct('sealA', items.sealA);
-  deduct('sealB', items.sealB);
-
-  saveDB(db);
+  // Stock deduction is disabled since inventory functions as a purchase ledger.
 }
 
 function loadWasteLog() {
