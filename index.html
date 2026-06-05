@@ -148,46 +148,20 @@
                             </div>
                         </div>
 
-                        <div class="dashboard-grid">
-                            <div class="card">
-                                <div class="card-header">
-                                    <span class="card-title">For Printing / 印刷待ち <span id="printing-count" style="font-weight: 400; font-size: 0.9rem; color: var(--text-secondary);"></span></span>
-                                    <button class="btn btn-text"
-                                        onclick="document.querySelector('[data-target=\'view-tasks\']').click()"
-                                        data-i18n="view_all">View All</button>
-                                </div>
-                                <div class="table-responsive">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Client / 顧客</th>
-                                                <th class="col-priority">Priority / 優先度</th>
-                                                <th>Items / 商品数</th>
-                                                <th>Deadline / 発送期日</th>
-                                                <th>Printing Done? / 印刷完了</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="printing-tbody"></tbody>
-                                    </table>
-                                </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title" data-i18n="quick_actions">Quick Actions</span>
                             </div>
-
-                            <div class="card">
-                                <div class="card-header">
-                                    <span class="card-title" data-i18n="quick_actions">Quick Actions</span>
-                                </div>
-                                <div style="display:flex; flex-direction:column; gap:10px;">
-                                    <button class="btn btn-outline" style="justify-content:flex-start;"
-                                        onclick="openModal('modal-client'); setClientDatePicker(new Date().toISOString().split('T')[0])"><i
-                                            class="fas fa-user-plus"></i> <span data-i18n="add_client">Add
-                                            Client</span></button>
-                                    <button class="btn btn-outline" style="justify-content:flex-start;"
-                                        onclick="openModal('modal-task')"><i class="fas fa-tasks"></i> <span
-                                            data-i18n="add_task">Add Task</span></button>
-                                    <button class="btn btn-primary" style="justify-content:flex-start;"
-                                        onclick="openModal('modal-order')"><i class="fas fa-plus"></i> <span
-                                            data-i18n="btn_new_order">New Order</span></button>
-                                </div>
+                            <div style="display:flex; flex-direction:column; gap:10px;">
+                                <button class="btn btn-outline" style="justify-content:flex-start;"
+                                    onclick="openModal('modal-client'); setClientDatePicker(new Date().toISOString().split('T')[0])"><i
+                                        class="fas fa-user-plus"></i> <span data-i18n="add_client">Add Client</span></button>
+                                <button class="btn btn-outline" style="justify-content:flex-start;"
+                                    onclick="openModal('modal-task')"><i class="fas fa-tasks"></i> <span
+                                        data-i18n="add_task">Add Task</span></button>
+                                <button class="btn btn-primary" style="justify-content:flex-start;"
+                                    onclick="openModal('modal-order')"><i class="fas fa-plus"></i> <span
+                                        data-i18n="btn_new_order">New Order</span></button>
                             </div>
                         </div>
                     </section>
@@ -198,6 +172,27 @@
                             <h2 data-i18n="nav_orders">Orders</h2>
                             <button class="btn btn-primary" onclick="openModal('modal-order')"><i
                                     class="fas fa-plus"></i> <span data-i18n="btn_new_order">New Order</span></button>
+                        </div>
+
+                        <!-- FOR PRINTING -->
+                        <div class="card" style="margin-bottom: 2rem;">
+                            <div class="card-header">
+                                <span class="card-title">For Printing / 印刷待ち <span id="printing-count" style="font-weight: 400; font-size: 0.9rem; color: var(--text-secondary);"></span></span>
+                            </div>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Client / 顧客</th>
+                                            <th class="col-priority">Priority / 優先度</th>
+                                            <th>Items / 商品数</th>
+                                            <th>Deadline / 発送期日</th>
+                                            <th>Printing Done? / 印刷完了</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="printing-tbody"></tbody>
+                                </table>
+                            </div>
                         </div>
 
                         <!-- ACTIVE ORDERS -->
