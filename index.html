@@ -347,6 +347,7 @@
                         <div id="misc-add-form" style="display:none; gap:0.6rem; align-items:center; flex-wrap:wrap; margin-bottom:1.2rem; padding:0.8rem 1rem; background:var(--status-todo-bg); border-radius:8px;">
                             <span style="font-size:0.9rem; font-weight:600; color:var(--text-primary);">New Item:</span>
                             <input type="text" id="misc-new-name" placeholder="Name (e.g. ゆうパケットポスト)" style="flex:2; min-width:160px; padding:0.45rem 0.7rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
+                            <input type="number" id="misc-new-price" placeholder="Price ¥" min="0" style="width:90px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
                             <input type="number" id="misc-new-qty" placeholder="Qty" min="0" style="width:75px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
                             <button class="btn btn-primary" style="font-size:0.85rem; padding:0.45rem 0.9rem;" onclick="addMiscItem()"><i class="fas fa-plus"></i> Add</button>
                             <button class="btn btn-outline" style="font-size:0.85rem; padding:0.45rem 0.9rem;" onclick="toggleMiscAddForm()">Cancel</button>
@@ -439,7 +440,26 @@
                                         onclick="restockItem('sealB')">追加</button>
                                 </div>
                             </div>
-                            <!-- Misc items are injected here by JS -->
+                        </div>
+
+                        <!-- Shopping List / Misc Items -->
+                        <div class="card" style="margin-bottom:2rem;">
+                            <div class="card-header">
+                                <span class="card-title">ショッピングリスト / Shopping List</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Item / 品目</th>
+                                            <th>Price / 単価</th>
+                                            <th>Qty / 数量</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="misc-items-tbody"></tbody>
+                                </table>
+                            </div>
                         </div>
 
                         <!-- Misprint / Waste Log -->
@@ -689,9 +709,17 @@
                             </select>
                         </div>
 
+                        <div style="display:flex; justify-content:space-between; margin-top:0.8rem; align-items:center; font-size:0.9rem;">
+                            <label style="margin:0; font-weight:500;">Platform / プラットフォーム</label>
+                            <select id="order-platform" style="width:155px; padding:0.4rem; font-size:0.85rem;" onchange="calculateOrderMath()">
+                                <option value="Mercari">Mercari</option>
+                                <option value="Rakuma">Rakuma</option>
+                                <option value="Yahoo">Yahoo フリマ</option>
+                            </select>
+                        </div>
                         <div
-                            style="display:flex; justify-content:space-between; margin-top:0.8rem; font-size:0.9rem; color:var(--accent);">
-                            <span data-i18n="platform_fee">Mercari Fee (-10%)</span>
+                            style="display:flex; justify-content:space-between; margin-top:0.5rem; font-size:0.9rem; color:var(--accent);">
+                            <span id="calc-fee-label" data-i18n="platform_fee">Mercari Fee (-10%)</span>
                             <strong id="calc-fee">-¥0</strong>
                         </div>
 

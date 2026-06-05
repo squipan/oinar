@@ -13,6 +13,7 @@ let PRICES = {
 };
 const SHIPPING_FEE_ADDITION = 300;
 const EXPRESS_FEE = 300;
+const PLATFORM_FEES = { Mercari: 0.10, Rakuma: 0.06, Yahoo: 0.05 };
 
 // Translation Dictionary
 const i18n = {
@@ -365,6 +366,8 @@ function editOrder(id) {
   document.getElementById('order-status').value = o.status;
   document.getElementById('order-deadline').value = o.deadline;
   document.getElementById('order-comments').value = o.comments || '';
+  const platSel = document.getElementById('order-platform');
+  if (platSel) platSel.value = o.platform || 'Mercari';
   calculateOrderMath();
 }
 
@@ -748,7 +751,14 @@ function calculateOrderMath() {
 
   const expressCharge = express ? EXPRESS_FEE : 0;
   const purchaseAmount = basePrice > 0 ? basePrice + SHIPPING_FEE_ADDITION + expressCharge : 0;
-  const fee = Math.floor(purchaseAmount * 0.10);
+  const platform = document.getElementById('order-platform')?.value || 'Mercari';
+  const feeRate = PLATFORM_FEES[platform] || 0.10;
+  const fee = Math.floor(purchaseAmount * feeRate);
+  const feeLabel = document.getElementById('calc-fee-label');
+  if (feeLabel) {
+    const platformName = platform === 'Yahoo' ? 'Yahoo フリマ' : platform;
+    feeLabel.textContent = `${platformName} Fee (-${Math.round(feeRate * 100)}%)`;
+  }
   const profit = purchaseAmount > 0 ? (purchaseAmount - fee - actualShipping) : 0;
 
   document.getElementById('calc-base').textContent = formatCurrency(basePrice);
@@ -795,7 +805,7 @@ function handleOrderSubmit(e) {
   const order = {
     date: orderDate,
     buyerName: document.getElementById('order-buyer').value,
-    platform: 'Mercari',
+    platform: document.getElementById('order-platform')?.value || 'Mercari',
     items: {
       noshi: parseInt(document.getElementById('item-noshi').value) || 0,
       nagagata: parseInt(document.getElementById('item-nagagata').value) || 0,
@@ -1106,31 +1116,34 @@ function saveMiscItems(items) {
 }
 
 function loadMiscItems() {
-  const grid = document.querySelector('#view-inventory .metric-grid');
-  if (!grid) return;
-
-  // Remove any previously injected misc cards
-  grid.querySelectorAll('.misc-item-card').forEach(el => el.remove());
+  const tbody = document.getElementById('misc-items-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
 
   const items = getMiscItems();
+
+  if (items.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:1.2rem; color:var(--text-light);">No items yet. Click "Add Item" to add to your shopping list.</td></tr>`;
+    return;
+  }
+
   items.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'metric-card misc-item-card';
-    card.style.cssText = 'position:relative;';
-    card.innerHTML = `
-      <button onclick="removeMiscItem('${item.id}')" title="Delete" style="position:absolute; top:0.5rem; right:0.5rem; background:none; border:none; cursor:pointer; color:var(--text-light); font-size:0.85rem; padding:0.2rem 0.4rem; border-radius:4px;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-light)'"><i class="fas fa-times"></i></button>
-      <div class="metric-title" style="padding-right:1.5rem; word-break:break-word;">${item.name}</div>
-      <div class="metric-value" id="misc-qty-${item.id}">${item.qty || 0}</div>
-      <i class="fas fa-box metric-icon"></i>
-      <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-        <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;" onclick="adjustMiscItem('${item.id}', -1)">-1</button>
-        <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;" onclick="adjustMiscItem('${item.id}', 1)">+1</button>
-        <button class="btn btn-outline" style="flex:1; font-size:0.8rem; padding:0.4rem;" onclick="adjustMiscItem('${item.id}', 10)">+10</button>
-        <input type="number" id="misc-input-${item.id}" placeholder="qty" style="width:55px; padding:0.3rem; font-size:0.8rem;">
-        <button class="btn btn-primary" style="font-size:0.8rem; padding:0.4rem 0.6rem;" onclick="setMiscItem('${item.id}')">Set</button>
-      </div>
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td data-label="Item / 品目"><strong>${item.name}</strong></td>
+      <td data-label="Price / 単価" style="color:var(--text-secondary);">${item.price ? formatCurrency(item.price) : '—'}</td>
+      <td data-label="Qty / 数量" id="misc-qty-${item.id}" style="font-weight:600; font-size:1.05rem;">${item.qty || 0}</td>
+      <td data-label="Actions">
+        <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
+          <button class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.5rem;" onclick="adjustMiscItem('${item.id}', -1)">-1</button>
+          <button class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.5rem;" onclick="adjustMiscItem('${item.id}', 1)">+1</button>
+          <input type="number" id="misc-input-${item.id}" placeholder="qty" style="width:55px; padding:0.3rem; font-size:0.8rem;">
+          <button class="btn btn-primary" style="font-size:0.8rem; padding:0.3rem 0.5rem;" onclick="setMiscItem('${item.id}')">Set</button>
+          <button class="btn btn-text" style="color:var(--accent); font-size:0.9rem; padding:0.3rem 0.5rem;" onclick="removeMiscItem('${item.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>
     `;
-    grid.appendChild(card);
+    tbody.appendChild(tr);
   });
 }
 
@@ -1146,14 +1159,17 @@ function toggleMiscAddForm() {
 function addMiscItem() {
   const nameInput = document.getElementById('misc-new-name');
   const qtyInput = document.getElementById('misc-new-qty');
+  const priceInput = document.getElementById('misc-new-price');
   const name = (nameInput.value || '').trim();
   if (!name) { nameInput.focus(); return; }
   const qty = parseInt(qtyInput.value) || 0;
+  const price = parseInt(priceInput.value) || 0;
   const items = getMiscItems();
-  items.push({ id: Date.now().toString(), name, qty });
+  items.push({ id: Date.now().toString(), name, qty, price });
   saveMiscItems(items);
   nameInput.value = '';
   qtyInput.value = '';
+  if (priceInput) priceInput.value = '';
   loadMiscItems();
 }
 
