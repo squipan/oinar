@@ -676,10 +676,10 @@ function renderOrderRow(o, tbody, isPastOrder = false) {
     <td data-label="購入者 (Buyer)">
       <strong>${o.buyerName}</strong>
       ${isExpress ? '<span style="display:inline-block; margin-left:0.4rem; background:#e53e3e; color:white; font-size:0.65rem; font-weight:700; padding:0.15rem 0.4rem; border-radius:4px; letter-spacing:0.5px;">⚡ 速達</span>' : ''}
+      <span class="badge ${statusClass}" style="display:inline-block; margin-left:0.3rem; font-size:0.65rem; padding:0.15rem 0.4rem; vertical-align:middle;">${o.status}</span>
       <br><small style="color:var(--text-light)">${o.platform}</small>
       <div class="mobile-only-meta">
-        <span class="badge ${statusClass}" style="font-size:0.65rem; padding:0.1rem 0.35rem;">${o.status}</span>
-        | 注文: ${o.date.replace(/^\d{4}-/, '')} | 期日: ${o.deadline.replace(/^\d{4}-/, '')}
+        注文: ${o.date.replace(/^\d{4}-/, '')} | 期日: ${o.deadline.replace(/^\d{4}-/, '')}
         ${!isPastOrder ? ` | 優先度: <span class="badge ${priorityClass}" style="font-size:0.65rem; padding:0.1rem 0.35rem;">${dynamicPriority}</span>` : ''}
       </div>
     </td>
