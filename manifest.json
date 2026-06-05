@@ -1,0 +1,28 @@
+{
+  "name": "Oinar Wedding Stationery",
+  "short_name": "Oinar",
+  "description": "Wedding stationery business dashboard for managing orders, tasks, and clients.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#fefae0",
+  "theme_color": "#d4a373",
+  "orientation": "portrait-primary",
+  "scope": "./",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": []
+}
