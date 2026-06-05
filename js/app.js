@@ -13,7 +13,7 @@ let PRICES = {
 };
 const SHIPPING_FEE_ADDITION = 300;
 const EXPRESS_FEE = 300;
-const PLATFORM_FEES = { Mercari: 0.10, Rakuma: 0.06, Yahoo: 0.05 };
+const PLATFORM_FEES = { Mercari: 0.10, Rakuma: 0.10, Yahoo: 0.05 };
 
 // Translation Dictionary
 const i18n = {
