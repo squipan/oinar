@@ -747,7 +747,8 @@ tbody tr:hover {
 }
 
 .mobile-only-meta,
-.mobile-only-inline {
+.mobile-only-inline,
+.mobile-only-block {
   display: none !important;
 }
 
@@ -875,7 +876,8 @@ tbody tr:hover {
   .col-status,
   .col-priority,
   .col-deadline,
-  .col-shipped-text {
+  .col-shipped-text,
+  .col-comments {
     display: none !important;
   }
 
@@ -885,6 +887,10 @@ tbody tr:hover {
 
   .mobile-only-inline {
     display: inline-block !important;
+  }
+
+  .mobile-only-block {
+    display: block !important;
   }
 
   /* Compact Card Padding on Mobile */
