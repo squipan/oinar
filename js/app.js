@@ -650,6 +650,7 @@ function editClient(id) {
   document.getElementById('client-orders').value = c.orders || 0;
   document.getElementById('client-sales').value = c.sales || 0;
   document.getElementById('client-profit').value = c.profit || 0;
+  document.getElementById('client-comments').value = c.comments || '';
   setClientDatePicker(c.date || '');
 }
 
@@ -1338,7 +1339,7 @@ function loadClients() {
   tbody.innerHTML = '';
 
   if (clients.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_clients_found')}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_clients_found')}</td></tr>`;
     return;
   }
 
@@ -1358,6 +1359,7 @@ function loadClients() {
       <td data-label="${t('dash_orders')}">${c.orders || 0}</td>
       <td data-label="${t('dash_sales')}" style="font-weight:600; color:var(--text-primary);">${formatCurrency(c.sales || 0)}</td>
       <td data-label="${t('order_profit')}" style="font-weight:700; color:var(--status-active-text);">${formatCurrency(c.profit || 0)}</td>
+      <td data-label="${t('label_comments')}">${c.comments || ''}</td>
       <td data-label="${t('th_actions')}">
         <div class="action-btns">
           <button class="btn btn-text" onclick="editClient('${c.id}')"><i class="fas fa-edit"></i></button>
@@ -1378,6 +1380,7 @@ function handleClientSubmit(e) {
     orders: parseInt(document.getElementById('client-orders').value) || 0,
     sales: parseInt(document.getElementById('client-sales').value) || 0,
     profit: parseInt(document.getElementById('client-profit').value) || 0,
+    comments: document.getElementById('client-comments').value || '',
     isFromOrder: false
   };
 
