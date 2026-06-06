@@ -120,6 +120,14 @@
                         </div>
 
                         <div class="metric-grid">
+                            <!-- NET PROFIT — hero card, always first -->
+                            <div class="metric-card metric-card--hero">
+                                <div class="metric-hero-glow"></div>
+                                <div class="metric-title" data-i18n="metric_net_profit">Net Profit</div>
+                                <div class="metric-value" id="metric-net-profit">¥0</div>
+                                <div class="metric-hero-label" data-i18n="metric_net_profit_sub">Revenue − Cost</div>
+                                <i class="fas fa-chart-line metric-icon"></i>
+                            </div>
                             <div class="metric-card">
                                 <div class="metric-title" data-i18n="metric_order_profit">Order Profit</div>
                                 <div class="metric-value" id="metric-profit">¥0</div>
@@ -129,11 +137,6 @@
                                 <div class="metric-title" data-i18n="metric_inventory_cost">Inventory Cost</div>
                                 <div class="metric-value" id="metric-inventory-cost">¥0</div>
                                 <i class="fas fa-boxes metric-icon"></i>
-                            </div>
-                            <div class="metric-card">
-                                <div class="metric-title" style="font-weight:700;" data-i18n="metric_net_profit">Net Profit</div>
-                                <div class="metric-value" id="metric-net-profit" style="color: var(--status-active-text); font-weight:800;">¥0</div>
-                                <i class="fas fa-calculator metric-icon"></i>
                             </div>
                             <div class="metric-card">
                                 <div class="metric-title" data-i18n="dash_sales">Total Sales</div>
@@ -351,7 +354,43 @@
                         <div id="misc-add-form" style="display:none; gap:0.6rem; align-items:center; flex-wrap:wrap; margin-bottom:1.2rem; padding:0.8rem 1rem; background:var(--status-todo-bg); border-radius:8px;">
                             <span style="font-size:0.9rem; font-weight:600; color:var(--text-primary);" data-i18n="label_new_purchase_log">New Purchase Log:</span>
                             <input type="date" id="inv-new-date" style="width:145px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
-                            <input type="text" id="inv-new-name" placeholder="Item Name (e.g. Noshi, Ink)" data-i18n="label_item_name_placeholder" style="flex:2; min-width:160px; padding:0.45rem 0.7rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
+                            <select id="inv-new-name" style="flex:2; min-width:160px; padding:0.45rem 0.7rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px; background-color:#fafafa;">
+                                <option value="" data-i18n="label_select_item">-- Select Item --</option>
+                                <option>封筒大（15枚）</option>
+                                <option>封筒小（22枚）</option>
+                                <option>インクカートリッジ</option>
+                                <option>ゆうパケットポストmini</option>
+                                <option>マスキングテープ</option>
+                                <option>画用紙</option>
+                                <option>インク　マットブラック</option>
+                                <option>インクメンテナンスボックスEPMB1</option>
+                                <option>封筒用OPP袋(40枚)</option>
+                                <option>長形4号(50枚)</option>
+                                <option>Thankyouシール</option>
+                                <option>封筒大(100枚)</option>
+                                <option>高級封筒大(100枚)</option>
+                                <option>マルアイ封筒小（200枚）</option>
+                                <option>長3OPP袋(100枚)</option>
+                                <option>長4紙厚100封筒(100枚)</option>
+                                <option>長4紙厚80封筒(100枚)</option>
+                                <option>ゆうパケットポストシール</option>
+                                <option>セリア：カラー封筒</option>
+                                <option>シール用袋(75枚)</option>
+                                <option>中厚口紙(150枚)</option>
+                                <option>マーメイド紙(スノーホワイト) 33枚</option>
+                                <option>マーメイド紙(ナチュラル) 33枚</option>
+                                <option>クリアフォルダー 100枚</option>
+                                <option>茶封筒A4 100枚</option>
+                                <option>OPP袋 100枚</option>
+                                <option>特厚口紙　12枚</option>
+                                <option>ゆうパケットシール20枚</option>
+                                <option>バインダー</option>
+                                <option>特厚口上質紙（100枚）</option>
+                                <option>写真立てフレーム</option>
+                                <option>マーメイド紙(スノーホワイト)ハガキ 30枚</option>
+                                <option>マーメイド紙(ホワイト)ハガキ 30枚</option>
+                                <option>超厚口(白)ハガキ 100枚</option>
+                            </select>
                             <input type="number" id="inv-new-qty" placeholder="Qty" data-i18n="qty" min="1" style="width:75px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
                             <input type="number" id="inv-new-price" placeholder="Total Cost ¥" data-i18n="label_total_cost_placeholder" min="0" style="width:110px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
                             <button class="btn btn-primary" style="font-size:0.85rem; padding:0.45rem 0.9rem;" onclick="addInventoryPurchase()"><i class="fas fa-plus"></i> <span data-i18n="label_add">Add</span></button>

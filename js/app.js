@@ -197,7 +197,9 @@ const i18n = {
     'label_yes': 'Yes',
     'login_failed': 'Login failed.',
     'invalid_credentials': 'Invalid email or password.',
-    'client_auto_tracked': 'Auto-tracked'
+    'client_auto_tracked': 'Auto-tracked',
+    'metric_net_profit_sub': 'Revenue − Cost',
+    'label_select_item': '-- Select Item --'
   },
   jp: {
     'login_btn': 'ダッシュボードへ',
@@ -379,7 +381,9 @@ const i18n = {
     'label_yes': 'はい',
     'login_failed': 'ログインに失敗しました。',
     'invalid_credentials': 'メールアドレスまたはパスワードが正しくありません。',
-    'client_auto_tracked': '自動追跡'
+    'client_auto_tracked': '自動追跡',
+    'metric_net_profit_sub': '売上－コスト',
+    'label_select_item': '-- 品目を選択 --'
   }
 };
 

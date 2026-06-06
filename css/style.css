@@ -415,9 +415,15 @@ textarea:focus {
 /* Cards */
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: 1fr repeat(3, 1fr);
+  grid-template-rows: auto auto;
   gap: 1.5rem;
   margin-bottom: 2.5rem;
+}
+
+/* Hero card spans full left column across both rows */
+.metric-card--hero {
+  grid-row: 1 / 3;
 }
 
 .metric-card {
@@ -429,6 +435,12 @@ textarea:focus {
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .metric-card::before {
@@ -439,6 +451,75 @@ textarea:focus {
   width: 4px;
   height: 100%;
   background-color: var(--primary);
+}
+
+/* ── Net Profit hero card ── */
+.metric-card--hero {
+  background: linear-gradient(135deg, #1a2a1a 0%, #1e3a28 40%, #2d5a3d 100%);
+  border-radius: var(--border-radius);
+  padding: 2rem 2rem 1.8rem;
+  box-shadow: 0 8px 32px rgba(15, 81, 50, 0.35), 0 2px 8px rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.08);
+  justify-content: center;
+}
+
+.metric-card--hero::before {
+  display: none; /* no left accent strip on hero */
+}
+
+/* animated radial glow pulse */
+.metric-hero-glow {
+  position: absolute;
+  top: -40%;
+  right: -20%;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,163,115,0.22) 0%, transparent 70%);
+  animation: heroPulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes heroPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.12); }
+}
+
+.metric-card--hero .metric-title {
+  color: rgba(212,163,115,0.85);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+
+.metric-card--hero .metric-value {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.metric-hero-label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+  margin-top: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.metric-card--hero .metric-icon {
+  color: rgba(212,163,115,0.5);
+  opacity: 1;
+  font-size: 2.6rem;
+  right: 1.8rem;
+  top: 1.8rem;
 }
 
 .metric-title {
@@ -461,6 +542,20 @@ textarea:focus {
   font-size: 2rem;
   color: var(--primary);
   opacity: 0.4;
+}
+
+/* Collapse to single-column on narrow screens */
+@media (max-width: 900px) {
+  .metric-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .metric-card--hero {
+    grid-row: auto;
+    grid-column: 1 / -1;
+  }
+  .metric-card--hero .metric-value {
+    font-size: 2.4rem;
+  }
 }
 
 /* Tables */
