@@ -199,7 +199,9 @@ const i18n = {
     'invalid_credentials': 'Invalid email or password.',
     'client_auto_tracked': 'Auto-tracked',
     'metric_net_profit_sub': 'Revenue − Cost',
-    'label_select_item': '-- Select Item --'
+    'label_select_item': '-- Select Item --',
+    'label_adjustment': 'Add-ons / Deductions',
+    'label_adjustment_reason_placeholder': 'Reason (e.g. discount, custom charge)'
   },
   jp: {
     'login_btn': 'ダッシュボードへ',
@@ -383,7 +385,9 @@ const i18n = {
     'invalid_credentials': 'メールアドレスまたはパスワードが正しくありません。',
     'client_auto_tracked': '自動追跡',
     'metric_net_profit_sub': '売上－コスト',
-    'label_select_item': '-- 品目を選択 --'
+    'label_select_item': '-- 品目を選択 --',
+    'label_adjustment': '追加・割引',
+    'label_adjustment_reason_placeholder': '理由（例：割引、カスタム追加など）'
   }
 };
 
@@ -667,6 +671,8 @@ function editOrder(id) {
   document.getElementById('item-seal-a').value = o.items.sealA || 0;
   document.getElementById('item-seal-b').value = o.items.sealB || 0;
   document.getElementById('order-shipping-cost').value = o.shippingCost || 160;
+  document.getElementById('order-adjustment').value = o.adjustment || 0;
+  document.getElementById('order-adjustment-reason').value = o.adjustmentReason || '';
   document.getElementById('order-express').checked = o.express || false;
   document.getElementById('order-status').value = o.status;
   document.getElementById('order-deadline').value = o.deadline;
@@ -975,6 +981,11 @@ function renderOrderRow(o, tbody, isPastOrder = false) {
   if (o.items.atsugami) itemsStr.push(`${t('atsugami')}`);
   if (o.items.sealA > 0) itemsStr.push(`${t('sealA')} x${o.items.sealA}`);
   if (o.items.sealB > 0) itemsStr.push(`${t('sealB')} x${o.items.sealB}`);
+  if (o.adjustment && o.adjustment !== 0) {
+    const sign = o.adjustment > 0 ? '+' : '';
+    const reasonText = o.adjustmentReason ? ` (${o.adjustmentReason})` : '';
+    itemsStr.push(`${t('label_adjustment')}: ${sign}${o.adjustment}${reasonText}`);
+  }
 
   const isShipped = o.shipped;
   const isExpress = o.express;
@@ -1037,7 +1048,7 @@ function toggleShipped(orderId) {
 
 // --- ORDER CALCULATION ---
 function setupOrderCalculators() {
-  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-seal-a', 'item-seal-b', 'order-shipping-cost'];
+  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-seal-a', 'item-seal-b', 'order-shipping-cost', 'order-adjustment'];
   inputs.forEach(id => {
     document.getElementById(id)?.addEventListener('input', calculateOrderMath);
     document.getElementById(id)?.addEventListener('change', calculateOrderMath);
@@ -1059,6 +1070,7 @@ function calculateOrderMath() {
   const sealB = parseInt(document.getElementById('item-seal-b').value) || 0;
   const actualShipping = parseInt(document.getElementById('order-shipping-cost').value) || 160;
   const express = document.getElementById('order-express').checked;
+  const adjustment = parseInt(document.getElementById('order-adjustment').value) || 0;
 
   const basePrice = (noshi * PRICES.noshi)
     + (nagagata * PRICES.nagagata)
@@ -1068,7 +1080,7 @@ function calculateOrderMath() {
     + (sealB * PRICES.sealB);
 
   const expressCharge = express ? EXPRESS_FEE : 0;
-  const purchaseAmount = basePrice > 0 ? basePrice + SHIPPING_FEE_ADDITION + expressCharge : 0;
+  const purchaseAmount = (basePrice > 0 || adjustment !== 0) ? Math.max(0, basePrice + adjustment + SHIPPING_FEE_ADDITION + expressCharge) : 0;
   const platform = document.getElementById('order-platform')?.value || 'Mercari';
   const feeRate = PLATFORM_FEES[platform] || 0.10;
   const fee = Math.floor(purchaseAmount * feeRate);
@@ -1140,6 +1152,8 @@ function handleOrderSubmit(e) {
     status: document.getElementById('order-status').value,
     deadline,
     comments: document.getElementById('order-comments').value,
+    adjustment: parseInt(document.getElementById('order-adjustment').value) || 0,
+    adjustmentReason: document.getElementById('order-adjustment-reason').value || '',
     purchaseAmount: parseInt(document.getElementById('hidden-purchase').value) || 0,
     fee: parseInt(document.getElementById('hidden-fee').value) || 0,
     profit: parseInt(document.getElementById('hidden-profit').value) || 0,

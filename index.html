@@ -653,6 +653,16 @@
                             <strong id="calc-base">¥0</strong>
                         </div>
                         <div
+                            style="display:flex; justify-content:space-between; margin-bottom:0.4rem; font-size:0.9rem; align-items:center;">
+                            <span data-i18n="label_adjustment" style="font-weight:500;">Add-ons/Deductions</span>
+                            <input type="number" id="order-adjustment" value="0" placeholder="¥0"
+                                style="width: 100px; padding:0.3rem 0.5rem; font-size:0.85rem; border:1px solid var(--border-color); border-radius:6px; text-align:right; background:#fff;">
+                        </div>
+                        <div style="margin-bottom:0.6rem;">
+                            <input type="text" id="order-adjustment-reason" placeholder="Reason (e.g. discount, custom charge)" data-i18n="label_adjustment_reason_placeholder"
+                                style="width: 100%; padding:0.3rem 0.5rem; font-size:0.8rem; border:1px solid var(--border-color); border-radius:6px; background:#fff;">
+                        </div>
+                        <div
                             style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.9rem;">
                             <span data-i18n="shipping_added">Shipping Added</span>
                             <strong id="calc-shipping-added" style="color:var(--text-secondary);">+¥300</strong>
