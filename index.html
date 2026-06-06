@@ -679,7 +679,12 @@
                             <select id="order-shipping-cost" style="width: 120px; padding:0.4rem;">
                                 <option value="160">¥160</option>
                                 <option value="215">¥215</option>
+                                <option value="custom" data-i18n="shipping_custom">Custom</option>
                             </select>
+                        </div>
+                        <div id="custom-shipping-container" style="display:none; justify-content:space-between; margin-top:0.5rem; align-items:center;">
+                            <label style="margin:0; font-size:0.85rem; color:var(--text-secondary);" data-i18n="shipping_custom_label">Custom Cost (¥)</label>
+                            <input type="number" id="order-shipping-cost-custom" value="150" min="0" style="width: 120px; padding:0.35rem 0.5rem; font-size:0.85rem; border:1px solid var(--border-color); border-radius:6px; text-align:right; background:#fff;">
                         </div>
 
                         <div style="display:flex; justify-content:space-between; margin-top:0.8rem; align-items:center; font-size:0.9rem;">

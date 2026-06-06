@@ -201,7 +201,9 @@ const i18n = {
     'metric_net_profit_sub': 'Revenue − Cost',
     'label_select_item': '-- Select Item --',
     'label_adjustment': 'Add-ons / Deductions',
-    'label_adjustment_reason_placeholder': 'Reason (e.g. discount, custom charge)'
+    'label_adjustment_reason_placeholder': 'Reason (e.g. discount, custom charge)',
+    'shipping_custom': 'Custom',
+    'shipping_custom_label': 'Custom Cost (¥)'
   },
   jp: {
     'login_btn': 'ダッシュボードへ',
@@ -387,7 +389,9 @@ const i18n = {
     'metric_net_profit_sub': '売上－コスト',
     'label_select_item': '-- 品目を選択 --',
     'label_adjustment': '追加・割引',
-    'label_adjustment_reason_placeholder': '理由（例：割引、カスタム追加など）'
+    'label_adjustment_reason_placeholder': '理由（例：割引、カスタム追加など）',
+    'shipping_custom': 'カスタム',
+    'shipping_custom_label': 'カスタム送料 (¥)'
   }
 };
 
@@ -624,6 +628,8 @@ function openModal(id) {
   if (id === 'modal-order') {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('order-date').value = today;
+    const customContainer = document.getElementById('custom-shipping-container');
+    if (customContainer) customContainer.style.display = 'none';
     autoFillDeadline();
     calculateOrderMath();
   }
@@ -671,7 +677,18 @@ function editOrder(id) {
   document.getElementById('item-atsugami').checked = o.items.atsugami || false;
   document.getElementById('item-seal-a').value = o.items.sealA || 0;
   document.getElementById('item-seal-b').value = o.items.sealB || 0;
-  document.getElementById('order-shipping-cost').value = o.shippingCost || 160;
+  const costVal = o.shippingCost || 160;
+  const costSel = document.getElementById('order-shipping-cost');
+  const customContainer = document.getElementById('custom-shipping-container');
+  if (costVal === 160 || costVal === 215) {
+    if (costSel) costSel.value = costVal;
+    if (customContainer) customContainer.style.display = 'none';
+  } else {
+    if (costSel) costSel.value = 'custom';
+    if (customContainer) customContainer.style.display = 'flex';
+    const costCustomInput = document.getElementById('order-shipping-cost-custom');
+    if (costCustomInput) costCustomInput.value = costVal;
+  }
   document.getElementById('order-adjustment').value = o.adjustment || 0;
   document.getElementById('order-adjustment-reason').value = o.adjustmentReason || '';
   document.getElementById('order-express').checked = o.express || false;
@@ -1049,10 +1066,16 @@ function toggleShipped(orderId) {
 
 // --- ORDER CALCULATION ---
 function setupOrderCalculators() {
-  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-seal-a', 'item-seal-b', 'order-shipping-cost', 'order-adjustment'];
+  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-seal-a', 'item-seal-b', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
   inputs.forEach(id => {
     document.getElementById(id)?.addEventListener('input', calculateOrderMath);
     document.getElementById(id)?.addEventListener('change', calculateOrderMath);
+  });
+  document.getElementById('order-shipping-cost')?.addEventListener('change', (e) => {
+    const container = document.getElementById('custom-shipping-container');
+    if (container) {
+      container.style.display = e.target.value === 'custom' ? 'flex' : 'none';
+    }
   });
   document.getElementById('item-atsugami')?.addEventListener('change', calculateOrderMath);
   document.getElementById('order-express')?.addEventListener('change', () => {
@@ -1069,7 +1092,14 @@ function calculateOrderMath() {
   const atsugami = document.getElementById('item-atsugami').checked;
   const sealA = parseInt(document.getElementById('item-seal-a').value) || 0;
   const sealB = parseInt(document.getElementById('item-seal-b').value) || 0;
-  const actualShipping = parseInt(document.getElementById('order-shipping-cost').value) || 160;
+  
+  const shippingSel = document.getElementById('order-shipping-cost')?.value || '160';
+  let actualShipping = 160;
+  if (shippingSel === 'custom') {
+    actualShipping = parseInt(document.getElementById('order-shipping-cost-custom').value) || 0;
+  } else {
+    actualShipping = parseInt(shippingSel) || 160;
+  }
   const express = document.getElementById('order-express').checked;
   const adjustment = parseInt(document.getElementById('order-adjustment').value) || 0;
 
@@ -1136,6 +1166,11 @@ function handleOrderSubmit(e) {
   const deadline = document.getElementById('order-deadline').value;
   const express = document.getElementById('order-express').checked;
 
+  const shippingSel = document.getElementById('order-shipping-cost')?.value || '160';
+  const shippingCost = shippingSel === 'custom'
+    ? (parseInt(document.getElementById('order-shipping-cost-custom').value) || 0)
+    : (parseInt(shippingSel) || 160);
+
   const order = {
     date: orderDate,
     buyerName: document.getElementById('order-buyer').value,
@@ -1148,7 +1183,7 @@ function handleOrderSubmit(e) {
       sealA: parseInt(document.getElementById('item-seal-a').value) || 0,
       sealB: parseInt(document.getElementById('item-seal-b').value) || 0,
     },
-    shippingCost: parseInt(document.getElementById('order-shipping-cost').value) || 160,
+    shippingCost,
     express,
     status: document.getElementById('order-status').value,
     deadline,
@@ -1164,10 +1199,17 @@ function handleOrderSubmit(e) {
   if (isEdit) {
     savedOrder = { ...order, id };
     updateItem('orders', id, order);
+    if (order.comments) {
+      const clients = getAll('clients');
+      const client = clients.find(c => c.name.toLowerCase() === order.buyerName.toLowerCase());
+      if (client) {
+        updateItem('clients', client.id, { comments: order.comments });
+      }
+    }
   } else {
     savedOrder = addItem('orders', order);
     deductStock(order.items);
-    trackClientFromOrder(order.buyerName, order.purchaseAmount, order.profit, order.date, order.items);
+    trackClientFromOrder(order.buyerName, order.purchaseAmount, order.profit, order.date, order.items, order.comments);
     const lang = getLanguage();
     const priority = calcTaskPriority(orderDate, deadline, express);
     const expressLabel = express ? (lang === 'jp' ? '【速達】' : '[Express] ') : '';
@@ -1402,7 +1444,7 @@ function removeClient(id) {
   }
 }
 
-function trackClientFromOrder(buyerName, amount, profit, orderDate, items) {
+function trackClientFromOrder(buyerName, amount, profit, orderDate, items, orderComments) {
   const nameTrimmed = (buyerName || '').trim();
   if (!nameTrimmed) return;
   
@@ -1412,13 +1454,17 @@ function trackClientFromOrder(buyerName, amount, profit, orderDate, items) {
   const clients = getAll('clients');
   const existing = clients.find(c => c.name.toLowerCase() === nameTrimmed.toLowerCase());
   if (existing) {
-    updateItem('clients', existing.id, {
+    const updates = {
       orders: (existing.orders || 0) + envelopeQty,
       sales: (existing.sales || 0) + amount,
       profit: (existing.profit || 0) + profit,
       date: orderDate || existing.date,
       isFromOrder: true
-    });
+    };
+    if (orderComments) {
+      updates.comments = orderComments;
+    }
+    updateItem('clients', existing.id, updates);
   } else {
     addItem('clients', {
       name: nameTrimmed,
@@ -1426,6 +1472,7 @@ function trackClientFromOrder(buyerName, amount, profit, orderDate, items) {
       orders: envelopeQty,
       sales: amount,
       profit: profit,
+      comments: orderComments || '',
       isFromOrder: true
     });
   }
