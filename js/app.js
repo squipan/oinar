@@ -432,6 +432,7 @@ async function refreshData() {
 
 document.addEventListener('DOMContentLoaded', () => {
   setupNavigation();
+  setupBottomNav();
   setupModals();
 
   auth.onAuthStateChanged(async (firebaseUser) => {
@@ -1778,4 +1779,30 @@ function setClientDatePicker(dateStr) {
   if (monthSel) monthSel.value = m;
   if (daySel) daySel.value = d;
   if (hidden) hidden.value = dateStr;
+}
+// ── BOTTOM NAV ──
+function setupBottomNav() {
+  const bottomLinks = document.querySelectorAll('.bottom-nav-link');
+  const sidebarLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.view-section');
+
+  bottomLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      const targetId = link.getAttribute('data-target');
+      if (!targetId) return;
+
+      // Update bottom nav active state
+      bottomLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+
+      // Sync sidebar active state
+      sidebarLinks.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('data-target') === targetId);
+      });
+
+      // Show correct section
+      sections.forEach(s => s.classList.remove('active'));
+      document.getElementById(targetId)?.classList.add('active');
+    });
+  });
 }
