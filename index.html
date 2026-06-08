@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -916,7 +916,61 @@
         }
     </script>
     <!-- ========================================================================== -->
+<!-- BOTTOM NAV (mobile only) -->
+<nav class="bottom-nav" id="bottom-nav">
+  <a class="bottom-nav-link active" data-target="view-dashboard">
+    <i class="fas fa-home"></i>
+    <span>Dashboard</span>
+  </a>
+  <a class="bottom-nav-link" data-target="view-orders">
+    <i class="fas fa-shopping-cart"></i>
+    <span>Orders</span>
+  </a>
+  <a class="bottom-nav-link" data-target="view-clients">
+    <i class="fas fa-users"></i>
+    <span>Clients</span>
+  </a>
+  <a class="bottom-nav-link" data-target="view-tasks">
+    <i class="fas fa-tasks"></i>
+    <span>Tasks</span>
+  </a>
+  <a class="bottom-nav-link" data-target="view-inventory">
+    <i class="fas fa-boxes"></i>
+    <span>Inventory</span>
+  </a>
+  <a class="bottom-nav-link" data-target="view-settings">
+    <i class="fas fa-cog"></i>
+    <span>Settings</span>
+  </a>
+</nav>
+<!-- CLIENT DETAIL POPUP -->
+<div class="client-detail-overlay" id="client-detail-overlay">
+  <div class="client-detail-popup">
+    <button class="client-detail-popup-close" onclick="closeClientDetail()">&times;</button>
+    <h4 id="cdp-name">Client Name</h4>
 
+    <div class="client-detail-row">
+      <span class="detail-label" data-i18n="th_purchase_date">Purchase Date</span>
+      <span class="detail-value" id="cdp-date">—</span>
+    </div>
+    <div class="client-detail-row">
+      <span class="detail-label" data-i18n="label_total_orders">Total Orders</span>
+      <span class="detail-value" id="cdp-orders">0</span>
+    </div>
+    <div class="client-detail-row">
+      <span class="detail-label" data-i18n="label_total_sales">Total Sales</span>
+      <span class="detail-value" id="cdp-sales">¥0</span>
+    </div>
+    <div class="client-detail-row">
+      <span class="detail-label" data-i18n="label_total_profit">Total Profit</span>
+      <span class="detail-value profit-value" id="cdp-profit">¥0</span>
+    </div>
+    <div class="client-detail-row" id="cdp-comment-row" style="display:none;">
+      <span class="detail-label" data-i18n="label_comments">Comments</span>
+      <span class="detail-value comment-text" id="cdp-comment"></span>
+    </div>
+  </div>
+</div>
 </body>
 
 </html>

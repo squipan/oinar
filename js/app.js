@@ -432,6 +432,7 @@ async function refreshData() {
 
 document.addEventListener('DOMContentLoaded', () => {
   setupNavigation();
+  setupBottomNav();
   setupModals();
 
   auth.onAuthStateChanged(async (firebaseUser) => {
@@ -552,6 +553,14 @@ function setupNavigation() {
 
   overlay.addEventListener('click', closeSidebar);
   overlay.addEventListener('touchstart', closeSidebar, { passive: true });
+
+  // ── Client detail panel: close on backdrop click ──
+  const cdpOverlay = document.getElementById('client-detail-overlay');
+  if (cdpOverlay) {
+    cdpOverlay.addEventListener('click', (e) => {
+      if (e.target === cdpOverlay) closeClientDetail();
+    });
+  }
 
   let touchStartX = 0;
   let touchStartY = 0;
@@ -802,9 +811,9 @@ function loadDashboardData() {
   const totalClients = filteredAllClients.length;
 
   document.getElementById('metric-profit').textContent = formatCurrency(totalProfit);
-  
-  const inv = getDB().inventory || [];
-  const totalInventoryCost = inv.reduce((sum, item) => sum + (item.price || 0), 0);
+
+  const filteredInv = filterByPeriod(getDB().inventory || [], 'date');
+  const totalInventoryCost = filteredInv.reduce((sum, item) => sum + (item.price || 0), 0);
   const netProfit = totalProfit - totalInventoryCost;
 
   const costEl = document.getElementById('metric-inventory-cost');
@@ -1372,6 +1381,37 @@ function syncAutoTrackedClients() {
   });
 }
 
+// --- CLIENT DETAIL PANEL ---
+function showClientDetail(id) {
+  const c = getAll('clients').find(x => x.id === id);
+  if (!c) return;
+
+  const overlay = document.getElementById('client-detail-overlay');
+  if (!overlay) return;
+
+  document.getElementById('cdp-name').textContent   = c.name;
+  document.getElementById('cdp-date').textContent   = formatDate(c.date);
+  document.getElementById('cdp-orders').textContent = c.orders || 0;
+  document.getElementById('cdp-sales').textContent  = formatCurrency(c.sales || 0);
+  document.getElementById('cdp-profit').textContent = formatCurrency(c.profit || 0);
+
+  const commentRow = document.getElementById('cdp-comment-row');
+  const commentEl  = document.getElementById('cdp-comment');
+  if (c.comments) {
+    commentEl.textContent    = c.comments;
+    commentRow.style.display = 'flex';
+  } else {
+    commentRow.style.display = 'none';
+  }
+
+  overlay.classList.add('active');
+}
+
+function closeClientDetail() {
+  const overlay = document.getElementById('client-detail-overlay');
+  if (overlay) overlay.classList.remove('active');
+}
+
 // --- CLIENTS ---
 function loadClients() {
   syncAutoTrackedClients();
@@ -1393,16 +1433,25 @@ function loadClients() {
   });
 
   clients.forEach(c => {
-    const source = c.isFromOrder ? `<span style="font-size:0.7rem; color:var(--text-light); display:block;">${t('client_auto_tracked')}</span>` : '';
-    const commentHtml = c.comments ? `<span class="mobile-only-block" style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem; font-weight:normal; white-space:normal;">💬 ${c.comments}</span>` : '';
+    const source = c.isFromOrder
+      ? `<span style="font-size:0.7rem; color:var(--text-light); display:block;">${t('client_auto_tracked')}</span>`
+      : '';
+    const infoBtnHtml = c.comments
+  ? `<button class="client-info-btn" onclick="showClientDetail('${c.id}')" title="${c.comments}">!</button>`
+  : '';
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td data-label="${t('order_buyer')}"><strong>${c.name}</strong>${source}${commentHtml}</td>
+      <td data-label="${t('order_buyer')}">
+        <span style="display:inline-flex; align-items:center; gap:0.2rem; flex-wrap:wrap;">
+          <strong>${c.name}</strong>${infoBtnHtml}
+        </span>
+        ${source}
+      </td>
       <td data-label="${t('th_purchase_date')}">${formatDate(c.date)}</td>
       <td data-label="${t('dash_orders')}">${c.orders || 0}</td>
       <td data-label="${t('dash_sales')}" style="font-weight:600; color:var(--text-primary);">${formatCurrency(c.sales || 0)}</td>
       <td data-label="${t('order_profit')}" style="font-weight:700; color:var(--status-active-text);">${formatCurrency(c.profit || 0)}</td>
-      <td class="col-comments" data-label="${t('label_comments')}">${c.comments || ''}</td>
+      <td class="col-comments" data-label="${t('label_comments')}" style="font-size:0.85rem; color:var(--text-secondary); white-space:normal; max-width:180px;">${c.comments ? `💬 ${c.comments}` : '—'}</td>
       <td data-label="${t('th_actions')}">
         <div class="action-btns">
           <button class="btn btn-text" onclick="editClient('${c.id}')"><i class="fas fa-edit"></i></button>
@@ -1778,4 +1827,31 @@ function setClientDatePicker(dateStr) {
   if (monthSel) monthSel.value = m;
   if (daySel) daySel.value = d;
   if (hidden) hidden.value = dateStr;
+}
+
+// ── BOTTOM NAV ──
+function setupBottomNav() {
+  const bottomLinks = document.querySelectorAll('.bottom-nav-link');
+  const sidebarLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.view-section');
+
+  bottomLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      const targetId = link.getAttribute('data-target');
+      if (!targetId) return;
+
+      // Update bottom nav active state
+      bottomLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+
+      // Sync sidebar active state
+      sidebarLinks.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('data-target') === targetId);
+      });
+
+      // Show correct section
+      sections.forEach(s => s.classList.remove('active'));
+      document.getElementById(targetId)?.classList.add('active');
+    });
+  });
 }
