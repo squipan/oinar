@@ -871,12 +871,15 @@ tbody tr:hover {
     gap: 0.15rem !important;
   }
 
-  /* Responsive Columns Hiding */
+/* Responsive Columns Hiding */
   .col-date,
   .col-status,
   .col-priority,
   .col-deadline,
   .col-shipped-text,
+  .col-comments {
+    display: none !important;
+  }
  
 
   .mobile-only-meta {
