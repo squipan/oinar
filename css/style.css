@@ -992,3 +992,51 @@ tbody tr:hover {
     padding: 1rem 0.8rem;
   }
 }
+/* ── BOTTOM NAV ── */
+.bottom-nav { display: none; }
+
+@media (max-width: 768px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--surface-color);
+    border-top: 1px solid var(--border-color);
+    z-index: 200;
+    padding-bottom: env(safe-area-inset-bottom);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+  }
+
+  .bottom-nav-link {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.25rem;
+    font-size: 0.6rem;
+    color: var(--text-light);
+    cursor: pointer;
+    gap: 0.2rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .bottom-nav-link i {
+    font-size: 1.15rem;
+  }
+
+  .bottom-nav-link.active {
+    color: var(--primary-hover);
+  }
+
+  /* Push content up so bottom nav doesn't overlap it */
+  .main-content {
+    padding-bottom: 70px;
+  }
+
+  /* Hide sidebar hamburger since bottom nav replaces it */
+  #mobile-toggle { display: none !important; }
+}
