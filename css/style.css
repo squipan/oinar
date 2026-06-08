@@ -877,7 +877,6 @@ tbody tr:hover {
   .col-priority,
   .col-deadline,
   .col-shipped-text,
-  .col-comments {
     display: none !important;
   }
  
