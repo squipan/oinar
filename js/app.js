@@ -802,9 +802,9 @@ function loadDashboardData() {
   const totalClients = filteredAllClients.length;
 
   document.getElementById('metric-profit').textContent = formatCurrency(totalProfit);
-  
-  const inv = getDB().inventory || [];
-  const totalInventoryCost = inv.reduce((sum, item) => sum + (item.price || 0), 0);
+
+  const filteredInv = filterByPeriod(getDB().inventory || [], 'date');
+  const totalInventoryCost = filteredInv.reduce((sum, item) => sum + (item.price || 0), 0);
   const netProfit = totalProfit - totalInventoryCost;
 
   const costEl = document.getElementById('metric-inventory-cost');
@@ -1394,7 +1394,7 @@ function loadClients() {
 
   clients.forEach(c => {
     const source = c.isFromOrder ? `<span style="font-size:0.7rem; color:var(--text-light); display:block;">${t('client_auto_tracked')}</span>` : '';
-    const commentHtml = c.comments ? `<span class="mobile-only-block" style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem; font-weight:normal; white-space:normal;">💬 ${c.comments}</span>` : '';
+    const commentHtml = '';
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td data-label="${t('order_buyer')}"><strong>${c.name}</strong>${source}${commentHtml}</td>
@@ -1402,7 +1402,7 @@ function loadClients() {
       <td data-label="${t('dash_orders')}">${c.orders || 0}</td>
       <td data-label="${t('dash_sales')}" style="font-weight:600; color:var(--text-primary);">${formatCurrency(c.sales || 0)}</td>
       <td data-label="${t('order_profit')}" style="font-weight:700; color:var(--status-active-text);">${formatCurrency(c.profit || 0)}</td>
-      <td class="col-comments" data-label="${t('label_comments')}">${c.comments || ''}</td>
+      <td class="col-comments" data-label="${t('label_comments')}" style="font-size:0.85rem; color:var(--text-secondary); white-space:normal; max-width:180px;">${c.comments ? `💬 ${c.comments}` : '—'}</td>
       <td data-label="${t('th_actions')}">
         <div class="action-btns">
           <button class="btn btn-text" onclick="editClient('${c.id}')"><i class="fas fa-edit"></i></button>
