@@ -877,9 +877,7 @@ tbody tr:hover {
   .col-priority,
   .col-deadline,
   .col-shipped-text,
-  .col-comments {
-    display: none !important;
-  }
+ 
 
   .mobile-only-meta {
     display: block !important;
