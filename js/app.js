@@ -1143,7 +1143,10 @@ function calculateOrderMath() {
 
   // Dynamic shipping addition: 350 if any A4 item ordered, else 300
   const hasA4Items = hofuchoMermaid > 0 || hofuchoGayo > 0 || uketsukeSign > 0;
-  const shippingAddition = hasA4Items ? 350 : SHIPPING_FEE_ADDITION;
+  const hasEnvelopes = noshi > 0 || nagagata > 0 || pochi > 0;
+  const shippingAddition = hasA4Items && hasEnvelopes ? 650
+    : hasA4Items ? 350
+    : SHIPPING_FEE_ADDITION;
 
   const shippingSel = document.getElementById('order-shipping-cost')?.value || '160';
   let actualShipping = 160;
