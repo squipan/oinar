@@ -1608,7 +1608,7 @@ function toggleCustomInventoryInput(sel) {
   const customInput = document.getElementById('inv-custom-name');
   if (!customInput) return;
   if (sel.value === '__custom__') {
-    customInput.style.display = 'block';
+    customInput.style.display = 'inline-block';
     customInput.focus();
   } else {
     customInput.style.display = 'none';
