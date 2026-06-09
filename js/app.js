@@ -505,10 +505,10 @@ function formatCurrency(amount) {
 
 function formatDate(dateStr) {
   if (!dateStr) return '—';
-  const d = new Date(dateStr + 'T00:00:00');
+  const d = new Date(dateStr + 'T00:00:00+09:00'); // force JST
   const lang = getLanguage();
   const locale = lang === 'jp' ? 'ja-JP' : 'en-US';
-  return new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
+  return new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Tokyo' }).format(d);
 }
 
 // --- AUTH ---
