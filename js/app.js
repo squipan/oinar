@@ -9,7 +9,13 @@ let PRICES = {
   pochi: 80,
   atsugami: 100,
   sealA: 20,
-  sealB: 10
+  sealB: 10,
+  hofuchoMermaid1: 280,   // 芳名帳 マーメイド紙 1pc
+  hofuchoMermaid2: 180,   // 芳名帳 マーメイド紙 2pc+
+  hofuchoGayo1: 260,      // 芳名帳 画用紙 1pc
+  hofuchoGayo2: 160,      // 芳名帳 画用紙 2pc+
+  uketsukeSign1: 320,     // 受付サイン 1pc
+  uketsukeSignExtra: 100  // 受付サイン each additional pc
 };
 const SHIPPING_FEE_ADDITION = 300;
 const EXPRESS_FEE = 300;
@@ -117,6 +123,9 @@ const i18n = {
     'atsugami': 'Hard Board Reinforcement',
     'sealA': 'Sticker A',
     'sealB': 'Sticker B',
+    'hofuchoMermaid': 'Guest Book / Reception (Mermaid)',
+    'hofuchoGayo': 'Guest Book / Reception (Drawing Paper)',
+    'uketsukeSign': 'Reception Sign',
     'badge_express': 'Express',
     'status_ready': 'Ready',
     'status_pending': 'Pending',
@@ -305,6 +314,9 @@ const i18n = {
     'atsugami': '厚紙補強',
     'sealA': 'シールA',
     'sealB': 'シールB',
+    'hofuchoMermaid': '芳名帳/受付書 マーメイド紙',
+    'hofuchoGayo': '芳名帳/受付書 画用紙',
+    'uketsukeSign': '受付サイン',
     'badge_express': '速達',
     'status_ready': '発送待ち',
     'status_pending': '進行中',
@@ -686,6 +698,9 @@ function editOrder(id) {
   document.getElementById('item-atsugami').checked = o.items.atsugami || false;
   document.getElementById('item-seal-a').value = o.items.sealA || 0;
   document.getElementById('item-seal-b').value = o.items.sealB || 0;
+  document.getElementById('item-hofucho-mermaid').value = o.items.hofuchoMermaid || 0;
+  document.getElementById('item-hofucho-gayo').value = o.items.hofuchoGayo || 0;
+  document.getElementById('item-uketsuke').value = o.items.uketsukeSign || 0;
   const costVal = o.shippingCost || 160;
   const costSel = document.getElementById('order-shipping-cost');
   const customContainer = document.getElementById('custom-shipping-container');
@@ -874,6 +889,12 @@ function renderRecentTasks() {
       if (pochi > 0) itemDetails.push(`${t('pochi')}×${pochi}`);
       if (sealA > 0) itemDetails.push(`${t('sealA')}×${sealA}`);
       if (sealB > 0) itemDetails.push(`${t('sealB')}×${sealB}`);
+      const hofuchoMermaid = items.hofuchoMermaid || 0;
+      const hofuchoGayo = items.hofuchoGayo || 0;
+      const uketsukeSign = items.uketsukeSign || 0;
+      if (hofuchoMermaid > 0) itemDetails.push(`${t('hofuchoMermaid')}×${hofuchoMermaid}`);
+      if (hofuchoGayo > 0) itemDetails.push(`${t('hofuchoGayo')}×${hofuchoGayo}`);
+      if (uketsukeSign > 0) itemDetails.push(`${t('uketsukeSign')}×${uketsukeSign}`);
       if (items.atsugami) itemDetails.push(t('atsugami'));
     }
     const itemsDisplay = totalItems > 0
@@ -902,14 +923,14 @@ function renderRecentTasks() {
 }
 function calculateDynamicPriority(deadline, orderDate) {
   if (!deadline) return 'Medium';
-  
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const deadlineDate = new Date(deadline);
   deadlineDate.setHours(0, 0, 0, 0);
-  
+
   const daysUntilDeadline = Math.round((deadlineDate - today) / (1000 * 60 * 60 * 24));
-  
+
   // If deadline is today or tomorrow = High
   if (daysUntilDeadline <= 1) return 'High';
   // If deadline is 2-3 days = Medium
@@ -950,12 +971,12 @@ function loadOrders() {
 
   // ---- SORT ACTIVE ORDERS BY PRIORITY ----
   activeOrders.sort((a, b) => {
-  // Express orders always first
-  if (a.express && !b.express) return -1;
-  if (!a.express && b.express) return 1;
-  // Then sort by date (oldest first)
-  return (a.date || '').localeCompare(b.date || '');
-});
+    // Express orders always first
+    if (a.express && !b.express) return -1;
+    if (!a.express && b.express) return 1;
+    // Then sort by date (oldest first)
+    return (a.date || '').localeCompare(b.date || '');
+  });
 
   // ---- ACTIVE ORDERS ----
   const activeTbody = document.getElementById('orders-tbody');
@@ -1008,6 +1029,9 @@ function renderOrderRow(o, tbody, isPastOrder = false) {
   if (o.items.atsugami) itemsStr.push(`${t('atsugami')}`);
   if (o.items.sealA > 0) itemsStr.push(`${t('sealA')} x${o.items.sealA}`);
   if (o.items.sealB > 0) itemsStr.push(`${t('sealB')} x${o.items.sealB}`);
+  if (o.items.hofuchoMermaid > 0) itemsStr.push(`${t('hofuchoMermaid')} x${o.items.hofuchoMermaid}`);
+  if (o.items.hofuchoGayo > 0) itemsStr.push(`${t('hofuchoGayo')} x${o.items.hofuchoGayo}`);
+  if (o.items.uketsukeSign > 0) itemsStr.push(`${t('uketsukeSign')} x${o.items.uketsukeSign}`);
   if (o.adjustment && o.adjustment !== 0) {
     const sign = o.adjustment > 0 ? '+' : '';
     const reasonText = o.adjustmentReason ? ` (${o.adjustmentReason})` : '';
@@ -1065,7 +1089,7 @@ function renderOrderRow(o, tbody, isPastOrder = false) {
 function toggleShipped(orderId) {
   const order = getAll('orders').find(o => o.id === orderId);
   if (order) {
-    updateItem('orders', orderId, { 
+    updateItem('orders', orderId, {
       shipped: !order.shipped,
       status: !order.shipped ? 'Shipped' : 'Ready for Shipping' // Toggle status too
     });
@@ -1075,7 +1099,7 @@ function toggleShipped(orderId) {
 
 // --- ORDER CALCULATION ---
 function setupOrderCalculators() {
-  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-seal-a', 'item-seal-b', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
+  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-seal-a', 'item-seal-b', 'item-hofucho-mermaid', 'item-hofucho-gayo', 'item-uketsuke', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
   inputs.forEach(id => {
     document.getElementById(id)?.addEventListener('input', calculateOrderMath);
     document.getElementById(id)?.addEventListener('change', calculateOrderMath);
@@ -1101,7 +1125,26 @@ function calculateOrderMath() {
   const atsugami = document.getElementById('item-atsugami').checked;
   const sealA = parseInt(document.getElementById('item-seal-a').value) || 0;
   const sealB = parseInt(document.getElementById('item-seal-b').value) || 0;
-  
+  const hofuchoMermaid = parseInt(document.getElementById('item-hofucho-mermaid').value) || 0;
+  const hofuchoGayo = parseInt(document.getElementById('item-hofucho-gayo').value) || 0;
+  const uketsukeSign = parseInt(document.getElementById('item-uketsuke').value) || 0;
+
+  // A4 items pricing logic
+  const hofuchoMermaidPrice = hofuchoMermaid === 0 ? 0
+    : hofuchoMermaid === 1 ? 280
+      : hofuchoMermaid * 180;
+
+  const hofuchoGayoPrice = hofuchoGayo === 0 ? 0
+    : hofuchoGayo === 1 ? 260
+      : hofuchoGayo * 160;
+
+  const uketsukeSignPrice = uketsukeSign === 0 ? 0
+    : 320 + (Math.max(0, uketsukeSign - 1) * 100);
+
+  // Dynamic shipping addition: 350 if any A4 item ordered, else 300
+  const hasA4Items = hofuchoMermaid > 0 || hofuchoGayo > 0 || uketsukeSign > 0;
+  const shippingAddition = hasA4Items ? 350 : SHIPPING_FEE_ADDITION;
+
   const shippingSel = document.getElementById('order-shipping-cost')?.value || '160';
   let actualShipping = 160;
   if (shippingSel === 'custom') {
@@ -1117,10 +1160,13 @@ function calculateOrderMath() {
     + (pochi * PRICES.pochi)
     + (atsugami ? PRICES.atsugami : 0)
     + (sealA * PRICES.sealA)
-    + (sealB * PRICES.sealB);
+    + (sealB * PRICES.sealB)
+    + hofuchoMermaidPrice
+    + hofuchoGayoPrice
+    + uketsukeSignPrice;
 
   const expressCharge = express ? EXPRESS_FEE : 0;
-  const purchaseAmount = (basePrice > 0 || adjustment !== 0) ? Math.max(0, basePrice + adjustment + SHIPPING_FEE_ADDITION + expressCharge) : 0;
+  const purchaseAmount = (basePrice > 0 || adjustment !== 0) ? Math.max(0, basePrice + adjustment + shippingAddition + expressCharge) : 0;
   const platform = document.getElementById('order-platform')?.value || 'Mercari';
   const feeRate = PLATFORM_FEES[platform] || 0.10;
   const fee = Math.floor(purchaseAmount * feeRate);
@@ -1135,7 +1181,7 @@ function calculateOrderMath() {
   const profit = purchaseAmount > 0 ? (purchaseAmount - fee - actualShipping) : 0;
 
   document.getElementById('calc-base').textContent = formatCurrency(basePrice);
-  document.getElementById('calc-shipping-added').textContent = `+${formatCurrency(SHIPPING_FEE_ADDITION + expressCharge)}`;
+  document.getElementById('calc-shipping-added').textContent = `+${formatCurrency(shippingAddition + expressCharge)}`;
   document.getElementById('calc-purchase').textContent = formatCurrency(purchaseAmount);
   document.getElementById('calc-fee').textContent = formatCurrency(fee);
   document.getElementById('calc-profit').textContent = formatCurrency(profit);
@@ -1191,6 +1237,9 @@ function handleOrderSubmit(e) {
       atsugami: document.getElementById('item-atsugami').checked,
       sealA: parseInt(document.getElementById('item-seal-a').value) || 0,
       sealB: parseInt(document.getElementById('item-seal-b').value) || 0,
+      hofuchoMermaid: parseInt(document.getElementById('item-hofucho-mermaid').value) || 0,
+      hofuchoGayo: parseInt(document.getElementById('item-hofucho-gayo').value) || 0,
+      uketsukeSign: parseInt(document.getElementById('item-uketsuke').value) || 0,
     },
     shippingCost,
     express,
@@ -1274,7 +1323,7 @@ function loadTasks() {
 function renderTaskRow(tRow, tbody, isCompleted = false) {
   const isDone = tRow.status === 'Done' || tRow.status === '完了';
   const statusClass = isDone ? 'status-completed' : 'status-todo';
-  
+
   let priorityClass = 'status-todo'; // Medium
   if (tRow.priority === 'High' || tRow.priority === '高') priorityClass = 'status-pending';
   else if (tRow.priority === 'Low' || tRow.priority === '低') priorityClass = 'status-completed';
@@ -1389,16 +1438,16 @@ function showClientDetail(id) {
   const overlay = document.getElementById('client-detail-overlay');
   if (!overlay) return;
 
-  document.getElementById('cdp-name').textContent   = c.name;
-  document.getElementById('cdp-date').textContent   = formatDate(c.date);
+  document.getElementById('cdp-name').textContent = c.name;
+  document.getElementById('cdp-date').textContent = formatDate(c.date);
   document.getElementById('cdp-orders').textContent = c.orders || 0;
-  document.getElementById('cdp-sales').textContent  = formatCurrency(c.sales || 0);
+  document.getElementById('cdp-sales').textContent = formatCurrency(c.sales || 0);
   document.getElementById('cdp-profit').textContent = formatCurrency(c.profit || 0);
 
   const commentRow = document.getElementById('cdp-comment-row');
-  const commentEl  = document.getElementById('cdp-comment');
+  const commentEl = document.getElementById('cdp-comment');
   if (c.comments) {
-    commentEl.textContent    = c.comments;
+    commentEl.textContent = c.comments;
     commentRow.style.display = 'flex';
   } else {
     commentRow.style.display = 'none';
@@ -1437,8 +1486,8 @@ function loadClients() {
       ? `<span style="font-size:0.7rem; color:var(--text-light); display:block;">${t('client_auto_tracked')}</span>`
       : '';
     const infoBtnHtml = c.comments
-  ? `<button class="client-info-btn" onclick="showClientDetail('${c.id}')" title="${c.comments}">!</button>`
-  : '';
+      ? `<button class="client-info-btn" onclick="showClientDetail('${c.id}')" title="${c.comments}">!</button>`
+      : '';
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td data-label="${t('order_buyer')}">
@@ -1497,10 +1546,10 @@ function removeClient(id) {
 function trackClientFromOrder(buyerName, amount, profit, orderDate, items, orderComments) {
   const nameTrimmed = (buyerName || '').trim();
   if (!nameTrimmed) return;
-  
+
   // Calculate total items ordered (only envelopes: noshi, nagagata, pochi)
   const envelopeQty = items ? ((items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0)) : 0;
-  
+
   const clients = getAll('clients');
   const existing = clients.find(c => c.name.toLowerCase() === nameTrimmed.toLowerCase());
   if (existing) {
@@ -1620,7 +1669,7 @@ function addInventoryPurchase() {
   const nameInput = document.getElementById('inv-new-name');
   const qtyInput = document.getElementById('inv-new-qty');
   const priceInput = document.getElementById('inv-new-price');
-  
+
   const date = dateInput.value || new Date().toISOString().split('T')[0];
   const isCustom = nameInput.value === '__custom__';
   const customNameInput = document.getElementById('inv-custom-name');
@@ -1630,10 +1679,10 @@ function addInventoryPurchase() {
   if (!name) { nameInput.focus(); return; }
   const qty = parseInt(qtyInput.value) || 1;
   const price = parseInt(priceInput.value) || 0;
-  
+
   const db = getDB();
   if (!db.inventory) db.inventory = [];
-  
+
   db.inventory.push({
     id: 'pur_' + Date.now().toString() + Math.random().toString(36).substr(2, 5),
     date,
@@ -1641,17 +1690,17 @@ function addInventoryPurchase() {
     qty,
     price // total cost
   });
-  
+
   saveDB(db);
-  
+
   nameInput.value = '';
-   if (customNameInput) { 
-    customNameInput.value = ''; 
-    customNameInput.style.display = 'none'; 
+  if (customNameInput) {
+    customNameInput.value = '';
+    customNameInput.style.display = 'none';
   }
   qtyInput.value = '';
   priceInput.value = '';
-  
+
   toggleMiscAddForm();
   loadInventory();
   loadDashboardData();
@@ -1772,6 +1821,9 @@ function updatePriceLabels() {
     'label-price-atsugami': `${t('atsugami')} (${formatCurrency(PRICES.atsugami)})`,
     'label-price-sealA': `${t('sealA')} (${formatCurrency(PRICES.sealA)}${perPiece})`,
     'label-price-sealB': `${t('sealB')} (${formatCurrency(PRICES.sealB)}${perPiece})`,
+    'label-price-hofucho-mermaid': `${t('hofuchoMermaid')} (¥280 / ¥180×2+)`,
+    'label-price-hofucho-gayo': `${t('hofuchoGayo')} (¥260 / ¥160×2+)`,
+    'label-price-uketsuke': `${t('uketsukeSign')} (¥320 +¥100/pc)`,
   };
   Object.entries(labels).forEach(([id, text]) => {
     const el = document.getElementById(id);
