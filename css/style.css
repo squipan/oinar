@@ -1200,3 +1200,33 @@ tbody tr:hover {
     display: inline-flex;
   }
 }
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE MODAL FIX — paste this at the very end of style.css
+   (it overrides the existing @media 580px modal rules above)
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 580px) {
+
+  /* 1. Make the bottom-sheet taller so it fills the screen
+        instead of leaving a blank gap at the top.
+        95dvh uses the dynamic viewport so browser chrome is accounted for. */
+  .modal {
+    max-height: 95dvh !important; /* taller sheet, less dead space at top */
+    /* Fallback for browsers without dvh support */
+    max-height: 95vh !important;
+  }
+
+  /* 2. Pad the modal footer so the buttons clear the bottom nav bar
+        (bottom nav is ~60px tall + device safe area) */
+  .modal-footer {
+    padding-bottom: calc(1.2rem + 60px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Extra safety for very small phones (iPhone SE etc.) */
+@media (max-width: 400px) {
+  .modal {
+    max-height: 98dvh !important;
+    max-height: 98vh !important;
+  }
+}
