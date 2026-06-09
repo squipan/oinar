@@ -1604,7 +1604,17 @@ function toggleMiscAddForm() {
     if (nameInput) nameInput.focus();
   }
 }
-
+function toggleCustomInventoryInput(sel) {
+  const customInput = document.getElementById('inv-custom-name');
+  if (!customInput) return;
+  if (sel.value === '__custom__') {
+    customInput.style.display = 'block';
+    customInput.focus();
+  } else {
+    customInput.style.display = 'none';
+    customInput.value = '';
+  }
+}
 function addInventoryPurchase() {
   const dateInput = document.getElementById('inv-new-date');
   const nameInput = document.getElementById('inv-new-name');
@@ -1612,7 +1622,11 @@ function addInventoryPurchase() {
   const priceInput = document.getElementById('inv-new-price');
   
   const date = dateInput.value || new Date().toISOString().split('T')[0];
-  const name = (nameInput.value || '').trim();
+  const isCustom = nameInput.value === '__custom__';
+  const customNameInput = document.getElementById('inv-custom-name');
+  const name = isCustom
+    ? (customNameInput ? customNameInput.value.trim() : '')
+    : (nameInput.value || '').trim();
   if (!name) { nameInput.focus(); return; }
   const qty = parseInt(qtyInput.value) || 1;
   const price = parseInt(priceInput.value) || 0;
@@ -1631,6 +1645,10 @@ function addInventoryPurchase() {
   saveDB(db);
   
   nameInput.value = '';
+   if (customNameInput) { 
+    customNameInput.value = ''; 
+    customNameInput.style.display = 'none'; 
+  }
   qtyInput.value = '';
   priceInput.value = '';
   

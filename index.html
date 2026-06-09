@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,11 +38,13 @@
                 <form onsubmit="login(event)">
                     <div class="form-group" style="text-align: left;">
                         <label data-i18n="login_email_label">Email Address</label>
-                        <input type="email" id="login-email" placeholder="your@email.com" data-i18n="login_email_placeholder" required>
+                        <input type="email" id="login-email" placeholder="your@email.com"
+                            data-i18n="login_email_placeholder" required>
                     </div>
                     <div class="form-group" style="text-align: left;">
                         <label data-i18n="login_password_label">Password</label>
-                        <input type="password" id="login-password" placeholder="••••••••" data-i18n="login_password_placeholder" required>
+                        <input type="password" id="login-password" placeholder="••••••••"
+                            data-i18n="login_password_placeholder" required>
                     </div>
                     <input type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.8rem;"
                         value="Access Dashboard" data-i18n="login_btn">
@@ -64,7 +66,8 @@
                     <li class="nav-item"><a href="#" class="nav-link active" data-target="view-dashboard"><i
                                 class="fas fa-home"></i> <span data-i18n="nav_dashboard">Dashboard</span></a></li>
                     <li class="nav-item"><a href="#" class="nav-link" data-target="view-orders"><i
-                                class="fas fa-shopping-cart"></i> <span data-i18n="nav_orders">Orders</span> <span id="nav-active-orders-count" class="nav-badge" style="display: none;">0</span></a></li>
+                                class="fas fa-shopping-cart"></i> <span data-i18n="nav_orders">Orders</span> <span
+                                id="nav-active-orders-count" class="nav-badge" style="display: none;">0</span></a></li>
                     <li class="nav-item"><a href="#" class="nav-link" data-target="view-clients"><i
                                 class="fas fa-users"></i> <span data-i18n="nav_clients">Clients</span></a></li>
                     <li class="nav-item"><a href="#" class="nav-link" data-target="view-tasks"><i
@@ -167,7 +170,8 @@
                             <div style="display:flex; flex-direction:column; gap:10px;">
                                 <button class="btn btn-outline" style="justify-content:flex-start;"
                                     onclick="openModal('modal-client'); setClientDatePicker(new Date().toISOString().split('T')[0])"><i
-                                        class="fas fa-user-plus"></i> <span data-i18n="add_client">Add Client</span></button>
+                                        class="fas fa-user-plus"></i> <span data-i18n="add_client">Add
+                                        Client</span></button>
                                 <button class="btn btn-outline" style="justify-content:flex-start;"
                                     onclick="openModal('modal-task')"><i class="fas fa-tasks"></i> <span
                                         data-i18n="add_task">Add Task</span></button>
@@ -189,7 +193,9 @@
                         <!-- FOR PRINTING -->
                         <div class="card" style="margin-bottom: 2rem;">
                             <div class="card-header">
-                                <span class="card-title"><span data-i18n="title_for_printing">For Printing</span> <span id="printing-count" style="font-weight: 400; font-size: 0.9rem; color: var(--text-secondary);"></span></span>
+                                <span class="card-title"><span data-i18n="title_for_printing">For Printing</span> <span
+                                        id="printing-count"
+                                        style="font-weight: 400; font-size: 0.9rem; color: var(--text-secondary);"></span></span>
                             </div>
                             <div class="table-responsive">
                                 <table>
@@ -210,7 +216,8 @@
                         <!-- ACTIVE ORDERS -->
                         <div class="card" style="margin-bottom: 2rem;">
                             <div class="card-header">
-                                <span class="card-title"><span data-i18n="title_active_orders">Active Orders</span> <span id="card-active-orders-count"></span></span>
+                                <span class="card-title"><span data-i18n="title_active_orders">Active Orders</span>
+                                    <span id="card-active-orders-count"></span></span>
                             </div>
                             <div class="table-responsive">
                                 <table>
@@ -347,15 +354,20 @@
                                     <i class="fas fa-plus"></i> <span data-i18n="label_add_item">Add Item</span>
                                 </button>
                                 <button class="btn btn-outline" onclick="openModal('modal-waste')"><i
-                                        class="fas fa-exclamation-triangle"></i> <span data-i18n="title_log_misprint">Log Misprint</span></button>
+                                        class="fas fa-exclamation-triangle"></i> <span
+                                        data-i18n="title_log_misprint">Log Misprint</span></button>
                             </div>
                         </div>
 
                         <!-- Inline add form for inventory purchases (hidden by default) -->
-                        <div id="misc-add-form" style="display:none; gap:0.6rem; align-items:center; flex-wrap:wrap; margin-bottom:1.2rem; padding:0.8rem 1rem; background:var(--status-todo-bg); border-radius:8px;">
-                            <span style="font-size:0.9rem; font-weight:600; color:var(--text-primary);" data-i18n="label_new_purchase_log">New Purchase Log:</span>
-                            <input type="date" id="inv-new-date" style="width:145px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
-                            <select id="inv-new-name" style="flex:2; min-width:160px; padding:0.45rem 0.7rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px; background-color:#fafafa;">
+                        <div id="misc-add-form"
+                            style="display:none; gap:0.6rem; align-items:center; flex-wrap:wrap; margin-bottom:1.2rem; padding:0.8rem 1rem; background:var(--status-todo-bg); border-radius:8px;">
+                            <span style="font-size:0.9rem; font-weight:600; color:var(--text-primary);"
+                                data-i18n="label_new_purchase_log">New Purchase Log:</span>
+                            <input type="date" id="inv-new-date"
+                                style="width:145px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
+                            <select id="inv-new-name" onchange="toggleCustomInventoryInput(this)"
+                                style="flex:2; min-width:160px; padding:0.45rem 0.7rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px; background-color:#fafafa;">
                                 <option value="" data-i18n="label_select_item">-- Select Item --</option>
                                 <option>封筒大（15枚）</option>
                                 <option>封筒小（22枚）</option>
@@ -391,11 +403,21 @@
                                 <option>マーメイド紙(スノーホワイト)ハガキ 30枚</option>
                                 <option>マーメイド紙(ホワイト)ハガキ 30枚</option>
                                 <option>超厚口(白)ハガキ 100枚</option>
+                                <option value="__custom__">✏️ Custom / その他</option>
                             </select>
-                            <input type="number" id="inv-new-qty" placeholder="Qty" data-i18n="qty" min="1" style="width:75px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
-                            <input type="number" id="inv-new-price" placeholder="Total Cost ¥" data-i18n="label_total_cost_placeholder" min="0" style="width:110px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
-                            <button class="btn btn-primary" style="font-size:0.85rem; padding:0.45rem 0.9rem;" onclick="addInventoryPurchase()"><i class="fas fa-plus"></i> <span data-i18n="label_add">Add</span></button>
-                            <button class="btn btn-outline" style="font-size:0.85rem; padding:0.45rem 0.9rem;" onclick="toggleMiscAddForm()"><span data-i18n="label_cancel">Cancel</span></button>
+                            <!-- Custom item text input — hidden until "Custom" is selected -->
+                            <input type="text" id="inv-custom-name" placeholder="Item name..."
+                                style="display:none; flex:2; min-width:140px; padding:0.45rem 0.7rem; font-size:0.9rem; border:1px solid var(--primary); border-radius:6px; background:#fff;">
+                            <input type="number" id="inv-new-qty" placeholder="Qty" data-i18n="qty" min="1"
+                                style="width:75px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
+                            <input type="number" id="inv-new-price" placeholder="Total Cost ¥"
+                                data-i18n="label_total_cost_placeholder" min="0"
+                                style="width:110px; padding:0.45rem 0.6rem; font-size:0.9rem; border:1px solid var(--border-color); border-radius:6px;">
+                            <button class="btn btn-primary" style="font-size:0.85rem; padding:0.45rem 0.9rem;"
+                                onclick="addInventoryPurchase()"><i class="fas fa-plus"></i> <span
+                                    data-i18n="label_add">Add</span></button>
+                            <button class="btn btn-outline" style="font-size:0.85rem; padding:0.45rem 0.9rem;"
+                                onclick="toggleMiscAddForm()"><span data-i18n="label_cancel">Cancel</span></button>
                         </div>
 
                         <!-- Purchase Log List -->
@@ -417,7 +439,8 @@
                                     <tbody id="inventory-items-tbody"></tbody>
                                     <tfoot>
                                         <tr style="font-weight:bold; background:var(--status-todo-bg);">
-                                            <td colspan="2" style="text-align:right;" data-i18n="th_total_spent">Total Spent:</td>
+                                            <td colspan="2" style="text-align:right;" data-i18n="th_total_spent">Total
+                                                Spent:</td>
                                             <td id="inv-total-qty">0</td>
                                             <td id="inv-total-cost">¥0</td>
                                             <td></td>
@@ -465,15 +488,18 @@
                             </div>
                             <div class="form-group">
                                 <label data-i18n="settings_business_name_label">Business Name</label>
-                                <input type="text" id="settings-business-name-input" placeholder="Oinar Wedding" data-i18n="settings_business_name_placeholder">
+                                <input type="text" id="settings-business-name-input" placeholder="Oinar Wedding"
+                                    data-i18n="settings_business_name_placeholder">
                             </div>
                             <div class="form-group">
                                 <label data-i18n="label_email_address">Email Address</label>
-                                <input type="email" id="settings-email" placeholder="hello@oinar.com" data-i18n="settings_email_placeholder">
+                                <input type="email" id="settings-email" placeholder="hello@oinar.com"
+                                    data-i18n="settings_email_placeholder">
                             </div>
                             <div class="form-group">
                                 <label data-i18n="label_phone_number">Phone Number</label>
-                                <input type="tel" id="settings-phone" placeholder="+81 90 0000 0000" data-i18n="settings_phone_placeholder">
+                                <input type="tel" id="settings-phone" placeholder="+81 90 0000 0000"
+                                    data-i18n="settings_phone_placeholder">
                             </div>
                             <div class="form-group">
                                 <label data-i18n="label_mercari_profile">Mercari Profile</label>
@@ -483,7 +509,8 @@
                                         value="https://jp.mercari.com/user/profile/177559465">
                                     <a id="mercari-link" href="https://jp.mercari.com/user/profile/177559465"
                                         target="_blank" class="btn btn-outline" style="white-space:nowrap;"><i
-                                            class="fas fa-external-link-alt"></i> <span data-i18n="label_open">Open</span></a>
+                                            class="fas fa-external-link-alt"></i> <span
+                                            data-i18n="label_open">Open</span></a>
                                 </div>
                             </div>
 
@@ -524,7 +551,8 @@
                                 </div>
                             </div>
 
-                            <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> <span data-i18n="save_settings_btn">Save Settings</span></button>
+                            <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> <span
+                                    data-i18n="save_settings_btn">Save Settings</span></button>
                         </div>
                     </section>
 
@@ -592,7 +620,8 @@
                         <div
                             style="border-top: 1px dashed var(--border-color); margin: 0.8rem 0; display:flex; align-items:center; gap:0.5rem;">
                             <span
-                                style="font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-light); white-space:nowrap;" data-i18n="label_options">Options</span>
+                                style="font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-light); white-space:nowrap;"
+                                data-i18n="label_options">Options</span>
                             <div style="flex:1; border-top: 1px dashed var(--border-color);"></div>
                         </div>
 
@@ -660,7 +689,9 @@
                                 style="width: 100px; padding:0.3rem 0.5rem; font-size:0.85rem; border:1px solid var(--border-color); border-radius:6px; text-align:right; background:#fff;">
                         </div>
                         <div style="margin-bottom:0.6rem;">
-                            <input type="text" id="order-adjustment-reason" placeholder="Reason (e.g. discount, custom charge)" data-i18n="label_adjustment_reason_placeholder"
+                            <input type="text" id="order-adjustment-reason"
+                                placeholder="Reason (e.g. discount, custom charge)"
+                                data-i18n="label_adjustment_reason_placeholder"
                                 style="width: 100%; padding:0.3rem 0.5rem; font-size:0.8rem; border:1px solid var(--border-color); border-radius:6px; background:#fff;">
                         </div>
                         <div
@@ -682,14 +713,19 @@
                                 <option value="custom" data-i18n="shipping_custom">Custom</option>
                             </select>
                         </div>
-                        <div id="custom-shipping-container" style="display:none; justify-content:space-between; margin-top:0.5rem; align-items:center;">
-                            <label style="margin:0; font-size:0.85rem; color:var(--text-secondary);" data-i18n="shipping_custom_label">Custom Cost (¥)</label>
-                            <input type="number" id="order-shipping-cost-custom" value="150" min="0" style="width: 120px; padding:0.35rem 0.5rem; font-size:0.85rem; border:1px solid var(--border-color); border-radius:6px; text-align:right; background:#fff;">
+                        <div id="custom-shipping-container"
+                            style="display:none; justify-content:space-between; margin-top:0.5rem; align-items:center;">
+                            <label style="margin:0; font-size:0.85rem; color:var(--text-secondary);"
+                                data-i18n="shipping_custom_label">Custom Cost (¥)</label>
+                            <input type="number" id="order-shipping-cost-custom" value="150" min="0"
+                                style="width: 120px; padding:0.35rem 0.5rem; font-size:0.85rem; border:1px solid var(--border-color); border-radius:6px; text-align:right; background:#fff;">
                         </div>
 
-                        <div style="display:flex; justify-content:space-between; margin-top:0.8rem; align-items:center; font-size:0.9rem;">
+                        <div
+                            style="display:flex; justify-content:space-between; margin-top:0.8rem; align-items:center; font-size:0.9rem;">
                             <label style="margin:0; font-weight:500;" data-i18n="label_platform">Platform</label>
-                            <select id="order-platform" style="width:155px; padding:0.4rem; font-size:0.85rem;" onchange="calculateOrderMath()">
+                            <select id="order-platform" style="width:155px; padding:0.4rem; font-size:0.85rem;"
+                                onchange="calculateOrderMath()">
                                 <option value="Mercari">Mercari</option>
                                 <option value="Rakuma">Rakuma</option>
                                 <option value="Yahoo" data-i18n="platform_yahoo">Yahoo Flea Market</option>
@@ -717,7 +753,8 @@
                             <label data-i18n="order_status">Status</label>
                             <select id="order-status">
                                 <option value="Pending" data-i18n="Pending">Pending</option>
-                                <option value="Ready for Shipping" data-i18n="Ready for Shipping">Ready for Shipping</option>
+                                <option value="Ready for Shipping" data-i18n="Ready for Shipping">Ready for Shipping
+                                </option>
                                 <option value="Finished" data-i18n="Finished">Finished</option>
                             </select>
                         </div>
@@ -729,7 +766,8 @@
 
                     <div class="form-group">
                         <label data-i18n="label_comments">Comments</label>
-                        <input type="text" id="order-comments" placeholder="Optional notes..." data-i18n="label_comments_placeholder">
+                        <input type="text" id="order-comments" placeholder="Optional notes..."
+                            data-i18n="label_comments_placeholder">
                     </div>
 
                     <div class="modal-footer">
@@ -815,7 +853,8 @@
                     </div>
                     <div class="form-group">
                         <label data-i18n="th_note">Note</label>
-                        <input type="text" id="waste-note" placeholder="e.g. Misprint, Paper jam..." data-i18n="label_note_placeholder">
+                        <input type="text" id="waste-note" placeholder="e.g. Misprint, Paper jam..."
+                            data-i18n="label_note_placeholder">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline modal-cancel" data-i18n="cancel">Cancel</button>
@@ -838,7 +877,8 @@
                     <input type="hidden" id="client-id">
                     <div class="form-group">
                         <label data-i18n="order_buyer">Buyer Name</label>
-                        <input type="text" id="client-name" required placeholder="e.g. Yamada Hanako" data-i18n="label_buyer_placeholder">
+                        <input type="text" id="client-name" required placeholder="e.g. Yamada Hanako"
+                            data-i18n="label_buyer_placeholder">
                     </div>
                     <div class="form-group">
                         <label data-i18n="th_purchase_date">Purchase Date</label>
@@ -869,7 +909,8 @@
                     </div>
                     <div class="form-group">
                         <label data-i18n="label_comments">Comments</label>
-                        <input type="text" id="client-comments" placeholder="Optional notes..." data-i18n="label_comments_placeholder">
+                        <input type="text" id="client-comments" placeholder="Optional notes..."
+                            data-i18n="label_comments_placeholder">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline modal-cancel" data-i18n="cancel">Cancel</button>
@@ -886,7 +927,8 @@
         <div
             style="width:48px; height:48px; border:4px solid var(--border-color); border-top-color:var(--primary); border-radius:50%; animation:spin 0.8s linear infinite;">
         </div>
-        <p style="font-family:var(--font-family); color:var(--text-secondary); font-size:0.95rem;" data-i18n="label_loading_data">Loading data...</p>
+        <p style="font-family:var(--font-family); color:var(--text-secondary); font-size:0.95rem;"
+            data-i18n="label_loading_data">Loading data...</p>
     </div>
     <style>
         @keyframes spin {
@@ -916,61 +958,61 @@
         }
     </script>
     <!-- ========================================================================== -->
-<!-- BOTTOM NAV (mobile only) -->
-<nav class="bottom-nav" id="bottom-nav">
-  <a class="bottom-nav-link active" data-target="view-dashboard">
-    <i class="fas fa-home"></i>
-    <span>Dashboard</span>
-  </a>
-  <a class="bottom-nav-link" data-target="view-orders">
-    <i class="fas fa-shopping-cart"></i>
-    <span>Orders</span>
-  </a>
-  <a class="bottom-nav-link" data-target="view-clients">
-    <i class="fas fa-users"></i>
-    <span>Clients</span>
-  </a>
-  <a class="bottom-nav-link" data-target="view-tasks">
-    <i class="fas fa-tasks"></i>
-    <span>Tasks</span>
-  </a>
-  <a class="bottom-nav-link" data-target="view-inventory">
-    <i class="fas fa-boxes"></i>
-    <span>Inventory</span>
-  </a>
-  <a class="bottom-nav-link" data-target="view-settings">
-    <i class="fas fa-cog"></i>
-    <span>Settings</span>
-  </a>
-</nav>
-<!-- CLIENT DETAIL POPUP -->
-<div class="client-detail-overlay" id="client-detail-overlay">
-  <div class="client-detail-popup">
-    <button class="client-detail-popup-close" onclick="closeClientDetail()">&times;</button>
-    <h4 id="cdp-name">Client Name</h4>
+    <!-- BOTTOM NAV (mobile only) -->
+    <nav class="bottom-nav" id="bottom-nav">
+        <a class="bottom-nav-link active" data-target="view-dashboard">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a class="bottom-nav-link" data-target="view-orders">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Orders</span>
+        </a>
+        <a class="bottom-nav-link" data-target="view-clients">
+            <i class="fas fa-users"></i>
+            <span>Clients</span>
+        </a>
+        <a class="bottom-nav-link" data-target="view-tasks">
+            <i class="fas fa-tasks"></i>
+            <span>Tasks</span>
+        </a>
+        <a class="bottom-nav-link" data-target="view-inventory">
+            <i class="fas fa-boxes"></i>
+            <span>Inventory</span>
+        </a>
+        <a class="bottom-nav-link" data-target="view-settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+    <!-- CLIENT DETAIL POPUP -->
+    <div class="client-detail-overlay" id="client-detail-overlay">
+        <div class="client-detail-popup">
+            <button class="client-detail-popup-close" onclick="closeClientDetail()">&times;</button>
+            <h4 id="cdp-name">Client Name</h4>
 
-    <div class="client-detail-row">
-      <span class="detail-label" data-i18n="th_purchase_date">Purchase Date</span>
-      <span class="detail-value" id="cdp-date">—</span>
+            <div class="client-detail-row">
+                <span class="detail-label" data-i18n="th_purchase_date">Purchase Date</span>
+                <span class="detail-value" id="cdp-date">—</span>
+            </div>
+            <div class="client-detail-row">
+                <span class="detail-label" data-i18n="label_total_orders">Total Orders</span>
+                <span class="detail-value" id="cdp-orders">0</span>
+            </div>
+            <div class="client-detail-row">
+                <span class="detail-label" data-i18n="label_total_sales">Total Sales</span>
+                <span class="detail-value" id="cdp-sales">¥0</span>
+            </div>
+            <div class="client-detail-row">
+                <span class="detail-label" data-i18n="label_total_profit">Total Profit</span>
+                <span class="detail-value profit-value" id="cdp-profit">¥0</span>
+            </div>
+            <div class="client-detail-row" id="cdp-comment-row" style="display:none;">
+                <span class="detail-label" data-i18n="label_comments">Comments</span>
+                <span class="detail-value comment-text" id="cdp-comment"></span>
+            </div>
+        </div>
     </div>
-    <div class="client-detail-row">
-      <span class="detail-label" data-i18n="label_total_orders">Total Orders</span>
-      <span class="detail-value" id="cdp-orders">0</span>
-    </div>
-    <div class="client-detail-row">
-      <span class="detail-label" data-i18n="label_total_sales">Total Sales</span>
-      <span class="detail-value" id="cdp-sales">¥0</span>
-    </div>
-    <div class="client-detail-row">
-      <span class="detail-label" data-i18n="label_total_profit">Total Profit</span>
-      <span class="detail-value profit-value" id="cdp-profit">¥0</span>
-    </div>
-    <div class="client-detail-row" id="cdp-comment-row" style="display:none;">
-      <span class="detail-label" data-i18n="label_comments">Comments</span>
-      <span class="detail-value comment-text" id="cdp-comment"></span>
-    </div>
-  </div>
-</div>
 </body>
 
 </html>
