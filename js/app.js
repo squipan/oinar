@@ -700,7 +700,6 @@ function editOrder(id) {
   document.getElementById('order-id').value = o.id;
   document.getElementById('order-date').value = o.date;
   document.getElementById('order-buyer').value = o.buyerName || '';
-  document.getElementById('order-client-id').value = o.clientId || '';
   document.getElementById('item-noshi').value = o.items.noshi || 0;
   document.getElementById('item-nagagata').value = o.items.nagagata || 0;
   document.getElementById('item-pochi').value = o.items.pochi || 0;
@@ -1243,18 +1242,17 @@ function handleOrderSubmit(e) {
     ? (parseInt(document.getElementById('order-shipping-cost-custom').value) || 0)
     : (parseInt(shippingSel) || 160);
 
-  const customClientId = document.getElementById('order-client-id').value.trim();
   const buyerName = document.getElementById('order-buyer').value.trim();
   let clientId = '';
 
   if (isEdit) {
     const oldOrder = getAll('orders').find(o => o.id === id);
-    clientId = customClientId || (oldOrder ? oldOrder.clientId : '');
+    clientId = oldOrder ? oldOrder.clientId : '';
     if (!clientId) {
       clientId = 'c' + Date.now() + Math.random().toString(36).slice(2, 7);
     }
   } else {
-    clientId = customClientId || ('c' + Date.now() + Math.random().toString(36).slice(2, 7));
+    clientId = 'c' + Date.now() + Math.random().toString(36).slice(2, 7);
   }
 
   // Ensure client record exists
@@ -1492,7 +1490,7 @@ function showClientDetail(id) {
   const overlay = document.getElementById('client-detail-overlay');
   if (!overlay) return;
 
-  document.getElementById('cdp-name').textContent = `${c.name} (ID: ${c.id})`;
+  document.getElementById('cdp-name').textContent = c.name;
   document.getElementById('cdp-date').textContent = formatDate(c.date);
   document.getElementById('cdp-orders').textContent = c.orders || 0;
   document.getElementById('cdp-sales').textContent = formatCurrency(c.sales || 0);
@@ -1545,13 +1543,10 @@ function loadClients() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td data-label="${t('order_buyer')}">
-        <div style="display:flex; flex-direction:column; gap:0.15rem;">
-          <span style="display:inline-flex; align-items:center; gap:0.2rem; flex-wrap:wrap;">
-            <strong>${c.name}</strong>${infoBtnHtml}
-          </span>
-          <span style="font-size:0.7rem; color:var(--text-light); font-family:monospace; word-break:break-all;">ID: ${c.id}</span>
-          ${source}
-        </div>
+        <span style="display:inline-flex; align-items:center; gap:0.2rem; flex-wrap:wrap;">
+          <strong>${c.name}</strong>${infoBtnHtml}
+        </span>
+        ${source}
       </td>
       <td data-label="${t('th_purchase_date')}">${formatDate(c.date)}</td>
       <td data-label="${t('dash_orders')}">${c.orders || 0}</td>
@@ -1981,27 +1976,24 @@ function migrateHistoricalData() {
 
   orders.forEach(o => {
     if (!o.clientId) {
-      // Find client with same name (case-insensitive)
-      let client = clients.find(c => (c.name || '').trim().toLowerCase() === (o.buyerName || '').trim().toLowerCase());
-      if (!client) {
-        // Create an auto-tracked client
-        const newClientId = 'c' + Date.now() + Math.random().toString(36).slice(2, 7);
-        client = {
-          id: newClientId,
-          name: (o.buyerName || '').trim() || 'Unknown',
-          date: o.date || new Date().toISOString().split('T')[0],
-          orders: 0,
-          sales: 0,
-          profit: 0,
-          comments: o.comments || '',
-          isFromOrder: true
-        };
-        clients.push(client);
-        fsAddItem('clients', client);
-      }
-      o.clientId = client.id;
+      // Create a brand new auto-tracked client for this order to keep it completely unique
+      const newClientId = 'c' + Date.now() + Math.random().toString(36).slice(2, 7);
+      const client = {
+        id: newClientId,
+        name: (o.buyerName || '').trim() || 'Unknown',
+        date: o.date || new Date().toISOString().split('T')[0],
+        orders: 0,
+        sales: 0,
+        profit: 0,
+        comments: o.comments || '',
+        isFromOrder: true
+      };
+      clients.push(client);
+      fsAddItem('clients', client);
+      
+      o.clientId = newClientId;
       // Save the order updates
-      updateItem('orders', o.id, { clientId: client.id });
+      updateItem('orders', o.id, { clientId: newClientId });
       migrated = true;
     }
   });

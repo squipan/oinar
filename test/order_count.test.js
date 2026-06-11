@@ -27,7 +27,7 @@ const mockDoc = {
   },
   querySelectorAll: () => [],
   addEventListener: () => {},
-  createElement: (tag) => ({ appendChild: () => {}, value: '', textContent: '', setAttribute: () => {} })
+  createElement: (tag) => ({ appendChild: () => {}, value: '', textContent: '', setAttribute: () => {}, style: {} })
 };
 
 const mockWindow = {
@@ -188,4 +188,62 @@ const dashboardOrders = parseInt(context.document.getElementById('metric-orders'
 assert.strictEqual(dashboardOrders, 39, `Dashboard total orders count should be 39, got ${dashboardOrders}`);
 
 console.log('✓ Test 2 Passed!');
+
+// Test 3: handleOrderSubmit auto-assigns unique clientId and creates separate clients for same name
+console.log('Test 3: handleOrderSubmit auto-assigns unique client IDs...');
+// Reset / Clear database
+context.initDB({
+  user: { name: 'Oinar Test' },
+  language: 'en',
+  orders: [],
+  clients: [],
+  tasks: [],
+  inventory: [],
+  waste: [],
+  prices: { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10 }
+});
+
+// Setup mock elements for first order
+domElements['order-id'] = { value: '' }; // New order
+domElements['order-date'] = { value: '2026-06-11' };
+domElements['order-buyer'] = { value: 'ここ' };
+domElements['item-noshi'] = { value: '5' };
+domElements['item-nagagata'] = { value: '0' };
+domElements['item-pochi'] = { value: '0' };
+domElements['item-atsugami'] = { checked: false };
+domElements['item-seal-a'] = { value: '0' };
+domElements['item-seal-b'] = { value: '0' };
+domElements['item-hofucho-mermaid'] = { value: '0' };
+domElements['item-hofucho-gayo'] = { value: '0' };
+domElements['item-uketsuke'] = { value: '0' };
+domElements['order-express'] = { checked: false };
+domElements['order-deadline'] = { value: '2026-06-18' };
+domElements['order-comments'] = { value: 'First Order Comments' };
+domElements['order-adjustment'] = { value: '0' };
+domElements['order-adjustment-reason'] = { value: '' };
+domElements['hidden-purchase'] = { value: '500' };
+domElements['hidden-fee'] = { value: '50' };
+domElements['hidden-profit'] = { value: '450' };
+
+// Submit first order
+context.handleOrderSubmit({ preventDefault: () => {} });
+
+// Setup mock elements for second order with same name
+domElements['order-id'] = { value: '' }; // New order
+domElements['order-buyer'] = { value: 'ここ' };
+domElements['order-comments'] = { value: 'Second Order Comments' };
+
+// Submit second order
+context.handleOrderSubmit({ preventDefault: () => {} });
+
+const test3Orders = context.getAll('orders');
+const test3Clients = context.getAll('clients');
+
+assert.strictEqual(test3Orders.length, 2, 'Should have created 2 orders');
+assert.strictEqual(test3Clients.length, 2, 'Should have created 2 client records');
+assert.notStrictEqual(test3Orders[0].clientId, test3Orders[1].clientId, 'Client IDs must be different');
+assert.notStrictEqual(test3Clients[0].id, test3Clients[1].id, 'Client record IDs must be different');
+
+console.log('✓ Test 3 Passed!');
 console.log('All tests passed successfully! 🎉');
+
