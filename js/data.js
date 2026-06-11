@@ -88,7 +88,9 @@ function saveDB(db) {
 function getAll(collection) { return _db[collection] || []; }
 
 function addItem(collection, item) {
-  item.id = collection[0] + Date.now() + Math.random().toString(36).slice(2, 7);
+  if (!item.id) {
+    item.id = collection[0] + Date.now() + Math.random().toString(36).slice(2, 7);
+  }
   if (!_db[collection]) _db[collection] = [];
   _db[collection].unshift(item);
   fsAddItem(collection, item);

@@ -151,6 +151,7 @@ const i18n = {
     'client_day_placeholder': 'Day',
     'label_date': 'Date',
     'label_buyer': 'Buyer',
+    'label_client_id': 'Client ID / Account ID',
     'Pending': 'Pending',
     'Ready for Shipping': 'Ready for Shipping',
     'Finished': 'Finished',
@@ -342,6 +343,7 @@ const i18n = {
     'client_day_placeholder': '日',
     'label_date': '日付',
     'label_buyer': '購入者',
+    'label_client_id': '顧客ID / アカウントID',
     'Pending': '進行中',
     'Ready for Shipping': '発送待ち',
     'Finished': '完了',
@@ -426,7 +428,10 @@ async function refreshData() {
   if (icon) icon.classList.add('fa-spin');
 
   const data = await loadAllDataFromFirestore();
-  if (data) initDB(data);
+  if (data) {
+    initDB(data);
+    migrateHistoricalData();
+  }
 
   PRICES = getPrices();
   applyLanguage(getLanguage());
@@ -451,7 +456,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (firebaseUser) {
       showLoadingOverlay(true);
       const data = await loadAllDataFromFirestore();
-      if (data) initDB(data);
+      if (data) {
+        initDB(data);
+        migrateHistoricalData();
+      }
       showLoadingOverlay(false);
 
       document.getElementById('home-view').style.display = 'none';
@@ -691,7 +699,8 @@ function editOrder(id) {
   // Fill fields after reset
   document.getElementById('order-id').value = o.id;
   document.getElementById('order-date').value = o.date;
-  document.getElementById('order-buyer').value = o.buyerName;
+  document.getElementById('order-buyer').value = o.buyerName || '';
+  document.getElementById('order-client-id').value = o.clientId || '';
   document.getElementById('item-noshi').value = o.items.noshi || 0;
   document.getElementById('item-nagagata').value = o.items.nagagata || 0;
   document.getElementById('item-pochi').value = o.items.pochi || 0;
@@ -817,7 +826,12 @@ function loadDashboardData() {
     + filteredClients.reduce((sum, c) => sum + (c.profit || 0), 0);
   const totalSales = filteredOrders.reduce((sum, o) => sum + (o.purchaseAmount || 0), 0)
     + filteredClients.reduce((sum, c) => sum + (c.sales || 0), 0);
-  const totalOrders = filteredOrders.length + filteredClients.reduce((sum, c) => sum + (c.orders || 0), 0);
+  const totalOrders = filteredOrders.reduce((sum, o) => {
+    const items = o.items || {};
+    const envelopeQty = (items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0);
+    const a4Qty = (items.hofuchoMermaid || 0) + (items.hofuchoGayo || 0) + (items.uketsukeSign || 0);
+    return sum + envelopeQty + a4Qty;
+  }, 0) + filteredClients.reduce((sum, c) => sum + (c.orders || 0), 0);
   const remainingTasks = tasks.filter(t => t.status === 'To Do' || t.status === '未完了').length;
 
   // Count all clients filtered by period (auto-tracked use their latest order date)
@@ -1229,9 +1243,48 @@ function handleOrderSubmit(e) {
     ? (parseInt(document.getElementById('order-shipping-cost-custom').value) || 0)
     : (parseInt(shippingSel) || 160);
 
+  const customClientId = document.getElementById('order-client-id').value.trim();
+  const buyerName = document.getElementById('order-buyer').value.trim();
+  let clientId = '';
+
+  if (isEdit) {
+    const oldOrder = getAll('orders').find(o => o.id === id);
+    clientId = customClientId || (oldOrder ? oldOrder.clientId : '');
+    if (!clientId) {
+      clientId = 'c' + Date.now() + Math.random().toString(36).slice(2, 7);
+    }
+  } else {
+    clientId = customClientId || ('c' + Date.now() + Math.random().toString(36).slice(2, 7));
+  }
+
+  // Ensure client record exists
+  const clients = getAll('clients');
+  let client = clients.find(c => c.id === clientId);
+  if (!client) {
+    client = addItem('clients', {
+      id: clientId,
+      name: buyerName,
+      date: orderDate || new Date().toISOString().split('T')[0],
+      orders: 0,
+      sales: 0,
+      profit: 0,
+      comments: document.getElementById('order-comments').value || '',
+      isFromOrder: true
+    });
+  } else {
+    if (client.name !== buyerName || (document.getElementById('order-comments').value && client.comments !== document.getElementById('order-comments').value)) {
+      const updates = { name: buyerName };
+      if (document.getElementById('order-comments').value) {
+        updates.comments = document.getElementById('order-comments').value;
+      }
+      updateItem('clients', client.id, updates);
+    }
+  }
+
   const order = {
     date: orderDate,
-    buyerName: document.getElementById('order-buyer').value,
+    clientId,
+    buyerName,
     platform: document.getElementById('order-platform')?.value || 'Mercari',
     items: {
       noshi: parseInt(document.getElementById('item-noshi').value) || 0,
@@ -1260,17 +1313,13 @@ function handleOrderSubmit(e) {
   if (isEdit) {
     savedOrder = { ...order, id };
     updateItem('orders', id, order);
-    if (order.comments) {
-      const clients = getAll('clients');
-      const client = clients.find(c => c.name.toLowerCase() === order.buyerName.toLowerCase());
-      if (client) {
-        updateItem('clients', client.id, { comments: order.comments });
-      }
+    if (order.comments && order.clientId) {
+      updateItem('clients', order.clientId, { comments: order.comments });
     }
   } else {
     savedOrder = addItem('orders', order);
     deductStock(order.items);
-    trackClientFromOrder(order.buyerName, order.purchaseAmount, order.profit, order.date, order.items, order.comments);
+    trackClientFromOrder(order.clientId, order.purchaseAmount, order.profit, order.date, order.items, order.comments);
     const lang = getLanguage();
     const priority = calcTaskPriority(orderDate, deadline, express);
     const expressLabel = express ? (lang === 'jp' ? '【速達】' : '[Express] ') : '';
@@ -1384,16 +1433,19 @@ function syncAutoTrackedClients() {
   const orders = getAll('orders');
   const clients = getAll('clients');
 
-  // Group orders by buyer name (case-insensitive)
+  // Group orders by clientId
   const orderStats = {};
   orders.forEach(o => {
-    const nameKey = (o.buyerName || '').trim().toLowerCase();
-    if (!nameKey) return;
+    const clientId = o.clientId;
+    if (!clientId) return;
 
-    const envQty = (o.items?.noshi || 0) + (o.items?.nagagata || 0) + (o.items?.pochi || 0);
+    const items = o.items || {};
+    const envelopeQty = (items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0);
+    const a4Qty = (items.hofuchoMermaid || 0) + (items.hofuchoGayo || 0) + (items.uketsukeSign || 0);
+    const totalQty = envelopeQty + a4Qty;
 
-    if (!orderStats[nameKey]) {
-      orderStats[nameKey] = {
+    if (!orderStats[clientId]) {
+      orderStats[clientId] = {
         orders: 0,
         sales: 0,
         profit: 0,
@@ -1401,20 +1453,19 @@ function syncAutoTrackedClients() {
       };
     }
 
-    orderStats[nameKey].orders += envQty;
-    orderStats[nameKey].sales += o.purchaseAmount || 0;
-    orderStats[nameKey].profit += o.profit || 0;
+    orderStats[clientId].orders += totalQty;
+    orderStats[clientId].sales += o.purchaseAmount || 0;
+    orderStats[clientId].profit += o.profit || 0;
 
-    if (!orderStats[nameKey].latestDate || o.date > orderStats[nameKey].latestDate) {
-      orderStats[nameKey].latestDate = o.date;
+    if (!orderStats[clientId].latestDate || o.date > orderStats[clientId].latestDate) {
+      orderStats[clientId].latestDate = o.date;
     }
   });
 
   // Update clients who are auto-tracked
   clients.forEach(c => {
     if (c.isFromOrder) {
-      const nameKey = c.name.trim().toLowerCase();
-      const stats = orderStats[nameKey] || { orders: 0, sales: 0, profit: 0, latestDate: c.date };
+      const stats = orderStats[c.id] || { orders: 0, sales: 0, profit: 0, latestDate: c.date };
 
       if (
         c.orders !== stats.orders ||
@@ -1441,7 +1492,7 @@ function showClientDetail(id) {
   const overlay = document.getElementById('client-detail-overlay');
   if (!overlay) return;
 
-  document.getElementById('cdp-name').textContent = c.name;
+  document.getElementById('cdp-name').textContent = `${c.name} (ID: ${c.id})`;
   document.getElementById('cdp-date').textContent = formatDate(c.date);
   document.getElementById('cdp-orders').textContent = c.orders || 0;
   document.getElementById('cdp-sales').textContent = formatCurrency(c.sales || 0);
@@ -1494,10 +1545,13 @@ function loadClients() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td data-label="${t('order_buyer')}">
-        <span style="display:inline-flex; align-items:center; gap:0.2rem; flex-wrap:wrap;">
-          <strong>${c.name}</strong>${infoBtnHtml}
-        </span>
-        ${source}
+        <div style="display:flex; flex-direction:column; gap:0.15rem;">
+          <span style="display:inline-flex; align-items:center; gap:0.2rem; flex-wrap:wrap;">
+            <strong>${c.name}</strong>${infoBtnHtml}
+          </span>
+          <span style="font-size:0.7rem; color:var(--text-light); font-family:monospace; word-break:break-all;">ID: ${c.id}</span>
+          ${source}
+        </div>
       </td>
       <td data-label="${t('th_purchase_date')}">${formatDate(c.date)}</td>
       <td data-label="${t('dash_orders')}">${c.orders || 0}</td>
@@ -1546,18 +1600,19 @@ function removeClient(id) {
   }
 }
 
-function trackClientFromOrder(buyerName, amount, profit, orderDate, items, orderComments) {
-  const nameTrimmed = (buyerName || '').trim();
-  if (!nameTrimmed) return;
+function trackClientFromOrder(clientId, amount, profit, orderDate, items, orderComments) {
+  if (!clientId) return;
 
-  // Calculate total items ordered (only envelopes: noshi, nagagata, pochi)
-  const envelopeQty = items ? ((items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0)) : 0;
+  const itemsObj = items || {};
+  const envelopeQty = (itemsObj.noshi || 0) + (itemsObj.nagagata || 0) + (itemsObj.pochi || 0);
+  const a4Qty = (itemsObj.hofuchoMermaid || 0) + (itemsObj.hofuchoGayo || 0) + (itemsObj.uketsukeSign || 0);
+  const totalQty = envelopeQty + a4Qty;
 
   const clients = getAll('clients');
-  const existing = clients.find(c => c.name.toLowerCase() === nameTrimmed.toLowerCase());
+  const existing = clients.find(c => c.id === clientId);
   if (existing) {
     const updates = {
-      orders: (existing.orders || 0) + envelopeQty,
+      orders: (existing.orders || 0) + totalQty,
       sales: (existing.sales || 0) + amount,
       profit: (existing.profit || 0) + profit,
       date: orderDate || existing.date,
@@ -1567,16 +1622,6 @@ function trackClientFromOrder(buyerName, amount, profit, orderDate, items, order
       updates.comments = orderComments;
     }
     updateItem('clients', existing.id, updates);
-  } else {
-    addItem('clients', {
-      name: nameTrimmed,
-      date: orderDate || new Date().toISOString().split('T')[0],
-      orders: envelopeQty,
-      sales: amount,
-      profit: profit,
-      comments: orderComments || '',
-      isFromOrder: true
-    });
   }
 }
 
@@ -1927,4 +1972,41 @@ function setupBottomNav() {
       document.getElementById(targetId)?.classList.add('active');
     });
   });
+}
+
+function migrateHistoricalData() {
+  const orders = getAll('orders');
+  const clients = getAll('clients');
+  let migrated = false;
+
+  orders.forEach(o => {
+    if (!o.clientId) {
+      // Find client with same name (case-insensitive)
+      let client = clients.find(c => (c.name || '').trim().toLowerCase() === (o.buyerName || '').trim().toLowerCase());
+      if (!client) {
+        // Create an auto-tracked client
+        const newClientId = 'c' + Date.now() + Math.random().toString(36).slice(2, 7);
+        client = {
+          id: newClientId,
+          name: (o.buyerName || '').trim() || 'Unknown',
+          date: o.date || new Date().toISOString().split('T')[0],
+          orders: 0,
+          sales: 0,
+          profit: 0,
+          comments: o.comments || '',
+          isFromOrder: true
+        };
+        clients.push(client);
+        fsAddItem('clients', client);
+      }
+      o.clientId = client.id;
+      // Save the order updates
+      updateItem('orders', o.id, { clientId: client.id });
+      migrated = true;
+    }
+  });
+
+  if (migrated) {
+    console.log('[Migration] Migrated legacy orders to use unique client IDs');
+  }
 }
