@@ -776,13 +776,11 @@ function populateDashboardYears() {
   // Remember what was selected before we rebuild the options
   const currentValue = sel.value;
 
-  // Collect all years present in orders and manual clients
+  // Collect all years present in clients list
   const years = new Set();
   const now = new Date().getFullYear();
   for (let yr = 2024; yr <= now; yr++) years.add(yr);
-  const orderClientIds = new Set(getAll('orders').map(o => o.clientId).filter(Boolean));
-  getAll('orders').forEach(o => { if (o.date) years.add(parseInt(o.date.split('-')[0])); });
-  getAll('clients').filter(c => !c.isFromOrder && !orderClientIds.has(c.id)).forEach(c => { if (c.date) years.add(parseInt(c.date.split('-')[0])); });
+  getAll('clients').forEach(c => { if (c.date) years.add(parseInt(c.date.split('-')[0])); });
 
   // Remove any previously injected year options
   sel.querySelectorAll('option[data-year]').forEach(o => o.remove());
@@ -815,30 +813,18 @@ function filterByPeriod(items, dateField = 'date') {
 
 function loadDashboardData() {
   populateDashboardYears();
-  const allOrders = getAll('orders');
   const tasks = getAll('tasks');
-  const orderClientIds = new Set(allOrders.map(o => o.clientId).filter(Boolean));
-  const manualClients = getAll('clients').filter(c => !c.isFromOrder && !orderClientIds.has(c.id));
+  const allClients = getAll('clients');
 
-  const filteredOrders = filterByPeriod(allOrders, 'date');
-  const filteredClients = filterByPeriod(manualClients, 'date');
+  const filteredClients = filterByPeriod(allClients, 'date');
 
-  const totalProfit = filteredOrders.reduce((sum, o) => sum + (o.profit || 0), 0)
-    + filteredClients.reduce((sum, c) => sum + (c.profit || 0), 0);
-  const totalSales = filteredOrders.reduce((sum, o) => sum + (o.purchaseAmount || 0), 0)
-    + filteredClients.reduce((sum, c) => sum + (c.sales || 0), 0);
-  const totalOrders = filteredOrders.reduce((sum, o) => {
-    const items = o.items || {};
-    const envelopeQty = (items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0);
-    const a4Qty = (items.hofuchoMermaid || 0) + (items.hofuchoGayo || 0) + (items.uketsukeSign || 0);
-    return sum + envelopeQty + a4Qty;
-  }, 0) + filteredClients.reduce((sum, c) => sum + (c.orders || 0), 0);
+  const totalProfit = filteredClients.reduce((sum, c) => sum + (c.profit || 0), 0);
+  const totalSales = filteredClients.reduce((sum, c) => sum + (c.sales || 0), 0);
+  const totalOrders = filteredClients.reduce((sum, c) => sum + (c.orders || 0), 0);
   const remainingTasks = tasks.filter(t => t.status === 'To Do' || t.status === '未完了').length;
 
-  // Count all clients filtered by period (auto-tracked use their latest order date)
-  const allClients = getAll('clients');
-  const filteredAllClients = filterByPeriod(allClients, 'date');
-  const totalClients = filteredAllClients.length;
+  // Count all clients filtered by period
+  const totalClients = filteredClients.length;
 
   document.getElementById('metric-profit').textContent = formatCurrency(totalProfit);
 

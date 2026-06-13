@@ -115,7 +115,9 @@ const order1 = {
   purchaseAmount: 10000
 };
 
+context.addItem('clients', { id: 'c1', name: 'Buyer A', date: '2026-06-11', isFromOrder: true });
 context.addItem('orders', order1);
+context.syncAutoTrackedClients();
 
 // Run dashboard calculations
 context.loadDashboardData();
@@ -171,9 +173,9 @@ context.addItem('orders', o1);
 context.addItem('orders', o2);
 context.addItem('orders', o3);
 
-// Run dashboard and client sync
-context.loadDashboardData();
+// Run client sync first then dashboard calculations
 context.syncAutoTrackedClients();
+context.loadDashboardData();
 
 const clients = context.getAll('clients');
 const clientA = clients.find(c => c.id === 'client_A');
