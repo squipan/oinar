@@ -780,8 +780,9 @@ function populateDashboardYears() {
   const years = new Set();
   const now = new Date().getFullYear();
   for (let yr = 2024; yr <= now; yr++) years.add(yr);
+  const orderClientIds = new Set(getAll('orders').map(o => o.clientId).filter(Boolean));
   getAll('orders').forEach(o => { if (o.date) years.add(parseInt(o.date.split('-')[0])); });
-  getAll('clients').filter(c => !c.isFromOrder).forEach(c => { if (c.date) years.add(parseInt(c.date.split('-')[0])); });
+  getAll('clients').filter(c => !c.isFromOrder && !orderClientIds.has(c.id)).forEach(c => { if (c.date) years.add(parseInt(c.date.split('-')[0])); });
 
   // Remove any previously injected year options
   sel.querySelectorAll('option[data-year]').forEach(o => o.remove());
@@ -816,7 +817,8 @@ function loadDashboardData() {
   populateDashboardYears();
   const allOrders = getAll('orders');
   const tasks = getAll('tasks');
-  const manualClients = getAll('clients').filter(c => !c.isFromOrder);
+  const orderClientIds = new Set(allOrders.map(o => o.clientId).filter(Boolean));
+  const manualClients = getAll('clients').filter(c => !c.isFromOrder && !orderClientIds.has(c.id));
 
   const filteredOrders = filterByPeriod(allOrders, 'date');
   const filteredClients = filterByPeriod(manualClients, 'date');
@@ -1270,11 +1272,15 @@ function handleOrderSubmit(e) {
       isFromOrder: true
     });
   } else {
-    if (client.name !== buyerName || (document.getElementById('order-comments').value && client.comments !== document.getElementById('order-comments').value)) {
-      const updates = { name: buyerName };
-      if (document.getElementById('order-comments').value) {
-        updates.comments = document.getElementById('order-comments').value;
-      }
+    const updates = {};
+    if (client.name !== buyerName) updates.name = buyerName;
+    if (document.getElementById('order-comments').value && client.comments !== document.getElementById('order-comments').value) {
+      updates.comments = document.getElementById('order-comments').value;
+    }
+    if (client.isFromOrder !== true) {
+      updates.isFromOrder = true;
+    }
+    if (Object.keys(updates).length > 0) {
       updateItem('clients', client.id, updates);
     }
   }
@@ -1998,7 +2004,17 @@ function migrateHistoricalData() {
     }
   });
 
+  // Fix client records that are referenced by orders but lack isFromOrder = true (prevents double-counting in dashboard)
+  const orderClientIds = new Set(orders.map(o => o.clientId).filter(Boolean));
+  clients.forEach(c => {
+    if (orderClientIds.has(c.id) && c.isFromOrder !== true) {
+      c.isFromOrder = true;
+      updateItem('clients', c.id, { isFromOrder: true });
+      migrated = true;
+    }
+  });
+
   if (migrated) {
-    console.log('[Migration] Migrated legacy orders to use unique client IDs');
+    console.log('[Migration] Migrated legacy orders and synchronized client states');
   }
 }

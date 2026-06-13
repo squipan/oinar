@@ -245,5 +245,55 @@ assert.notStrictEqual(test3Orders[0].clientId, test3Orders[1].clientId, 'Client 
 assert.notStrictEqual(test3Clients[0].id, test3Clients[1].id, 'Client record IDs must be different');
 
 console.log('✓ Test 3 Passed!');
+
+// Test 4: Prevent double-counting when a client is linked to an order but isFromOrder is not true/unset.
+console.log('Test 4: Prevent double-counting with unset isFromOrder...');
+context.initDB({
+  user: { name: 'Oinar Test' },
+  language: 'en',
+  orders: [
+    {
+      id: 'o_2026_1',
+      date: '2026-06-11',
+      buyerName: 'Test Client',
+      clientId: 'c_unset_from_order',
+      items: { noshi: 1 },
+      profit: 5000,
+      purchaseAmount: 10000
+    }
+  ],
+  clients: [
+    {
+      id: 'c_unset_from_order',
+      name: 'Test Client',
+      date: '2026-06-11',
+      orders: 1,
+      sales: 10000,
+      profit: 5000,
+      isFromOrder: undefined // This mimics legacy database state
+    }
+  ],
+  tasks: [],
+  inventory: [],
+  waste: [],
+  prices: { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10 }
+});
+
+// Run migration
+context.migrateHistoricalData();
+
+// Verify migration corrected the client record
+const migratedClients = context.getAll('clients');
+const clientRecord = migratedClients.find(c => c.id === 'c_unset_from_order');
+assert.strictEqual(clientRecord.isFromOrder, true, 'Migration should set isFromOrder to true');
+
+// Reset to undefined and test dashboard-level fallback
+clientRecord.isFromOrder = undefined;
+context.loadDashboardData();
+
+const totalProfit = parseInt(context.document.getElementById('metric-profit').textContent.replace(/[^\d]/g, ''));
+assert.strictEqual(totalProfit, 5000, `Expected total profit of 5000 (no double counting), but got ${totalProfit}`);
+
+console.log('✓ Test 4 Passed!');
 console.log('All tests passed successfully! 🎉');
 
