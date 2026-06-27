@@ -764,6 +764,19 @@ tbody tr:hover {
     font-size: 13px !important;
   }
 
+  .topbar-left-new-order {
+    display: inline-flex !important;
+  }
+
+  .topbar-right .btn-primary {
+    display: none !important;
+  }
+
+  .section-header {
+    justify-content: flex-start !important;
+    gap: 1.5rem !important;
+  }
+
   .sidebar {
     transform: translateX(-100%);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);

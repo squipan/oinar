@@ -91,6 +91,9 @@
                         <button class="mobile-toggle" id="mobile-toggle"><i class="fas fa-bars"></i></button>
                         <h3 style="font-family: var(--font-family); font-weight:600; font-size:1.1rem; color: var(--text-secondary);"
                             data-i18n="top_overview">Business Overview</h3>
+                        <button class="btn btn-primary topbar-left-new-order" onclick="openModal('modal-order')" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; align-items: center; gap: 0.4rem;">
+                            <i class="fas fa-plus"></i> <span data-i18n="btn_new_order">New Order</span>
+                        </button>
                     </div>
                     <div class="topbar-right">
                         <button class="btn btn-outline" id="lang-toggle" onclick="toggleLanguage()"
