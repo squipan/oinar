@@ -70,7 +70,7 @@ const i18n = {
     'metric_net_profit': 'Net Profit',
     'metric_total_clients': 'Total Clients',
     'title_for_printing': 'For Printing',
-    'title_active_orders': 'Active Orders',
+    'title_active_orders': 'For Shipping',
     'title_past_orders': 'Past Orders',
     'title_active_tasks': 'Active Tasks',
     'title_completed_tasks': 'Completed Tasks',
@@ -910,14 +910,14 @@ function renderRecentTasks() {
           ${t('th_priority')}: <span class="badge ${priorityClass}" style="font-size: 0.65rem; padding: 0.1rem 0.35rem;">${t(displayPriority) || t('Medium')}</span>
         </div>
       </td>
-      <td class="col-priority" data-label="${t('th_priority')}"><span class="badge ${priorityClass}">${t(displayPriority) || t('Medium')}</span></td>
-      <td data-label="${t('th_items')}">${itemsDisplay}</td>
-      <td data-label="${t('th_deadline')}">${formatDate(tRow.dueDate)}</td>
       <td data-label="${t('th_printing_done')}" style="text-align: center;">
          <button class="btn btn-outline" style="font-size:0.8rem; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; gap: 0.4rem;" onclick="completePrintingTask('${tRow.id}')">
            <i class="fas fa-check"></i> ${t('label_yes')}
          </button>
       </td>
+      <td class="col-priority" data-label="${t('th_priority')}"><span class="badge ${priorityClass}">${t(displayPriority) || t('Medium')}</span></td>
+      <td data-label="${t('th_items')}">${itemsDisplay}</td>
+      <td data-label="${t('th_deadline')}">${formatDate(tRow.dueDate)}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -956,7 +956,7 @@ function completePrintingTask(taskId) {
 // --- ORDERS ---
 function loadOrders() {
   const orders = getAll('orders');
-  let activeOrders = orders.filter(o => !o.shipped && o.status !== 'Finished' && o.status !== '完了');
+  let activeOrders = orders.filter(o => !o.shipped && (o.status === 'Ready for Shipping' || o.status === '発送待ち'));
   let pastOrders = orders.filter(o => o.shipped || o.status === 'Finished' || o.status === '完了');
 
   // Update active orders count badge in sidebar and card header
