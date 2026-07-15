@@ -1244,46 +1244,10 @@ tbody tr:hover {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   DASHBOARD PERIOD PICKER — Two-level Year + Month
-   ═══════════════════════════════════════════════════════════════ */
-.dashboard-period-picker {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.period-select {
-  padding: 0.4rem 0.8rem;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
-  font-weight: 500;
-  font-size: 0.9rem;
-  background-color: var(--surface-color);
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  font-family: var(--font-family);
-}
-
-.period-select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.18);
-}
-
-.period-select--year {
-  min-width: 140px;
-}
-
-.period-select--month {
-  min-width: 110px;
-  /* Slides in smoothly */
-  animation: slideInMonth 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes slideInMonth {
-  from { opacity: 0; transform: translateX(-6px) scale(0.95); }
-  to   { opacity: 1; transform: translateX(0) scale(1); }
+/* ── Hide legacy selects permanently ── */
+#dashboard-period,
+#dashboard-month {
+  display: none !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1370,24 +1334,10 @@ tbody tr:hover {
     box-shadow: 4px 0 32px rgba(0,0,0,0.12) !important;
   }
 
-  /* ── Glass Period Selects ── */
-  .period-select {
-    background: rgba(255,255,255,0.72) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(255,255,255,0.5) !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
-    font-size: 0.82rem !important;
-    padding: 0.35rem 0.6rem !important;
-    border-radius: 10px !important;
-  }
-
-  .period-select--year { min-width: 110px !important; }
-  .period-select--month { min-width: 88px !important; }
-
-  .dashboard-period-picker {
-    gap: 0.35rem;
-    flex-wrap: nowrap;
+  /* Space helper for hidden select wrapper */
+  .dashboard-period-picker-container {
+    display: inline-flex;
+    align-items: center;
   }
 
   /* ── Premium Button Styles ── */
@@ -1505,7 +1455,7 @@ tbody tr:hover {
     gap: 0.75rem !important;
   }
 
-  .dashboard-period-picker {
+  .dashboard-period-picker-container {
     width: 100%;
     justify-content: flex-start;
   }
@@ -1547,6 +1497,11 @@ tbody tr:hover {
 }
 
 /* iOS Frosted Glass Sheet */
+#modal-ios-picker {
+  align-items: flex-end !important;
+  justify-content: center !important;
+}
+
 .ios-picker-sheet {
   background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: saturate(180%) blur(24px) !important;
