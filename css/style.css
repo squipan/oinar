@@ -1510,3 +1510,228 @@ tbody tr:hover {
     justify-content: flex-start;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   CUPERTINO iOS DRUM SELECTOR STYLING
+   ═══════════════════════════════════════════════════════════════ */
+.ios-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.ios-trigger-btn:hover {
+  background: var(--border-color);
+  transform: scale(1.02);
+}
+
+.ios-trigger-btn i {
+  font-size: 0.95rem;
+  color: var(--primary);
+}
+
+.ios-trigger-btn i.fa-chevron-down {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+/* iOS Frosted Glass Sheet */
+.ios-picker-sheet {
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: saturate(180%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.6) !important;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 20px 20px 0 0;
+  padding-bottom: calc(1.2rem + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 45px rgba(0,0,0,0.12);
+  transform: translateY(100%);
+  transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-overlay.active .ios-picker-sheet {
+  transform: translateY(0);
+}
+
+.ios-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+/* iOS top pill indicator */
+.ios-picker-sheet::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 4px;
+  background: rgba(0,0,0,0.18);
+  border-radius: 2px;
+  margin: 0.6rem auto 0;
+  order: -1;
+}
+
+.ios-picker-title {
+  font-family: var(--font-family);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ios-picker-btn-cancel,
+.ios-picker-btn-done {
+  background: none;
+  border: none;
+  color: #007aff;
+  font-size: 1rem;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  padding: 0.2rem 0.5rem;
+}
+
+.ios-picker-btn-cancel:hover,
+.ios-picker-btn-done:hover {
+  opacity: 0.7;
+}
+
+.ios-picker-btn-done {
+  font-weight: 600;
+}
+
+.ios-picker-body {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  background: rgba(0,0,0,0.01);
+}
+
+/* Glass target focus ring */
+.ios-picker-glass-highlight {
+  position: absolute;
+  top: 80px;
+  left: 12px;
+  right: 12px;
+  height: 40px;
+  background: rgba(0,0,0,0.035);
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: inset 0 0.5px 0.5px rgba(0,0,0,0.05), 0 0.5px 0 rgba(255,255,255,0.4);
+}
+
+/* Top & Bottom Cylinder shadows */
+.ios-picker-body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 60%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ios-picker-body::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 60%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ios-picker-wheels-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.ios-picker-column {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.ios-picker-wheel {
+  height: 200px;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  position: relative;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.ios-picker-wheel::-webkit-scrollbar {
+  display: none;
+}
+
+.ios-picker-wheel-scroll-content {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  transform-style: preserve-3d;
+}
+
+.ios-picker-item {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  scroll-snap-align: center;
+  backface-visibility: hidden;
+  transition: transform 0.12s ease-out, opacity 0.12s ease-out;
+  user-select: none;
+}
+
+.ios-picker-item.active {
+  color: #000000;
+  font-weight: 600;
+}
+
+/* Cupertino glass overlay theme styling */
+@media (max-width: 768px) {
+  .ios-trigger-btn {
+    background: rgba(255, 255, 255, 0.72) !important;
+    backdrop-filter: saturate(180%) blur(16px) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(16px) !important;
+    border: 1px solid rgba(255,255,255,0.55) !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05) !important;
+  }
+  
+  .ios-picker-sheet {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.6) !important;
+  }
+}

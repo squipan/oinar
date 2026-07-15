@@ -523,6 +523,7 @@ function applyLanguage(lang) {
 
   updatePriceLabels();
   setupClientDatePicker();
+  updatePeriodPickerLabel();
 }
 
 function formatCurrency(amount) {
@@ -902,6 +903,7 @@ function loadDashboardData() {
   document.getElementById('metric-orders').textContent = totalOrders;
   document.getElementById('metric-clients').textContent = totalClients;
 
+  updatePeriodPickerLabel();
   renderRecentTasks();
 }
 
@@ -2061,5 +2063,210 @@ function migrateHistoricalData() {
 
   if (migrated) {
     console.log('[Migration] Migrated legacy orders and synchronized client states');
+  }
+}
+
+// ── iOS CUPERTINO DRUM WHEEL PICKER FUNCTIONS ──
+let lastSelectedYearVal = null;
+
+function openIOSPicker() {
+  const modal = document.getElementById('modal-ios-picker');
+  if (!modal) return;
+
+  const yearContent = document.getElementById('wheel-year-content');
+  if (yearContent) {
+    yearContent.innerHTML = '';
+    const periodSelect = document.getElementById('dashboard-period');
+    if (periodSelect) {
+      Array.from(periodSelect.options).forEach(opt => {
+        if (opt.disabled) return;
+        const div = document.createElement('div');
+        div.className = 'ios-picker-item';
+        div.setAttribute('data-value', opt.value);
+        div.textContent = opt.textContent;
+        yearContent.appendChild(div);
+      });
+    }
+  }
+
+  modal.classList.add('active');
+
+  const periodSelect = document.getElementById('dashboard-period');
+  const currentYearVal = periodSelect ? periodSelect.value : 'all';
+
+  setTimeout(() => {
+    scrollToValue('wheel-year', currentYearVal);
+
+    const monthCol = document.getElementById('wheel-month-col');
+    if (currentYearVal.startsWith('year-')) {
+      const yr = currentYearVal.split('-')[1];
+      populateIOSMonths(yr);
+      monthCol.style.display = 'block';
+
+      const monthSelect = document.getElementById('dashboard-month');
+      const currentMonthVal = monthSelect ? monthSelect.value : 'all-months';
+      setTimeout(() => {
+        scrollToValue('wheel-month', currentMonthVal);
+      }, 20);
+    } else {
+      monthCol.style.display = 'none';
+    }
+  }, 50);
+}
+
+function populateIOSMonths(yr) {
+  const content = document.getElementById('wheel-month-content');
+  if (!content) return;
+  content.innerHTML = '';
+  const lang = getLanguage();
+  const months = lang === 'jp'
+    ? ['全月', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+    : ['All Months', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  months.forEach((label, idx) => {
+    const div = document.createElement('div');
+    div.className = 'ios-picker-item';
+    div.setAttribute('data-value', idx === 0 ? 'all-months' : `${yr}-${String(idx).padStart(2, '0')}`);
+    div.textContent = label;
+    content.appendChild(div);
+  });
+
+  setTimeout(() => {
+    updateWheelTransform('wheel-month');
+  }, 10);
+}
+
+function closeIOSPicker(save) {
+  const modal = document.getElementById('modal-ios-picker');
+  if (!modal) return;
+
+  if (save) {
+    const yearWheel = document.getElementById('wheel-year');
+    const yearIndex = Math.round(yearWheel.scrollTop / 40);
+    const yearItems = yearWheel.querySelectorAll('.ios-picker-item');
+    const activeYearItem = yearItems[yearIndex];
+
+    if (activeYearItem) {
+      const yearVal = activeYearItem.getAttribute('data-value');
+      const periodSelect = document.getElementById('dashboard-period');
+      if (periodSelect) {
+        periodSelect.value = yearVal;
+        syncMonthDropdown(yearVal);
+
+        if (yearVal.startsWith('year-')) {
+          const monthWheel = document.getElementById('wheel-month');
+          const monthIndex = Math.round(monthWheel.scrollTop / 40);
+          const monthItems = monthWheel.querySelectorAll('.ios-picker-item');
+          const activeMonthItem = monthItems[monthIndex];
+          if (activeMonthItem) {
+            const monthVal = activeMonthItem.getAttribute('data-value');
+            const monthSelect = document.getElementById('dashboard-month');
+            if (monthSelect) {
+              monthSelect.value = monthVal;
+            }
+          }
+        }
+
+        updatePeriodPickerLabel();
+        loadDashboardData();
+      }
+    }
+  }
+
+  modal.classList.remove('active');
+}
+
+function scrollToValue(wheelId, value) {
+  const wheel = document.getElementById(wheelId);
+  if (!wheel) return;
+  const items = wheel.querySelectorAll('.ios-picker-item');
+  let targetIndex = 0;
+  items.forEach((item, idx) => {
+    if (item.getAttribute('data-value') === value) {
+      targetIndex = idx;
+    }
+  });
+
+  wheel.scrollTop = targetIndex * 40;
+  updateWheelTransform(wheelId);
+}
+
+function onWheelScroll(type) {
+  const wheelId = `wheel-${type}`;
+  updateWheelTransform(wheelId);
+
+  const wheel = document.getElementById(wheelId);
+  const scrollTop = wheel.scrollTop;
+  const index = Math.round(scrollTop / 40);
+  const items = wheel.querySelectorAll('.ios-picker-item');
+  const activeItem = items[index];
+  if (!activeItem) return;
+
+  const val = activeItem.getAttribute('data-value');
+
+  if (type === 'year') {
+    const monthCol = document.getElementById('wheel-month-col');
+    if (val.startsWith('year-')) {
+      const yr = val.split('-')[1];
+      if (lastSelectedYearVal !== val) {
+        lastSelectedYearVal = val;
+        populateIOSMonths(yr);
+        monthCol.style.display = 'block';
+      }
+    } else {
+      lastSelectedYearVal = null;
+      monthCol.style.display = 'none';
+    }
+  }
+}
+
+function updateWheelTransform(wheelId) {
+  const wheel = document.getElementById(wheelId);
+  if (!wheel) return;
+  const scrollTop = wheel.scrollTop;
+  const itemHeight = 40;
+  const items = wheel.querySelectorAll('.ios-picker-item');
+
+  items.forEach((item, index) => {
+    const itemOffsetTop = index * itemHeight;
+    const diff = itemOffsetTop - scrollTop;
+    const angle = (diff / itemHeight) * -18;
+    const opacity = Math.max(0.3, 1 - Math.abs(diff / itemHeight) * 0.25);
+    const scale = Math.max(0.85, 1 - Math.abs(diff / itemHeight) * 0.05);
+
+    item.style.transform = `rotateX(${angle}deg) translateZ(80px) scale(${scale})`;
+    item.style.opacity = opacity;
+
+    if (Math.round(scrollTop / itemHeight) === index) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+}
+
+function updatePeriodPickerLabel() {
+  const labelEl = document.getElementById('period-picker-label');
+  if (!labelEl) return;
+
+  const periodSelect = document.getElementById('dashboard-period');
+  const monthSelect = document.getElementById('dashboard-month');
+  if (!periodSelect) return;
+
+  const periodVal = periodSelect.value;
+  if (periodVal.startsWith('year-')) {
+    const yr = periodVal.split('-')[1];
+    const monthVal = monthSelect ? monthSelect.value : 'all-months';
+    if (monthVal && monthVal !== 'all-months') {
+      const lang = getLanguage();
+      const mNum = parseInt(monthVal.split('-')[1]);
+      labelEl.textContent = lang === 'jp' ? `${yr}年 ${mNum}月` : `${yr} - ${mNum}`;
+    } else {
+      const lang = getLanguage();
+      labelEl.textContent = lang === 'jp' ? `${yr}年` : `${yr}`;
+    }
+  } else {
+    const activeOpt = periodSelect.querySelector(`option[value="${periodVal}"]`);
+    labelEl.textContent = activeOpt ? activeOpt.textContent : periodVal;
   }
 }
