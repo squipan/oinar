@@ -2142,7 +2142,7 @@ function closeIOSPicker(save) {
 
   if (save) {
     const yearWheel = document.getElementById('wheel-year');
-    const yearIndex = Math.round(yearWheel.scrollTop / 40);
+    const yearIndex = Math.round(yearWheel.scrollTop / 36);
     const yearItems = yearWheel.querySelectorAll('.ios-picker-item');
     const activeYearItem = yearItems[yearIndex];
 
@@ -2155,7 +2155,7 @@ function closeIOSPicker(save) {
 
         if (yearVal.startsWith('year-')) {
           const monthWheel = document.getElementById('wheel-month');
-          const monthIndex = Math.round(monthWheel.scrollTop / 40);
+          const monthIndex = Math.round(monthWheel.scrollTop / 36);
           const monthItems = monthWheel.querySelectorAll('.ios-picker-item');
           const activeMonthItem = monthItems[monthIndex];
           if (activeMonthItem) {
@@ -2187,7 +2187,7 @@ function scrollToValue(wheelId, value) {
     }
   });
 
-  wheel.scrollTop = targetIndex * 40;
+  wheel.scrollTop = targetIndex * 36;
   updateWheelTransform(wheelId);
 }
 
@@ -2197,7 +2197,7 @@ function onWheelScroll(type) {
 
   const wheel = document.getElementById(wheelId);
   const scrollTop = wheel.scrollTop;
-  const index = Math.round(scrollTop / 40);
+  const index = Math.round(scrollTop / 36);
   const items = wheel.querySelectorAll('.ios-picker-item');
   const activeItem = items[index];
   if (!activeItem) return;
@@ -2224,17 +2224,27 @@ function updateWheelTransform(wheelId) {
   const wheel = document.getElementById(wheelId);
   if (!wheel) return;
   const scrollTop = wheel.scrollTop;
-  const itemHeight = 40;
+  const itemHeight = 36;
   const items = wheel.querySelectorAll('.ios-picker-item');
+  const R = 80; // Cylinder radius
 
   items.forEach((item, index) => {
     const itemOffsetTop = index * itemHeight;
     const diff = itemOffsetTop - scrollTop;
-    const angle = (diff / itemHeight) * -18;
-    const opacity = Math.max(0.3, 1 - Math.abs(diff / itemHeight) * 0.25);
-    const scale = Math.max(0.85, 1 - Math.abs(diff / itemHeight) * 0.05);
 
-    item.style.transform = `rotateX(${angle}deg) translateZ(80px) scale(${scale})`;
+    // Calculate angle in degrees (positive when below center)
+    const angle = (diff / itemHeight) * 18;
+
+    // Cylinder Y position and Y correction
+    const angleRad = (angle * Math.PI) / 180;
+    const cylinderY = R * Math.sin(angleRad);
+    const yCorrection = cylinderY - diff;
+
+    const opacity = Math.max(0.2, 1 - Math.abs(diff / itemHeight) * 0.28);
+    const scale = Math.max(0.85, 1 - Math.abs(diff / itemHeight) * 0.04);
+
+    // Apply translation along Y and Z, and tilt rotation
+    item.style.transform = `translateY(${yCorrection}px) rotateX(${-angle}deg) translateZ(${R}px) scale(${scale})`;
     item.style.opacity = opacity;
 
     if (Math.round(scrollTop / itemHeight) === index) {
