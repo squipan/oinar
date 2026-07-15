@@ -116,13 +116,20 @@
                     <section id="view-dashboard" class="view-section active">
                         <div class="section-header">
                             <h2 data-i18n="nav_dashboard">Dashboard</h2>
-                            <select id="dashboard-period" onchange="loadDashboardData()"
-                                style="width: 180px; padding: 0.4rem 0.8rem; border-radius: 8px; border: 1px solid var(--border-color); font-weight: 500; font-size: 0.9rem; background-color: var(--surface-color);">
-                                <option value="all" data-i18n="period_all">All Time</option>
-                                <option value="this-month" data-i18n="period_this_month">This Month</option>
-                                <option value="last-month" data-i18n="period_last_month">Last Month</option>
-                                <option value="this-year" data-i18n="period_this_year">This Year</option>
-                            </select>
+                            <div class="dashboard-period-picker" id="dashboard-period-picker">
+                                <select id="dashboard-period" onchange="onDashboardYearChange()"
+                                    class="period-select period-select--year">
+                                    <option value="all" data-i18n="period_all">All Time</option>
+                                    <option value="this-month" data-i18n="period_this_month">This Month</option>
+                                    <option value="last-month" data-i18n="period_last_month">Last Month</option>
+                                    <option value="this-year" data-i18n="period_this_year">This Year</option>
+                                </select>
+                                <select id="dashboard-month" onchange="loadDashboardData()"
+                                    class="period-select period-select--month"
+                                    style="display:none;">
+                                    <option value="all-months" data-i18n="period_all_months">All Months</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="metric-grid">

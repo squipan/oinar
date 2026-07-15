@@ -202,6 +202,9 @@ const i18n = {
     'period_this_month': 'This Month',
     'period_last_month': 'Last Month',
     'period_this_year': 'This Year',
+    'period_all_months': 'All Months',
+    'period_year_label': 'Year',
+    'period_month_label': 'Month',
     'label_qty_wasted': 'Qty Wasted',
     'label_save': 'Save',
     'label_yes': 'Yes',
@@ -394,6 +397,9 @@ const i18n = {
     'period_this_month': '今月',
     'period_last_month': '先月',
     'period_this_year': '今年',
+    'period_all_months': '全月',
+    'period_year_label': '年',
+    'period_month_label': '月',
     'label_qty_wasted': '枚数',
     'label_save': '保存する',
     'label_yes': 'はい',
@@ -761,9 +767,15 @@ function getPeriodPrefix() {
     const ly = m === 0 ? y - 1 : y;
     return { type: 'month', prefix: `${ly}-${String(lm + 1).padStart(2, '0')}-` };
   }
-  // Specific year: value is "year-2024", "year-2025", etc.
+  // Specific year selected — check if a specific month is also selected
   if (period.startsWith('year-')) {
     const yr = period.split('-')[1];
+    const monthSel = document.getElementById('dashboard-month');
+    const monthVal = monthSel ? monthSel.value : 'all-months';
+    if (monthVal && monthVal !== 'all-months') {
+      // monthVal is like "2025-07" → prefix becomes "2025-07-"
+      return { type: 'month', prefix: `${monthVal}-` };
+    }
     return { type: 'year', prefix: `${yr}-` };
   }
   return { type: 'all', prefix: '' };
@@ -803,6 +815,53 @@ function populateDashboardYears() {
 
   // Restore the previously selected value so the filter isn't lost
   if (currentValue) sel.value = currentValue;
+
+  // Sync the month dropdown visibility
+  syncMonthDropdown(currentValue);
+}
+
+function populateDashboardMonths(yr) {
+  const monthSel = document.getElementById('dashboard-month');
+  if (!monthSel) return;
+
+  const prevMonthVal = monthSel.value;
+  monthSel.innerHTML = '';
+
+  const lang = getLanguage();
+  const months = lang === 'jp'
+    ? ['全月', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+    : ['All Months', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  months.forEach((label, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx === 0 ? 'all-months' : `${yr}-${String(idx).padStart(2, '0')}`;
+    opt.textContent = label;
+    monthSel.appendChild(opt);
+  });
+
+  // Restore previously selected month if still valid
+  if (prevMonthVal && prevMonthVal !== 'all-months' && prevMonthVal.startsWith(yr)) {
+    monthSel.value = prevMonthVal;
+  }
+}
+
+function syncMonthDropdown(periodValue) {
+  const monthSel = document.getElementById('dashboard-month');
+  if (!monthSel) return;
+  if (periodValue && periodValue.startsWith('year-')) {
+    const yr = periodValue.split('-')[1];
+    populateDashboardMonths(yr);
+    monthSel.style.display = '';
+  } else {
+    monthSel.style.display = 'none';
+  }
+}
+
+function onDashboardYearChange() {
+  const sel = document.getElementById('dashboard-period');
+  const val = sel ? sel.value : 'all';
+  syncMonthDropdown(val);
+  loadDashboardData();
 }
 
 function filterByPeriod(items, dateField = 'date') {

@@ -1243,3 +1243,270 @@ tbody tr:hover {
     max-height: 98vh !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   DASHBOARD PERIOD PICKER — Two-level Year + Month
+   ═══════════════════════════════════════════════════════════════ */
+.dashboard-period-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.period-select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  font-weight: 500;
+  font-size: 0.9rem;
+  background-color: var(--surface-color);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: var(--font-family);
+}
+
+.period-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.18);
+}
+
+.period-select--year {
+  min-width: 140px;
+}
+
+.period-select--month {
+  min-width: 110px;
+  /* Slides in smoothly */
+  animation: slideInMonth 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes slideInMonth {
+  from { opacity: 0; transform: translateX(-6px) scale(0.95); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   APPLE GLASS UI — iPhone/Mobile Only
+   Triggered at ≤ 768px — Premium frosted glass aesthetic
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Glassmorphism Body Background ── */
+  body {
+    background: linear-gradient(145deg, #fef9f0 0%, #fdebd0 35%, #fce4c2 65%, #fdf6ec 100%) !important;
+    background-attachment: fixed !important;
+  }
+
+  /* ── Glass Topbar ── */
+  .topbar {
+    background: rgba(255, 255, 255, 0.72) !important;
+    backdrop-filter: saturate(180%) blur(20px) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.45) !important;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.06) !important;
+  }
+
+  /* ── Glass Cards ── */
+  .card {
+    background: rgba(255, 255, 255, 0.78) !important;
+    backdrop-filter: saturate(180%) blur(16px) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.55) !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0,0,0,0.04) !important;
+    border-radius: 16px !important;
+  }
+
+  /* ── Glass Metric Cards ── */
+  .metric-card {
+    background: rgba(255, 255, 255, 0.82) !important;
+    backdrop-filter: saturate(180%) blur(16px) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+    border-radius: 16px !important;
+  }
+
+  /* ── Hero card keeps its gradient but gets glass border ── */
+  .metric-card--hero {
+    background: linear-gradient(135deg, rgba(26,42,26,0.96) 0%, rgba(30,58,40,0.96) 40%, rgba(45,90,61,0.96) 100%) !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    box-shadow: 0 8px 32px rgba(15, 81, 50, 0.28), 0 2px 8px rgba(0,0,0,0.15) !important;
+  }
+
+  /* ── Glass Bottom Nav ── */
+  .bottom-nav {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: saturate(200%) blur(24px) !important;
+    -webkit-backdrop-filter: saturate(200%) blur(24px) !important;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 -1px 0 rgba(0,0,0,0.06), 0 -8px 32px rgba(0,0,0,0.05) !important;
+  }
+
+  .bottom-nav-link {
+    transition: color 0.18s ease, transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    border-radius: 14px;
+    margin: 4px 2px;
+  }
+
+  .bottom-nav-link.active {
+    transform: scale(1.08) !important;
+  }
+
+  .bottom-nav-link i {
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  }
+
+  .bottom-nav-link.active i {
+    transform: scale(1.12) !important;
+  }
+
+  /* ── Glass Sidebar (slides in) ── */
+  .sidebar {
+    background: rgba(255, 255, 255, 0.88) !important;
+    backdrop-filter: saturate(180%) blur(24px) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
+    border-right: 1px solid rgba(255,255,255,0.5) !important;
+    box-shadow: 4px 0 32px rgba(0,0,0,0.12) !important;
+  }
+
+  /* ── Glass Period Selects ── */
+  .period-select {
+    background: rgba(255,255,255,0.72) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255,255,255,0.5) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+    font-size: 0.82rem !important;
+    padding: 0.35rem 0.6rem !important;
+    border-radius: 10px !important;
+  }
+
+  .period-select--year { min-width: 110px !important; }
+  .period-select--month { min-width: 88px !important; }
+
+  .dashboard-period-picker {
+    gap: 0.35rem;
+    flex-wrap: nowrap;
+  }
+
+  /* ── Premium Button Styles ── */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%) !important;
+    box-shadow: 0 2px 12px rgba(212, 163, 115, 0.35) !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.2px !important;
+  }
+
+  .btn-primary:hover, .btn-primary:active {
+    box-shadow: 0 4px 16px rgba(212, 163, 115, 0.5) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .btn-outline {
+    background: rgba(255,255,255,0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border-radius: 12px !important;
+  }
+
+  /* ── Table rows glass hover ── */
+  tbody tr:hover {
+    background: rgba(212, 163, 115, 0.06) !important;
+  }
+
+  /* ── Section header badges — pill style ── */
+  .badge {
+    border-radius: 20px !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.3px !important;
+  }
+}
+
+/* ── Glass Modal Sheet (iPhone bottom sheet) ── */
+@media (max-width: 580px) {
+  .modal-overlay {
+    background: rgba(0, 0, 0, 0.35) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+  }
+
+  .modal {
+    background: rgba(255, 255, 255, 0.92) !important;
+    backdrop-filter: saturate(180%) blur(24px) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    border-bottom: none !important;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.12) !important;
+    /* Smooth spring slide-up */
+    transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1) !important;
+  }
+
+  /* Drag handle pill for iOS feel */
+  .modal-header::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: rgba(0,0,0,0.18);
+    border-radius: 2px;
+    margin: 0 auto 0.6rem;
+  }
+
+  /* Glass form inputs inside modal */
+  .modal input,
+  .modal select,
+  .modal textarea {
+    background: rgba(255,255,255,0.8) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    border-radius: 10px !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  }
+
+  .modal input:focus,
+  .modal select:focus,
+  .modal textarea:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.2), inset 0 1px 2px rgba(0,0,0,0.04) !important;
+    background: rgba(255,255,255,0.95) !important;
+  }
+}
+
+/* ── Client Detail Popup glass style on mobile ── */
+@media (max-width: 580px) {
+  .client-detail-popup {
+    background: rgba(255,255,255,0.92) !important;
+    backdrop-filter: saturate(180%) blur(24px) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
+    border: 1px solid rgba(255,255,255,0.6) !important;
+    border-bottom: none !important;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.1) !important;
+    transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1) !important;
+  }
+
+  .client-detail-popup::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: rgba(0,0,0,0.18);
+    border-radius: 2px;
+    margin: 0 auto 1rem;
+  }
+}
+
+/* ── Section-header responsive layout for period picker ── */
+@media (max-width: 480px) {
+  .section-header {
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+  }
+
+  .dashboard-period-picker {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
