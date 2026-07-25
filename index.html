@@ -127,13 +127,6 @@
                                 <select id="dashboard-month" onchange="loadDashboardData()" style="display:none;">
                                     <option value="all-months" data-i18n="period_all_months">All Months</option>
                                 </select>
-                                
-                                <!-- iOS Cupertino style trigger button -->
-                                <button id="period-picker-trigger" class="ios-trigger-btn" onclick="openIOSPicker()">
-                                    <i class="far fa-calendar-alt"></i>
-                                    <span id="period-picker-label" data-i18n="period_all">All Time</span>
-                                    <i class="fas fa-chevron-down"></i>
-                                </button>
                             </div>
                         </div>
 
@@ -1064,38 +1057,6 @@
             <div class="client-detail-row" id="cdp-comment-row" style="display:none;">
                 <span class="detail-label" data-i18n="label_comments">Comments</span>
                 <span class="detail-value comment-text" id="cdp-comment"></span>
-            </div>
-        </div>
-    </div>
-
-    <!-- iOS-style Cupertino Drum Picker Modal -->
-    <div class="modal-overlay" id="modal-ios-picker" onclick="if (event.target === this) closeIOSPicker(false)">
-        <div class="ios-picker-sheet">
-            <div class="ios-picker-header">
-                <button class="ios-picker-btn-cancel" onclick="closeIOSPicker(false)">Cancel</button>
-                <span class="ios-picker-title" data-i18n="nav_dashboard">Select Period</span>
-                <button class="ios-picker-btn-done" onclick="closeIOSPicker(true)">Done</button>
-            </div>
-            <div class="ios-picker-body">
-                <div class="ios-picker-glass-highlight"></div>
-                <div class="ios-picker-wheels-container">
-                    <!-- Left Wheel: Year / Shortcuts -->
-                    <div class="ios-picker-column">
-                        <div class="ios-picker-wheel" id="wheel-year" onscroll="onWheelScroll('year')">
-                            <div class="ios-picker-wheel-scroll-content" id="wheel-year-content">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Right Wheel: Month -->
-                    <div class="ios-picker-column" id="wheel-month-col" style="display: none;">
-                        <div class="ios-picker-wheel" id="wheel-month" onscroll="onWheelScroll('month')">
-                            <div class="ios-picker-wheel-scroll-content" id="wheel-month-content">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
