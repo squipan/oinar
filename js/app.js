@@ -1177,6 +1177,10 @@ function setupOrderCalculators() {
     }
   });
   document.getElementById('item-atsugami')?.addEventListener('change', calculateOrderMath);
+  document.getElementById('order-date')?.addEventListener('change', () => {
+    autoFillDeadline();
+    calculateOrderMath();
+  });
   document.getElementById('order-express')?.addEventListener('change', () => {
     calculateOrderMath();
     autoFillDeadline();
