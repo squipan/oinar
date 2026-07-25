@@ -38,7 +38,7 @@ const i18n = {
     'nav_logout': 'Logout',
     'title_profits_calendar': 'Profits Calendar',
     'profit_order_profit': 'Order Profit',
-    'profit_client_orders': 'Client Orders',
+    'profit_client_count': 'Clients',
     'top_overview': 'Business Overview',
     'btn_new_order': 'New Order',
     'dash_profit': 'Total Profit',
@@ -236,7 +236,7 @@ const i18n = {
     'nav_logout': 'ログアウト',
     'title_profits_calendar': '利益カレンダー',
     'profit_order_profit': '注文利益',
-    'profit_client_orders': '注文件数',
+    'profit_client_count': '顧客数',
     'top_overview': 'ビジネス概要',
     'btn_new_order': '新規注文',
     'dash_profit': '実質利益',
@@ -1983,18 +1983,18 @@ function loadProfitsView() {
 
   const yearStr = String(currentProfitYear);
   let yearTotalProfit = 0;
-  let yearTotalOrders = 0;
+  let yearTotalClients = 0;
 
   for (let m = 1; m <= 12; m++) {
     const monthStr = `${yearStr}-${String(m).padStart(2, '0')}`;
     
-    // Clients who placed order(s) in this month
+    // Unique clients who placed order(s) in this month
     const monthClients = allClients.filter(c => c.date && c.date.startsWith(monthStr));
     const monthProfit = monthClients.reduce((sum, c) => sum + (c.profit || 0), 0);
-    const monthOrders = monthClients.reduce((sum, c) => sum + (c.orders || 0), 0);
+    const clientCount = monthClients.length;
 
     yearTotalProfit += monthProfit;
-    yearTotalOrders += monthOrders;
+    yearTotalClients += clientCount;
 
     const monthName = lang === 'jp'
       ? `${m}月`
@@ -2002,7 +2002,7 @@ function loadProfitsView() {
 
     const card = document.createElement('div');
     const isCurrentMonth = new Date().getFullYear() === currentProfitYear && (new Date().getMonth() + 1) === m;
-    card.className = `profit-month-card ${isCurrentMonth ? 'current-month' : ''} ${monthOrders === 0 ? 'no-data' : ''}`;
+    card.className = `profit-month-card ${isCurrentMonth ? 'current-month' : ''} ${clientCount === 0 ? 'no-data' : ''}`;
     
     card.innerHTML = `
       <div class="profit-month-header">
@@ -2011,12 +2011,12 @@ function loadProfitsView() {
       </div>
       <div class="profit-month-body">
         <div class="profit-metric-item">
-          <span class="profit-metric-label" data-i18n="profit_order_profit">${t('profit_order_profit')}</span>
+          <span class="profit-metric-label"><i class="fas fa-coins" style="margin-right: 0.35rem; opacity: 0.75;"></i><span data-i18n="profit_order_profit">${t('profit_order_profit')}</span></span>
           <span class="profit-metric-val profit-value ${monthProfit < 0 ? 'negative' : ''}">${formatCurrency(monthProfit)}</span>
         </div>
         <div class="profit-metric-item">
-          <span class="profit-metric-label" data-i18n="profit_client_orders">${t('profit_client_orders')}</span>
-          <span class="profit-metric-val">${monthOrders}${lang === 'jp' ? '件' : ' orders'}</span>
+          <span class="profit-metric-label"><i class="fas fa-users" style="margin-right: 0.35rem; opacity: 0.75;"></i><span data-i18n="profit_client_count">${t('profit_client_count')}</span></span>
+          <span class="profit-metric-val">${clientCount}${lang === 'jp' ? '件' : ' clients'}</span>
         </div>
       </div>
     `;
@@ -2026,7 +2026,7 @@ function loadProfitsView() {
   const yearProfitEl = document.getElementById('profit-year-total-profit');
   if (yearProfitEl) yearProfitEl.textContent = formatCurrency(yearTotalProfit);
 
-  const yearOrdersEl = document.getElementById('profit-year-total-orders');
-  if (yearOrdersEl) yearOrdersEl.textContent = `${yearTotalOrders}${lang === 'jp' ? '件' : ''}`;
+  const yearClientsEl = document.getElementById('profit-year-total-clients');
+  if (yearClientsEl) yearClientsEl.textContent = `${yearTotalClients}${lang === 'jp' ? '件' : ''}`;
 }
 

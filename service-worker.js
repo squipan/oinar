@@ -3,7 +3,7 @@
 // Enables offline use + PWA installability
 // =============================================
 
-const CACHE_NAME = 'oinar-v26';
+const CACHE_NAME = 'oinar-v28';
 
 // All files to cache for offline use
 const ASSETS_TO_CACHE = [
