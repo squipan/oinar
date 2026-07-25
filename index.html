@@ -70,8 +70,6 @@
                                 id="nav-active-orders-count" class="nav-badge" style="display: none;">0</span></a></li>
                     <li class="nav-item"><a href="#" class="nav-link" data-target="view-clients"><i
                                 class="fas fa-users"></i> <span data-i18n="nav_clients">Clients</span></a></li>
-                    <li class="nav-item"><a href="#" class="nav-link" data-target="view-tasks"><i
-                                class="fas fa-tasks"></i> <span data-i18n="nav_tasks">Tasks</span></a></li>
                     <li class="nav-item"><a href="#" class="nav-link" data-target="view-inventory"><i
                                 class="fas fa-boxes"></i> <span data-i18n="nav_inventory">Inventory</span></a></li>
                     <li class="nav-item"><a href="#" class="nav-link" data-target="view-settings"><i
@@ -180,9 +178,6 @@
                                     onclick="openModal('modal-client'); setClientDatePicker(new Date().toISOString().split('T')[0])"><i
                                         class="fas fa-user-plus"></i> <span data-i18n="add_client">Add
                                         Client</span></button>
-                                <button class="btn btn-outline" style="justify-content:flex-start;"
-                                    onclick="openModal('modal-task')"><i class="fas fa-tasks"></i> <span
-                                        data-i18n="add_task">Add Task</span></button>
                                 <button class="btn btn-primary" style="justify-content:flex-start;"
                                     onclick="openModal('modal-order')"><i class="fas fa-plus"></i> <span
                                         data-i18n="btn_new_order">New Order</span></button>
@@ -297,57 +292,6 @@
                                         </tr>
                                     </thead>
                                     <tbody id="clients-tbody"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- VIEW: TASKS -->
-                    <section id="view-tasks" class="view-section">
-                        <div class="section-header">
-                            <h2 data-i18n="nav_tasks">Tasks</h2>
-                            <button class="btn btn-primary" onclick="openModal('modal-task')"><i
-                                    class="fas fa-plus"></i> <span data-i18n="add_task">Add Task</span></button>
-                        </div>
-
-                        <!-- ACTIVE TASKS -->
-                        <div class="card" style="margin-bottom: 2rem;">
-                            <div class="card-header">
-                                <span class="card-title" data-i18n="title_active_tasks">Active Tasks</span>
-                            </div>
-                            <div class="table-responsive">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th data-i18n="nav_tasks">Task Description</th>
-                                            <th class="col-priority" data-i18n="th_priority">Priority</th>
-                                            <th class="col-deadline" data-i18n="order_deadline">Due Date</th>
-                                            <th class="col-status" data-i18n="order_status">Status</th>
-                                            <th data-i18n="th_actions">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tasks-tbody"></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- COMPLETED TASKS -->
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="card-title" data-i18n="title_completed_tasks">Completed Tasks</span>
-                            </div>
-                            <div class="table-responsive">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th data-i18n="nav_tasks">Task Description</th>
-                                            <th class="col-priority" data-i18n="th_priority">Priority</th>
-                                            <th class="col-deadline" data-i18n="order_deadline">Due Date</th>
-                                            <th class="col-status" data-i18n="order_status">Status</th>
-                                            <th data-i18n="th_actions">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="completed-tasks-tbody"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -826,50 +770,6 @@
         </div>
     </div>
 
-    <!-- TASK MODAL -->
-    <div class="modal-overlay" id="modal-task">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 data-i18n="add_task">Task Details</h3>
-                <button class="btn-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="form-task">
-                    <input type="hidden" id="task-id">
-                    <div class="form-group">
-                        <label data-i18n="nav_tasks">Task Description</label>
-                        <input type="text" id="task-title" required>
-                    </div>
-                    <div class="form-group" style="display:flex; gap:1rem;">
-                        <div style="flex:1;">
-                            <label data-i18n="order_deadline">Due Date</label>
-                            <input type="date" id="task-due" required>
-                        </div>
-                        <div style="flex:1;">
-                            <label data-i18n="th_priority">Priority</label>
-                            <select id="task-priority">
-                                <option value="High" data-i18n="High">High</option>
-                                <option value="Medium" data-i18n="Medium">Medium</option>
-                                <option value="Low" data-i18n="Low">Low</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="order_status">Status</label>
-                        <select id="task-status">
-                            <option value="To Do" data-i18n="To Do">To Do</option>
-                            <option value="Done" data-i18n="Done">Done</option>
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline modal-cancel" data-i18n="cancel">Cancel</button>
-                        <button type="submit" class="btn btn-primary" data-i18n="save_task">Save Task</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- MISPRINT / WASTE MODAL -->
     <div class="modal-overlay" id="modal-waste">
         <div class="modal">
@@ -1018,10 +918,6 @@
         <a class="bottom-nav-link" data-target="view-clients">
             <i class="fas fa-users"></i>
             <span>Clients</span>
-        </a>
-        <a class="bottom-nav-link" data-target="view-tasks">
-            <i class="fas fa-tasks"></i>
-            <span>Tasks</span>
         </a>
         <a class="bottom-nav-link" data-target="view-inventory">
             <i class="fas fa-boxes"></i>

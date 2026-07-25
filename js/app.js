@@ -447,7 +447,6 @@ async function refreshData() {
   applyLanguage(getLanguage());
   loadDashboardData();
   loadOrders();
-  loadTasks();
   loadInventory();
   loadSettings();
   loadClients();
@@ -484,7 +483,6 @@ document.addEventListener('DOMContentLoaded', () => {
       loadDashboardData();
       loadOrders();
       loadClients();
-      loadTasks();
       loadInventory();
       loadSettings();
       setupOrderCalculators();
@@ -648,7 +646,6 @@ function setupModals() {
   });
 
   document.getElementById('form-order')?.addEventListener('submit', handleOrderSubmit);
-  document.getElementById('form-task')?.addEventListener('submit', handleTaskSubmit);
   document.getElementById('form-waste')?.addEventListener('submit', handleWasteSubmit);
   document.getElementById('form-client')?.addEventListener('submit', handleClientSubmit);
 }
@@ -742,20 +739,6 @@ function editOrder(id) {
   calculateOrderMath();
 }
 
-function editTask(id) {
-  const t = getAll('tasks').find(x => x.id === id);
-  if (!t) return;
-  const modal = document.getElementById('modal-task');
-  modal.classList.add('active');
-  const form = modal.querySelector('form');
-  if (form) form.reset();
-  // Fill fields after reset
-  document.getElementById('task-id').value = t.id;
-  document.getElementById('task-title').value = t.title;
-  document.getElementById('task-due').value = t.dueDate;
-  document.getElementById('task-status').value = t.status;
-  document.getElementById('task-priority').value = t.priority;
-}
 
 // --- DASHBOARD ---
 function getPeriodPrefix() {
@@ -876,7 +859,6 @@ function filterByPeriod(items, dateField = 'date') {
 
 function loadDashboardData() {
   populateDashboardYears();
-  const tasks = getAll('tasks');
   const allClients = getAll('clients');
 
   const filteredClients = filterByPeriod(allClients, 'date');
@@ -884,7 +866,9 @@ function loadDashboardData() {
   const totalProfit = filteredClients.reduce((sum, c) => sum + (c.profit || 0), 0);
   const totalSales = filteredClients.reduce((sum, c) => sum + (c.sales || 0), 0);
   const totalOrders = filteredClients.reduce((sum, c) => sum + (c.orders || 0), 0);
-  const remainingTasks = tasks.filter(t => t.status === 'To Do' || t.status === '未完了').length;
+  const pendingPrintCount = getAll('orders').filter(o =>
+    !o.shipped && (o.status === 'Pending' || o.status === '進行中')
+  ).length;
 
   // Count all clients filtered by period
   const totalClients = filteredClients.length;
@@ -902,7 +886,7 @@ function loadDashboardData() {
   if (netEl) netEl.textContent = formatCurrency(netProfit);
 
   document.getElementById('metric-sales').textContent = formatCurrency(totalSales);
-  document.getElementById('metric-tasks').textContent = remainingTasks;
+  document.getElementById('metric-tasks').textContent = pendingPrintCount;
   document.getElementById('metric-orders').textContent = totalOrders;
   document.getElementById('metric-clients').textContent = totalClients;
 
@@ -914,33 +898,31 @@ function renderRecentTasks() {
   if (!tbody) return;
   tbody.innerHTML = '';
 
-  const activeTasks = getAll('tasks').filter(t => t.status === 'To Do' || t.status === '未完了');
+  // Drive printing queue from orders (Pending status) instead of task records
+  const pendingOrders = getAll('orders').filter(o =>
+    !o.shipped && (o.status === 'Pending' || o.status === '進行中')
+  ).sort((a, b) => (a.deadline || '') < (b.deadline || '') ? -1 : 1);
 
-  // Update the printing count badge
   const printCountEl = document.getElementById('printing-count');
   if (printCountEl) {
-    printCountEl.textContent = activeTasks.length > 0 ? `(${activeTasks.length})` : '';
+    printCountEl.textContent = pendingOrders.length > 0 ? `(${pendingOrders.length})` : '';
   }
 
-  if (activeTasks.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_tasks_yet')}</td></tr>`;
+  if (pendingOrders.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_tasks_to_do')}</td></tr>`;
     return;
   }
 
-  activeTasks.forEach(tRow => {
-    const order = getAll('orders').find(o => o.id === tRow.projectId);
-    const clientName = order ? order.buyerName : tRow.title;
-    // Express orders always show High priority
-    const isExpress = order && order.express;
-    const displayPriority = isExpress ? 'High' : tRow.priority;
+  pendingOrders.forEach(order => {
+    const isExpress = order.express;
+    const displayPriority = isExpress ? 'High' : calculateDynamicPriority(order.deadline, order.date);
     let priorityClass = 'status-todo';
     if (displayPriority === 'High') priorityClass = 'status-pending';
     if (displayPriority === 'Low') priorityClass = 'status-completed';
 
-    // Calculate total items for this order
     let totalItems = 0;
     let itemDetails = [];
-    if (order && order.items) {
+    if (order.items) {
       const items = order.items;
       const noshi = items.noshi || 0;
       const nagagata = items.nagagata || 0;
@@ -948,39 +930,39 @@ function renderRecentTasks() {
       const sealA = items.sealA || 0;
       const sealB = items.sealB || 0;
       totalItems = noshi + nagagata + pochi + sealA + sealB;
-      if (noshi > 0) itemDetails.push(`${t('noshi')}×${noshi}`);
-      if (nagagata > 0) itemDetails.push(`${t('nagagata')}×${nagagata}`);
-      if (pochi > 0) itemDetails.push(`${t('pochi')}×${pochi}`);
-      if (sealA > 0) itemDetails.push(`${t('sealA')}×${sealA}`);
-      if (sealB > 0) itemDetails.push(`${t('sealB')}×${sealB}`);
+      if (noshi > 0) itemDetails.push(`${t('noshi')}\u00d7${noshi}`);
+      if (nagagata > 0) itemDetails.push(`${t('nagagata')}\u00d7${nagagata}`);
+      if (pochi > 0) itemDetails.push(`${t('pochi')}\u00d7${pochi}`);
+      if (sealA > 0) itemDetails.push(`${t('sealA')}\u00d7${sealA}`);
+      if (sealB > 0) itemDetails.push(`${t('sealB')}\u00d7${sealB}`);
       const hofuchoMermaid = items.hofuchoMermaid || 0;
       const hofuchoGayo = items.hofuchoGayo || 0;
       const uketsukeSign = items.uketsukeSign || 0;
-      if (hofuchoMermaid > 0) itemDetails.push(`${t('hofuchoMermaid')}×${hofuchoMermaid}`);
-      if (hofuchoGayo > 0) itemDetails.push(`${t('hofuchoGayo')}×${hofuchoGayo}`);
-      if (uketsukeSign > 0) itemDetails.push(`${t('uketsukeSign')}×${uketsukeSign}`);
+      if (hofuchoMermaid > 0) itemDetails.push(`${t('hofuchoMermaid')}\u00d7${hofuchoMermaid}`);
+      if (hofuchoGayo > 0) itemDetails.push(`${t('hofuchoGayo')}\u00d7${hofuchoGayo}`);
+      if (uketsukeSign > 0) itemDetails.push(`${t('uketsukeSign')}\u00d7${uketsukeSign}`);
       if (items.atsugami) itemDetails.push(t('atsugami'));
     }
     const itemsDisplay = totalItems > 0
       ? `<strong style="font-size:1.05rem;">${totalItems}</strong><div style="font-size:0.7rem; color:var(--text-light); margin-top:0.1rem; line-height:1.3;">${itemDetails.join(', ')}</div>`
-      : `<span style="color:var(--text-light);">—</span>`;
+      : `<span style="color:var(--text-light);">\u2014</span>`;
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td data-label="${t('th_client')}">
-        <strong>${clientName}</strong>${isExpress ? ` <span style="display:inline-block; margin-left:0.3rem; background:#e53e3e; color:white; font-size:0.6rem; font-weight:700; padding:0.1rem 0.35rem; border-radius:4px; letter-spacing:0.5px;">⚡ ${t('badge_express')}</span>` : ''}
+        <strong>${order.buyerName}</strong>${isExpress ? ` <span style="display:inline-block; margin-left:0.3rem; background:#e53e3e; color:white; font-size:0.6rem; font-weight:700; padding:0.1rem 0.35rem; border-radius:4px; letter-spacing:0.5px;">\u26a1 ${t('badge_express')}</span>` : ''}
         <div class="mobile-only-meta" style="font-size: 0.72rem; color: var(--text-light); margin-top: 0.15rem;">
           ${t('th_priority')}: <span class="badge ${priorityClass}" style="font-size: 0.65rem; padding: 0.1rem 0.35rem;">${t(displayPriority) || t('Medium')}</span>
         </div>
       </td>
       <td data-label="${t('th_printing_done')}" style="text-align: center;">
-         <button class="btn btn-outline" style="font-size:0.8rem; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; gap: 0.4rem;" onclick="completePrintingTask('${tRow.id}')">
+         <button class="btn btn-outline" style="font-size:0.8rem; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; gap: 0.4rem;" onclick="completePrintingTask('${order.id}')">
            <i class="fas fa-check"></i> ${t('label_yes')}
          </button>
       </td>
       <td class="col-priority" data-label="${t('th_priority')}"><span class="badge ${priorityClass}">${t(displayPriority) || t('Medium')}</span></td>
       <td data-label="${t('th_items')}">${itemsDisplay}</td>
-      <td data-label="${t('th_deadline')}">${formatDate(tRow.dueDate)}</td>
+      <td data-label="${t('th_deadline')}">${formatDate(order.deadline)}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -1002,17 +984,12 @@ function calculateDynamicPriority(deadline, orderDate) {
   // If more than 3 days = Low
   return 'Low';
 }
-function completePrintingTask(taskId) {
-  const task = getAll('tasks').find(t => t.id === taskId);
-  updateItem('tasks', taskId, { status: 'Done' });
-  if (task && task.projectId) {
-    const order = getAll('orders').find(o => o.id === task.projectId);
-    if (order && (order.status === 'Pending' || order.status === '進行中')) {
-      updateItem('orders', order.id, { status: 'Ready for Shipping' });
-    }
+function completePrintingTask(orderId) {
+  const order = getAll('orders').find(o => o.id === orderId);
+  if (order && (order.status === 'Pending' || order.status === '進行中')) {
+    updateItem('orders', orderId, { status: 'Ready for Shipping' });
   }
   loadDashboardData();
-  loadTasks();
   loadOrders();
 }
 
@@ -1275,13 +1252,6 @@ function addDays(dateStr, n) {
   return d.toISOString().split('T')[0];
 }
 
-function calcTaskPriority(orderDate, deadline, express) {
-  if (express) return 'High';
-  const daysUntilDeadline = Math.round((new Date(deadline) - new Date(orderDate)) / (1000 * 60 * 60 * 24));
-  if (daysUntilDeadline <= 2) return 'High';
-  if (daysUntilDeadline === 3) return 'Medium';
-  return 'Low';
-}
 
 function handleOrderSubmit(e) {
   e.preventDefault();
@@ -1378,22 +1348,10 @@ function handleOrderSubmit(e) {
     savedOrder = addItem('orders', order);
     deductStock(order.items);
     trackClientFromOrder(order.clientId, order.purchaseAmount, order.profit, order.date, order.items, order.comments);
-    const lang = getLanguage();
-    const priority = calcTaskPriority(orderDate, deadline, express);
-    const expressLabel = express ? (lang === 'jp' ? '【速達】' : '[Express] ') : '';
-    const taskTitle = t('task_title_template').replace('{buyer}', order.buyerName);
-    addItem('tasks', {
-      title: `${expressLabel}${taskTitle}`,
-      dueDate: deadline,
-      status: 'To Do',
-      priority,
-      projectId: savedOrder.id
-    });
   }
 
   closeModal('modal-order');
   loadOrders();
-  loadTasks();
   loadInventory();
   loadDashboardData();
   loadClients();
@@ -1403,89 +1361,6 @@ function removeOrder(id) {
   if (confirm(t('delete_item_confirm'))) { deleteItem('orders', id); loadOrders(); loadDashboardData(); loadClients(); }
 }
 
-// --- TASKS ---
-function loadTasks() {
-  const tasks = getAll('tasks');
-  const activeTasks = tasks.filter(tRow => tRow.status !== 'Done' && tRow.status !== '完了');
-  const completedTasks = tasks.filter(tRow => tRow.status === 'Done' || tRow.status === '完了');
-
-  const activeTbody = document.getElementById('tasks-tbody');
-  if (activeTbody) {
-    activeTbody.innerHTML = '';
-    if (activeTasks.length === 0) {
-      activeTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_tasks_to_do')}</td></tr>`;
-    } else {
-      activeTasks.forEach(tRow => renderTaskRow(tRow, activeTbody, false));
-    }
-  }
-
-  const completedTbody = document.getElementById('completed-tasks-tbody');
-  if (completedTbody) {
-    completedTbody.innerHTML = '';
-    if (completedTasks.length === 0) {
-      completedTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_tasks_yet')}</td></tr>`;
-    } else {
-      completedTasks.forEach(tRow => renderTaskRow(tRow, completedTbody, true));
-    }
-  }
-}
-
-function renderTaskRow(tRow, tbody, isCompleted = false) {
-  const isDone = tRow.status === 'Done' || tRow.status === '完了';
-  const statusClass = isDone ? 'status-completed' : 'status-todo';
-
-  let priorityClass = 'status-todo'; // Medium
-  if (tRow.priority === 'High' || tRow.priority === '高') priorityClass = 'status-pending';
-  else if (tRow.priority === 'Low' || tRow.priority === '低') priorityClass = 'status-completed';
-
-  let rowStyle = '';
-  if (isCompleted) {
-    rowStyle = 'opacity: 0.5; background-color: #f5f5f5;';
-  }
-
-  const tr = document.createElement('tr');
-  tr.style.cssText = rowStyle;
-  tr.innerHTML = `
-    <td data-label="${t('nav_tasks')}">
-      <strong>${tRow.title}</strong>
-      <div class="mobile-only-meta" style="font-size: 0.72rem; color: var(--text-light); margin-top: 0.15rem; line-height: 1.2;">
-        ${t('th_deadline')}: ${tRow.dueDate} | ${t('th_priority')}: <span class="badge ${priorityClass}" style="font-size: 0.65rem; padding: 0.1rem 0.35rem;">${t(tRow.priority)}</span>
-      </div>
-    </td>
-    <td class="col-priority" data-label="${t('th_priority')}">
-      <span class="badge ${priorityClass}">${t(tRow.priority)}</span>
-    </td>
-    <td class="col-deadline" data-label="${t('th_deadline')}">${formatDate(tRow.dueDate)}</td>
-    <td class="col-status" data-label="${t('order_status')}"><span class="badge ${statusClass}">${t(tRow.status)}</span></td>
-    <td data-label="${t('th_actions')}">
-      <div class="action-btns">
-        <button class="btn btn-text" onclick="editTask('${tRow.id}')"><i class="fas fa-edit"></i></button>
-        <button class="btn btn-text" style="color:var(--accent);" onclick="removeTask('${tRow.id}')"><i class="fas fa-trash"></i></button>
-      </div>
-    </td>
-  `;
-  tbody.appendChild(tr);
-}
-
-function handleTaskSubmit(e) {
-  e.preventDefault();
-  const id = document.getElementById('task-id').value;
-  const task = {
-    title: document.getElementById('task-title').value,
-    dueDate: document.getElementById('task-due').value,
-    status: document.getElementById('task-status').value,
-    priority: document.getElementById('task-priority').value,
-    projectId: null
-  };
-  if (id) { updateItem('tasks', id, task); } else { addItem('tasks', task); }
-  closeModal('modal-task');
-  loadTasks();
-  loadDashboardData();
-}
-
-function removeTask(id) {
-  if (confirm(t('delete_task_confirm'))) { deleteItem('tasks', id); loadTasks(); loadDashboardData(); }
-}
 
 function syncAutoTrackedClients() {
   const orders = getAll('orders');
