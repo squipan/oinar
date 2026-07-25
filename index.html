@@ -70,6 +70,8 @@
                                 id="nav-active-orders-count" class="nav-badge" style="display: none;">0</span></a></li>
                     <li class="nav-item"><a href="#" class="nav-link" data-target="view-clients"><i
                                 class="fas fa-users"></i> <span data-i18n="nav_clients">Clients</span></a></li>
+                    <li class="nav-item"><a href="#" class="nav-link" data-target="view-profits"><i
+                                class="fas fa-chart-line"></i> <span data-i18n="nav_profits">Profits Calendar</span></a></li>
                     <li class="nav-item"><a href="#" class="nav-link" data-target="view-inventory"><i
                                 class="fas fa-boxes"></i> <span data-i18n="nav_inventory">Inventory</span></a></li>
                     <li class="nav-item"><a href="#" class="nav-link" data-target="view-settings"><i
@@ -295,6 +297,33 @@
                                 </table>
                             </div>
                         </div>
+                    </section>
+
+                    <!-- VIEW: PROFITS CALENDAR -->
+                    <section id="view-profits" class="view-section">
+                        <div class="section-header">
+                            <h2 data-i18n="title_profits_calendar">Profits Calendar</h2>
+                            <div class="profit-year-nav">
+                                <button class="btn btn-outline profit-year-btn" onclick="changeProfitYear(-1)"><i class="fas fa-chevron-left"></i></button>
+                                <span id="profit-year-label" class="profit-year-label">2026</span>
+                                <button class="btn btn-outline profit-year-btn" onclick="changeProfitYear(1)"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Annual Overview Metrics -->
+                        <div class="metric-grid" style="margin-bottom: 1.5rem;">
+                            <div class="metric-card">
+                                <div class="metric-title" data-i18n="profit_order_profit">Order Profit</div>
+                                <div class="metric-value" id="profit-year-total-profit">¥0</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title" data-i18n="profit_client_orders">Client Orders</div>
+                                <div class="metric-value" id="profit-year-total-orders">0</div>
+                            </div>
+                        </div>
+
+                        <!-- Month Grid -->
+                        <div id="profit-month-grid" class="profit-month-grid"></div>
                     </section>
 
                     <!-- VIEW: INVENTORY -->
@@ -918,6 +947,10 @@
         <a class="bottom-nav-link" data-target="view-clients">
             <i class="fas fa-users"></i>
             <span>Clients</span>
+        </a>
+        <a class="bottom-nav-link" data-target="view-profits">
+            <i class="fas fa-chart-line"></i>
+            <span data-i18n="nav_profits">Profits</span>
         </a>
         <a class="bottom-nav-link" data-target="view-inventory">
             <i class="fas fa-boxes"></i>

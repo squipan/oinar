@@ -29,13 +29,16 @@ const PLATFORM_FEES = { Mercari: 0.10, Rakuma: 0.10, Yahoo: 0.05 };
 const i18n = {
   en: {
     'login_btn': 'Access Dashboard',
-    'nav_dashboard': 'Dashboard',
-    'nav_orders': 'Orders',
-    'nav_clients': 'Clients',
-    'nav_tasks': 'Tasks',
-    'nav_inventory': 'Inventory',
-    'nav_settings': 'Settings',
-    'nav_logout': 'Logout',
+    nav_dashboard: 'Dashboard',
+    nav_orders: 'Orders',
+    nav_clients: 'Clients',
+    nav_profits: 'Profits',
+    nav_inventory: 'Inventory',
+    nav_settings: 'Settings',
+    nav_logout: 'Logout',
+    title_profits_calendar: 'Profits Calendar',
+    profit_order_profit: 'Order Profit',
+    profit_client_orders: 'Client Orders',
     'top_overview': 'Business Overview',
     'btn_new_order': 'New Order',
     'dash_profit': 'Total Profit',
@@ -224,13 +227,16 @@ const i18n = {
   },
   jp: {
     'login_btn': 'ダッシュボードへ',
-    'nav_dashboard': 'ダッシュボード',
-    'nav_orders': '注文',
-    'nav_clients': '顧客',
-    'nav_tasks': 'タスク',
-    'nav_inventory': '在庫',
-    'nav_settings': '設定',
-    'nav_logout': 'ログアウト',
+    nav_dashboard: 'ダッシュボード',
+    nav_orders: '注文',
+    nav_clients: '顧客',
+    nav_profits: '利益カレンダー',
+    nav_inventory: '在庫',
+    nav_settings: '設定',
+    nav_logout: 'ログアウト',
+    title_profits_calendar: '利益カレンダー',
+    profit_order_profit: '注文利益',
+    profit_client_orders: '注文件数',
     'top_overview': 'ビジネス概要',
     'btn_new_order': '新規注文',
     'dash_profit': '実質利益',
@@ -450,6 +456,7 @@ async function refreshData() {
   loadInventory();
   loadSettings();
   loadClients();
+  loadProfitsView();
   updatePriceLabels();
 
   if (btn) btn.disabled = false;
@@ -485,6 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loadClients();
       loadInventory();
       loadSettings();
+      loadProfitsView();
       setupOrderCalculators();
       setupClientDatePicker();
       updatePriceLabels();
@@ -620,6 +628,9 @@ function setupNavigation() {
       link.classList.add('active');
       sections.forEach(s => s.classList.remove('active'));
       document.getElementById(targetId).classList.add('active');
+      if (targetId === 'view-profits') {
+        loadProfitsView();
+      }
       if (window.innerWidth <= 768) {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
@@ -1900,6 +1911,9 @@ function setupBottomNav() {
       // Show correct section
       sections.forEach(s => s.classList.remove('active'));
       document.getElementById(targetId)?.classList.add('active');
+      if (targetId === 'view-profits') {
+        loadProfitsView();
+      }
     });
   });
 }
@@ -1947,3 +1961,72 @@ function migrateHistoricalData() {
     console.log('[Migration] Migrated legacy orders and synchronized client states');
   }
 }
+
+// --- PROFITS CALENDAR ---
+let currentProfitYear = new Date().getFullYear();
+
+function changeProfitYear(delta) {
+  currentProfitYear += delta;
+  loadProfitsView();
+}
+
+function loadProfitsView() {
+  const yearLabel = document.getElementById('profit-year-label');
+  if (yearLabel) yearLabel.textContent = currentProfitYear;
+
+  const grid = document.getElementById('profit-month-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  const allClients = getAll('clients') || [];
+  const lang = getLanguage();
+
+  const yearStr = String(currentProfitYear);
+  let yearTotalProfit = 0;
+  let yearTotalOrders = 0;
+
+  for (let m = 1; m <= 12; m++) {
+    const monthStr = `${yearStr}-${String(m).padStart(2, '0')}`;
+    
+    // Clients who placed order(s) in this month
+    const monthClients = allClients.filter(c => c.date && c.date.startsWith(monthStr));
+    const monthProfit = monthClients.reduce((sum, c) => sum + (c.profit || 0), 0);
+    const monthOrders = monthClients.reduce((sum, c) => sum + (c.orders || 0), 0);
+
+    yearTotalProfit += monthProfit;
+    yearTotalOrders += monthOrders;
+
+    const monthName = lang === 'jp'
+      ? `${m}月`
+      : new Date(currentProfitYear, m - 1, 1).toLocaleString('en-US', { month: 'short' });
+
+    const card = document.createElement('div');
+    const isCurrentMonth = new Date().getFullYear() === currentProfitYear && (new Date().getMonth() + 1) === m;
+    card.className = `profit-month-card ${isCurrentMonth ? 'current-month' : ''} ${monthOrders === 0 ? 'no-data' : ''}`;
+    
+    card.innerHTML = `
+      <div class="profit-month-header">
+        <span class="profit-month-name">${monthName}</span>
+        ${isCurrentMonth ? `<span class="profit-month-badge">${lang === 'jp' ? '今月' : 'Current'}</span>` : ''}
+      </div>
+      <div class="profit-month-body">
+        <div class="profit-metric-item">
+          <span class="profit-metric-label" data-i18n="profit_order_profit">${t('profit_order_profit')}</span>
+          <span class="profit-metric-val profit-value ${monthProfit < 0 ? 'negative' : ''}">${formatCurrency(monthProfit)}</span>
+        </div>
+        <div class="profit-metric-item">
+          <span class="profit-metric-label" data-i18n="profit_client_orders">${t('profit_client_orders')}</span>
+          <span class="profit-metric-val">${monthOrders}${lang === 'jp' ? '件' : ' orders'}</span>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  }
+
+  const yearProfitEl = document.getElementById('profit-year-total-profit');
+  if (yearProfitEl) yearProfitEl.textContent = formatCurrency(yearTotalProfit);
+
+  const yearOrdersEl = document.getElementById('profit-year-total-orders');
+  if (yearOrdersEl) yearOrdersEl.textContent = `${yearTotalOrders}${lang === 'jp' ? '件' : ''}`;
+}
+

@@ -1460,3 +1460,137 @@ tbody tr:hover {
     justify-content: flex-start;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PROFITS CALENDAR STYLING
+   ═══════════════════════════════════════════════════════════════ */
+.profit-year-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: var(--surface-color);
+  padding: 0.35rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.profit-year-btn {
+  padding: 0.3rem 0.6rem !important;
+  font-size: 0.85rem !important;
+  border-radius: 8px !important;
+  line-height: 1 !important;
+}
+
+.profit-year-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 60px;
+  text-align: center;
+}
+
+.profit-month-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 992px) {
+  .profit-month-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .profit-month-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+  }
+}
+
+.profit-month-card {
+  background: var(--surface-color);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: 1.1rem 1.2rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.profit-month-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.profit-month-card.current-month {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(212, 163, 115, 0.25), var(--shadow-md);
+}
+
+.profit-month-card.no-data {
+  opacity: 0.65;
+}
+
+.profit-month-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.profit-month-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.profit-month-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: var(--primary);
+  color: #fff;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.profit-month-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.profit-metric-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profit-metric-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.profit-metric-val {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.profit-metric-val.profit-value {
+  color: var(--status-active-text);
+  font-size: 1.05rem;
+}
+
+.profit-metric-val.negative {
+  color: var(--accent);
+}
+
