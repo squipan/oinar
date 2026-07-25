@@ -230,7 +230,7 @@ const i18n = {
     'nav_dashboard': 'ダッシュボード',
     'nav_orders': '注文',
     'nav_clients': '顧客',
-    'nav_profits': '利益カレンダー',
+    'nav_profits': '利益',
     'nav_inventory': '在庫',
     'nav_settings': '設定',
     'nav_logout': 'ログアウト',
@@ -511,6 +511,10 @@ function toggleLanguage() {
   applyLanguage(newLang);
   loadDashboardData();
   loadOrders();
+  loadClients();
+  loadProfitsView();
+  loadInventory();
+  loadSettings();
 }
 
 function applyLanguage(lang) {
@@ -644,6 +648,39 @@ function setupNavigation() {
       overlay.classList.toggle('active');
     });
   }
+}
+
+function setupBottomNav() {
+  const bottomLinks = document.querySelectorAll('.bottom-nav-link');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.view-section');
+
+  bottomLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute('data-target');
+      if (!targetId) return;
+
+      bottomLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+
+      navLinks.forEach(nl => {
+        if (nl.getAttribute('data-target') === targetId) {
+          nl.classList.add('active');
+        } else {
+          nl.classList.remove('active');
+        }
+      });
+
+      sections.forEach(s => s.classList.remove('active'));
+      const targetSec = document.getElementById(targetId);
+      if (targetSec) targetSec.classList.add('active');
+
+      if (targetId === 'view-profits') {
+        loadProfitsView();
+      }
+    });
+  });
 }
 
 // --- MODALS ---
