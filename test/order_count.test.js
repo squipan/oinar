@@ -297,5 +297,36 @@ const totalProfit = parseInt(context.document.getElementById('metric-profit').te
 assert.strictEqual(totalProfit, 5000, `Expected total profit of 5000 (no double counting), but got ${totalProfit}`);
 
 console.log('✓ Test 4 Passed!');
+
+// Test 5: Verify Profit Calendar Net Profit and Inventory Cost calculation
+console.log('Test 5: Profit Calendar Net Profit & Inventory Cost calculation...');
+context.initDB({
+  user: { name: 'Oinar Test' },
+  language: 'en',
+  orders: [
+    { id: 'o_2026_1', date: '2026-03-15', buyerName: 'Client 1', clientId: 'c1', profit: 30000 },
+    { id: 'o_2026_2', date: '2026-04-10', buyerName: 'Client 2', clientId: 'c2', profit: 20000 }
+  ],
+  clients: [
+    { id: 'c1', name: 'Client 1', date: '2026-03-15', profit: 30000, isFromOrder: true },
+    { id: 'c2', name: 'Client 2', date: '2026-04-10', profit: 20000, isFromOrder: true }
+  ],
+  inventory: [
+    { id: 'p1', date: '2026-01-10', name: 'Envelopes', qty: 100, price: 5000 },
+    { id: 'p2', date: '2026-02-20', name: 'Ink', qty: 2, price: 3000 }
+  ]
+});
+
+context.loadProfitsView();
+
+const netProfitText = context.document.getElementById('profit-year-net-profit').textContent.replace(/[^\d]/g, '');
+const orderProfitText = context.document.getElementById('profit-year-total-profit').textContent.replace(/[^\d]/g, '');
+const inventoryText = context.document.getElementById('profit-year-total-inventory').textContent.replace(/[^\d]/g, '');
+
+assert.strictEqual(parseInt(orderProfitText), 50000, `Expected order profit 50000, got ${orderProfitText}`);
+assert.strictEqual(parseInt(inventoryText), 8000, `Expected inventory cost 8000, got ${inventoryText}`);
+assert.strictEqual(parseInt(netProfitText), 42000, `Expected net profit 42000 (50000 - 8000), got ${netProfitText}`);
+
+console.log('✓ Test 5 Passed!');
 console.log('All tests passed successfully! 🎉');
 

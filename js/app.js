@@ -2060,8 +2060,29 @@ function loadProfitsView() {
     grid.appendChild(card);
   }
 
+  // Annual inventory cost for the selected year
+  const db = getDB();
+  const inventoryList = db.inventory || [];
+  const yearInventoryList = inventoryList.filter(item => item.date && item.date.startsWith(yearStr));
+  const yearTotalInventory = yearInventoryList.reduce((sum, item) => sum + (item.price || 0), 0);
+
+  const yearNetProfit = yearTotalProfit - yearTotalInventory;
+
+  const yearNetProfitEl = document.getElementById('profit-year-net-profit');
+  if (yearNetProfitEl) {
+    yearNetProfitEl.textContent = formatCurrency(yearNetProfit);
+    if (yearNetProfit < 0) {
+      yearNetProfitEl.classList.add('negative');
+    } else {
+      yearNetProfitEl.classList.remove('negative');
+    }
+  }
+
   const yearProfitEl = document.getElementById('profit-year-total-profit');
   if (yearProfitEl) yearProfitEl.textContent = formatCurrency(yearTotalProfit);
+
+  const yearInvEl = document.getElementById('profit-year-total-inventory');
+  if (yearInvEl) yearInvEl.textContent = formatCurrency(yearTotalInventory);
 
   const yearClientsEl = document.getElementById('profit-year-total-clients');
   if (yearClientsEl) yearClientsEl.textContent = `${yearTotalClients}${lang === 'jp' ? '件' : ''}`;
