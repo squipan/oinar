@@ -2024,7 +2024,7 @@ function loadProfitsView() {
 
   for (let m = 1; m <= 12; m++) {
     const monthStr = `${yearStr}-${String(m).padStart(2, '0')}`;
-    
+
     // Unique clients who placed order(s) in this month
     const monthClients = allClients.filter(c => c.date && c.date.startsWith(monthStr));
     const monthProfit = monthClients.reduce((sum, c) => sum + (c.profit || 0), 0);
@@ -2037,10 +2037,19 @@ function loadProfitsView() {
       ? `${m}月`
       : new Date(currentProfitYear, m - 1, 1).toLocaleString('en-US', { month: 'short' });
 
+    // Full month label for the modal title (e.g. "August 2026" / "2026年8月")
+    const monthFullName = lang === 'jp'
+      ? `${currentProfitYear}年${m}月`
+      : new Date(currentProfitYear, m - 1, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
     const card = document.createElement('div');
     const isCurrentMonth = new Date().getFullYear() === currentProfitYear && (new Date().getMonth() + 1) === m;
     card.className = `profit-month-card ${isCurrentMonth ? 'current-month' : ''} ${clientCount === 0 ? 'no-data' : ''}`;
-    
+    card.style.cursor = 'pointer';
+
+    // Attach tap handler — works on both iPhone touch and desktop click
+    card.addEventListener('click', () => openMonthDetailModal(monthStr, monthFullName));
+
     card.innerHTML = `
       <div class="profit-month-header">
         <span class="profit-month-name">${monthName}</span>
@@ -2055,6 +2064,9 @@ function loadProfitsView() {
           <span class="profit-metric-label"><i class="fas fa-users" style="margin-right: 0.35rem; opacity: 0.75;"></i><span data-i18n="profit_client_count">${t('profit_client_count')}</span></span>
           <span class="profit-metric-val">${clientCount}${lang === 'jp' ? '件' : ' clients'}</span>
         </div>
+      </div>
+      <div class="profit-month-tap-hint">
+        <i class="fas fa-chevron-right" style="font-size:0.7rem; opacity:0.4;"></i>
       </div>
     `;
     grid.appendChild(card);
@@ -2086,5 +2098,78 @@ function loadProfitsView() {
 
   const yearClientsEl = document.getElementById('profit-year-total-clients');
   if (yearClientsEl) yearClientsEl.textContent = `${yearTotalClients}${lang === 'jp' ? '件' : ''}`;
+}
+
+// --- MONTH DETAIL BOTTOM SHEET ---
+function openMonthDetailModal(monthStr, monthFullName) {
+  const overlay = document.getElementById('modal-month-details');
+  const titleEl = document.getElementById('month-modal-title');
+  const summaryEl = document.getElementById('month-modal-summary');
+  const listEl = document.getElementById('month-client-list');
+  if (!overlay || !listEl) return;
+
+  const lang = getLanguage();
+  const allClients = getAll('clients') || [];
+  const monthClients = allClients.filter(c => c.date && c.date.startsWith(monthStr));
+
+  // Aggregate by client name: sum orders & profit
+  const clientMap = {};
+  monthClients.forEach(c => {
+    const key = c.name || (lang === 'jp' ? '不明' : 'Unknown');
+    if (!clientMap[key]) clientMap[key] = { orders: 0, profit: 0 };
+    clientMap[key].orders += 1;
+    clientMap[key].profit += (c.profit || 0);
+  });
+
+  const rows = Object.entries(clientMap).sort((a, b) => b[1].profit - a[1].profit);
+  const totalMonthProfit = rows.reduce((sum, [, v]) => sum + v.profit, 0);
+  const totalClients = rows.length;
+
+  // Set header
+  titleEl.textContent = monthFullName;
+  summaryEl.textContent = lang === 'jp'
+    ? `${formatCurrency(totalMonthProfit)} · ${totalClients}件`
+    : `${formatCurrency(totalMonthProfit)} · ${totalClients} client${totalClients !== 1 ? 's' : ''}`;
+
+  // Build client rows
+  if (rows.length === 0) {
+    listEl.innerHTML = `
+      <div class="month-modal-empty">
+        <i class="fas fa-calendar-times" style="font-size:2rem; opacity:0.3; margin-bottom:0.75rem;"></i>
+        <p>${lang === 'jp' ? 'この月の記録はありません' : 'No client activity for this month'}</p>
+      </div>`;
+  } else {
+    listEl.innerHTML = rows.map(([name, data]) => {
+      const ordersLabel = lang === 'jp'
+        ? `${data.orders}件`
+        : `${data.orders} order${data.orders !== 1 ? 's' : ''}`;
+      return `
+        <div class="profit-client-row">
+          <span class="profit-client-name">${name}</span>
+          <span class="profit-client-badge">${ordersLabel}</span>
+          <span class="profit-client-val ${data.profit < 0 ? 'negative' : ''}">+${formatCurrency(data.profit)}</span>
+        </div>`;
+    }).join('');
+  }
+
+  // Show the overlay
+  overlay.style.display = 'flex';
+  // Trigger slide-up animation
+  requestAnimationFrame(() => {
+    overlay.classList.add('visible');
+  });
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMonthDetailModal(e) {
+  // If called from backdrop click, only close if the click was on the overlay itself
+  if (e && e.target !== document.getElementById('modal-month-details')) return;
+  const overlay = document.getElementById('modal-month-details');
+  if (!overlay) return;
+  overlay.classList.remove('visible');
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+  }, 300);
 }
 

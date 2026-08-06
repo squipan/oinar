@@ -905,6 +905,22 @@
         </div>
     </div>
 
+    <!-- MONTH DETAIL BOTTOM SHEET MODAL -->
+    <div id="modal-month-details" class="month-modal-overlay" onclick="closeMonthDetailModal(event)" aria-modal="true" role="dialog" style="display:none;">
+        <div class="month-modal-sheet" onclick="event.stopPropagation()">
+            <div class="month-modal-header">
+                <div class="month-modal-title-wrap">
+                    <span id="month-modal-title" class="month-modal-title">Month</span>
+                    <span id="month-modal-summary" class="month-modal-summary-pill"></span>
+                </div>
+                <button class="month-modal-close-btn" onclick="closeMonthDetailModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="month-client-list" class="month-client-list"></div>
+        </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div id="loading-overlay"
         style="display:none; position:fixed; inset:0; background:rgba(255,255,255,0.85); z-index:9999; flex-direction:column; align-items:center; justify-content:center; gap:1rem;">
