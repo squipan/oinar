@@ -977,7 +977,7 @@ function renderRecentTasks() {
       const pochi = items.pochi || 0;
       const sealA = items.sealA || 0;
       const sealB = items.sealB || 0;
-      totalItems = noshi + nagagata + pochi + sealA + sealB;
+      totalItems = noshi + nagagata + pochi;
       if (noshi > 0) itemDetails.push(`${t('noshi')}\u00d7${noshi}`);
       if (nagagata > 0) itemDetails.push(`${t('nagagata')}\u00d7${nagagata}`);
       if (pochi > 0) itemDetails.push(`${t('pochi')}\u00d7${pochi}`);
