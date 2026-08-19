@@ -565,17 +565,22 @@ async function login(e) {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
   const btn = e.target.querySelector('[type="submit"]');
+  const errEl = document.getElementById('login-error');
+  if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
   btn.value = '...'; btn.disabled = true;
 
   try {
     await auth.signInWithEmailAndPassword(email, password);
   } catch (err) {
-    let msg = t('login_failed');
+    let msg = t('login_failed') || 'Login failed. Please try again.';
     if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-      msg = t('invalid_credentials');
+      msg = t('invalid_credentials') || 'Incorrect email or password.';
+    } else if (err.code === 'auth/network-request-failed') {
+      msg = 'Network error. Please check your connection.';
     }
-    alert(msg);
-    btn.value = t('login_btn'); btn.disabled = false;
+    if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
+    else alert(msg);
+    btn.value = t('login_btn') || 'Access Dashboard'; btn.disabled = false;
   }
 }
 

@@ -16,6 +16,10 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 
+// Keep user signed in permanently across PWA restarts (iOS Safari standalone mode
+// destroys SESSION storage on every cold start — LOCAL persistence fixes this)
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
 // ---- Firestore references ----
 function getUserDocRef() {
   const user = auth.currentUser;
