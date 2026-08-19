@@ -2,24 +2,9 @@
 // OINAR - Main Application Logic
 // =============================================
 
-// Pricing Constants
-const DEFAULT_PRICES = {
-  noshi: 60,
-  nagagata: 45,
-  pochi: 80,
-  atsugami: 100,
-  sealA: 20,
-  sealB: 10,
-  hofuchoMermaid1: 280,   // 芳名帳 マーメイド紙 1pc
-  hofuchoMermaid2: 180,   // 芳名帳 マーメイド紙 2pc+
-  hofuchoGayo1: 260,      // 芳名帳 画用紙 1pc
-  hofuchoGayo2: 160,      // 芳名帳 画用紙 2pc+
-  uketsukeSign1: 320,     // 受付サイン 1pc
-  uketsukeSignExtra: 100, // 受付サイン each additional pc
-  sekifudaNoLogo: 50,
-  sekifudaWithLogo: 55
-};
-let PRICES = { ...DEFAULT_PRICES };
+// PRICES is populated from Firestore on login (DEFAULT_PRICES defined in data.js)
+let PRICES = {};
+
 function getShippingFeeAddition(dateStr) {
   // From July 27 2026, standard shipping fee addition increases from ¥300 to ¥310
   if (dateStr && dateStr >= '2026-07-27') return 310;
@@ -470,51 +455,46 @@ async function refreshData() {
   if (icon) icon.classList.remove('fa-spin');
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   setupNavigation();
   setupBottomNav();
   setupModals();
 
-  // Show loading while we connect
-  showLoadingOverlay(true);
+  auth.onAuthStateChanged(async (firebaseUser) => {
+    if (firebaseUser) {
+      showLoadingOverlay(true);
+      const data = await loadAllDataFromFirestore();
+      if (data) {
+        initDB(data);
+        migrateHistoricalData();
+      }
+      showLoadingOverlay(false);
 
-  // Sign in anonymously (invisible, no login form needed)
-  await autoSignIn();
+      document.getElementById('home-view').style.display = 'none';
+      document.getElementById('dashboard-layout').style.display = 'flex';
+      const name = getUser().name || 'Oinar Studio';
+      const biz = getUser().businessName || name;
+      document.getElementById('topbar-user-name').textContent = name;
+      document.getElementById('sidebar-user-name').textContent = biz;
 
-  const data = await loadAllDataFromFirestore();
-  if (data) {
-    initDB(data);
-    migrateHistoricalData();
-  }
-
-  showLoadingOverlay(false);
-
-  // Hide login, show dashboard
-  const homeView = document.getElementById('home-view');
-  if (homeView) homeView.style.display = 'none';
-  document.getElementById('dashboard-layout').style.display = 'flex';
-  const name = getUser().name || 'Oinar Studio';
-  const biz  = getUser().businessName || name;
-  document.getElementById('topbar-user-name').textContent = name;
-  document.getElementById('sidebar-user-name').textContent = biz;
-
-  applyLanguage(getLanguage());
-  PRICES = getPrices();
-  loadDashboardData();
-  loadOrders();
-  loadClients();
-  loadInventory();
-  loadSettings();
-  loadProfitsView();
-  setupOrderCalculators();
-  setupClientDatePicker();
-  updatePriceLabels();
+      applyLanguage(getLanguage());
+      PRICES = getPrices();
+      loadDashboardData();
+      loadOrders();
+      loadClients();
+      loadInventory();
+      loadSettings();
+      loadProfitsView();
+      setupOrderCalculators();
+      setupClientDatePicker();
+      updatePriceLabels();
+    } else {
+      document.getElementById('home-view').style.display = 'flex';
+      document.getElementById('dashboard-layout').style.display = 'none';
+    }
+  });
 });
 
-// ---- Credential helpers (kept for compatibility, no longer used for auth) ----
-function _saveCredentials() {}
-function _loadSavedCredentials() { return null; }
-function _clearSavedCredentials() { localStorage.removeItem('_oc'); }
 
 // --- LANGUAGE ---
 function toggleLanguage() {
@@ -565,16 +545,33 @@ function formatDate(dateStr) {
   return new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Tokyo' }).format(d);
 }
 
-// --- AUTH (login/logout kept for compatibility but login screen is never shown) ---
+// --- AUTH ---
 async function login(e) {
-  if (e) e.preventDefault();
-  // No-op: app now uses anonymous auth automatically
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const btn = e.target.querySelector('[type="submit"]');
+  const errEl = document.getElementById('login-error');
+  if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+  btn.value = '...'; btn.disabled = true;
+
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+  } catch (err) {
+    let msg = 'Login failed. Please try again.';
+    if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+      msg = 'Incorrect email or password.';
+    } else if (err.code === 'auth/network-request-failed') {
+      msg = 'Network error. Please check your connection.';
+    }
+    if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
+    else alert(msg);
+    btn.value = 'Access Dashboard'; btn.disabled = false;
+  }
 }
 
 async function logout() {
-  _clearSavedCredentials();
-  // Just reload — auto-signin will run again
-  window.location.reload();
+  await auth.signOut();
 }
 
 // --- NAVIGATION ---
