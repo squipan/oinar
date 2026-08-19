@@ -537,6 +537,14 @@
                                         <label data-i18n="sealB">Seal B</label>
                                         <input type="number" id="settings-price-sealB" min="0" required>
                                     </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label data-i18n="sekifudaNoLogo">Sekifuda (No Logo)</label>
+                                        <input type="number" id="settings-price-sekifuda-nologo" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label data-i18n="sekifudaWithLogo">Sekifuda (With Logo)</label>
+                                        <input type="number" id="settings-price-sekifuda-withlogo" min="0" required>
+                                    </div>
                                 </div>
                             </div>
 
@@ -602,6 +610,24 @@
                             <div style="display:flex; align-items:center; gap:0.5rem;">
                                 <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
                                 <input type="number" id="item-pochi" value="0" min="0"
+                                    style="width: 70px; padding:0.4rem;">
+                            </div>
+                        </div>
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
+                            <span style="font-weight:500;" id="label-price-sekifuda-nologo">席札 ロゴなし (¥50)</span>
+                            <div style="display:flex; align-items:center; gap:0.5rem;">
+                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
+                                <input type="number" id="item-sekifuda-nologo" value="0" min="0"
+                                    style="width: 70px; padding:0.4rem;">
+                            </div>
+                        </div>
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
+                            <span style="font-weight:500;" id="label-price-sekifuda-withlogo">席札 ロゴあり (¥55)</span>
+                            <div style="display:flex; align-items:center; gap:0.5rem;">
+                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
+                                <input type="number" id="item-sekifuda-withlogo" value="0" min="0"
                                     style="width: 70px; padding:0.4rem;">
                             </div>
                         </div>

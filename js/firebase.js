@@ -70,7 +70,7 @@ function savePrices(prices) {
 
 // ---- Get prices (from localStorage cache) ----
 function getPrices() {
-  return getDB().prices || { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10 };
+  return getDB().prices || { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10, sekifudaNoLogo: 50, sekifudaWithLogo: 55 };
 }
 
 // ---- Load ALL data from Firestore on login ----
@@ -114,7 +114,7 @@ async function loadAllDataFromFirestore() {
       invoices:  [],
       inventory: userData.inventory || { noshi: 0, nagagata: 0, pochi: 0, sealA: 0, sealB: 0 },
       waste,
-      prices:    userData.prices    || { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10 },
+      prices:    userData.prices    || { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10, sekifudaNoLogo: 50, sekifudaWithLogo: 55 },
       miscItems: userData.miscItems || []
     };
   } catch (err) {

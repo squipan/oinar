@@ -15,7 +15,9 @@ let PRICES = {
   hofuchoGayo1: 260,      // 芳名帳 画用紙 1pc
   hofuchoGayo2: 160,      // 芳名帳 画用紙 2pc+
   uketsukeSign1: 320,     // 受付サイン 1pc
-  uketsukeSignExtra: 100  // 受付サイン each additional pc
+  uketsukeSignExtra: 100, // 受付サイン each additional pc
+  sekifudaNoLogo: 50,
+  sekifudaWithLogo: 55
 };
 function getShippingFeeAddition(dateStr) {
   // From July 27 2026, standard shipping fee addition increases from ¥300 to ¥310
@@ -130,6 +132,8 @@ const i18n = {
     'atsugami': 'Hard Board Reinforcement',
     'sealA': 'Sticker A',
     'sealB': 'Sticker B',
+    'sekifudaNoLogo': 'Sekifuda (No Logo)',
+    'sekifudaWithLogo': 'Sekifuda (With Logo)',
     'hofuchoMermaid': 'Guest Book / Reception (Mermaid)',
     'hofuchoGayo': 'Guest Book / Reception (Drawing Paper)',
     'uketsukeSign': 'Reception Sign',
@@ -328,6 +332,8 @@ const i18n = {
     'atsugami': '厚紙補強',
     'sealA': 'シールA',
     'sealB': 'シールB',
+    'sekifudaNoLogo': '席札 (ロゴなし)',
+    'sekifudaWithLogo': '席札 (ロゴあり)',
     'hofuchoMermaid': '芳名帳/受付書 マーメイド紙',
     'hofuchoGayo': '芳名帳/受付書 画用紙',
     'uketsukeSign': '受付サイン',
@@ -761,6 +767,8 @@ function editOrder(id) {
   document.getElementById('item-atsugami').checked = o.items.atsugami || false;
   document.getElementById('item-seal-a').value = o.items.sealA || 0;
   document.getElementById('item-seal-b').value = o.items.sealB || 0;
+  document.getElementById('item-sekifuda-nologo').value = o.items.sekifudaNoLogo || 0;
+  document.getElementById('item-sekifuda-withlogo').value = o.items.sekifudaWithLogo || 0;
   document.getElementById('item-hofucho-mermaid').value = o.items.hofuchoMermaid || 0;
   document.getElementById('item-hofucho-gayo').value = o.items.hofuchoGayo || 0;
   document.getElementById('item-uketsuke').value = o.items.uketsukeSign || 0;
@@ -977,10 +985,14 @@ function renderRecentTasks() {
       const pochi = items.pochi || 0;
       const sealA = items.sealA || 0;
       const sealB = items.sealB || 0;
-      totalItems = noshi + nagagata + pochi;
+      const sekifudaNoLogo = items.sekifudaNoLogo || 0;
+      const sekifudaWithLogo = items.sekifudaWithLogo || 0;
+      totalItems = noshi + nagagata + pochi + sekifudaNoLogo + sekifudaWithLogo;
       if (noshi > 0) itemDetails.push(`${t('noshi')}\u00d7${noshi}`);
       if (nagagata > 0) itemDetails.push(`${t('nagagata')}\u00d7${nagagata}`);
       if (pochi > 0) itemDetails.push(`${t('pochi')}\u00d7${pochi}`);
+      if (sekifudaNoLogo > 0) itemDetails.push(`${t('sekifudaNoLogo')}\u00d7${sekifudaNoLogo}`);
+      if (sekifudaWithLogo > 0) itemDetails.push(`${t('sekifudaWithLogo')}\u00d7${sekifudaWithLogo}`);
       if (sealA > 0) itemDetails.push(`${t('sealA')}\u00d7${sealA}`);
       if (sealB > 0) itemDetails.push(`${t('sealB')}\u00d7${sealB}`);
       const hofuchoMermaid = items.hofuchoMermaid || 0;
@@ -1116,6 +1128,8 @@ function renderOrderRow(o, tbody, isPastOrder = false) {
   if (o.items.nagagata > 0) itemsStr.push(`${t('nagagata')} x${o.items.nagagata}`);
   if (o.items.pochi > 0) itemsStr.push(`${t('pochi')} x${o.items.pochi}`);
   if (o.items.atsugami) itemsStr.push(`${t('atsugami')}`);
+  if (o.items.sekifudaNoLogo > 0) itemsStr.push(`${t('sekifudaNoLogo')} x${o.items.sekifudaNoLogo}`);
+  if (o.items.sekifudaWithLogo > 0) itemsStr.push(`${t('sekifudaWithLogo')} x${o.items.sekifudaWithLogo}`);
   if (o.items.sealA > 0) itemsStr.push(`${t('sealA')} x${o.items.sealA}`);
   if (o.items.sealB > 0) itemsStr.push(`${t('sealB')} x${o.items.sealB}`);
   if (o.items.hofuchoMermaid > 0) itemsStr.push(`${t('hofuchoMermaid')} x${o.items.hofuchoMermaid}`);
@@ -1188,7 +1202,7 @@ function toggleShipped(orderId) {
 
 // --- ORDER CALCULATION ---
 function setupOrderCalculators() {
-  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-seal-a', 'item-seal-b', 'item-hofucho-mermaid', 'item-hofucho-gayo', 'item-uketsuke', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
+  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-seal-a', 'item-seal-b', 'item-sekifuda-nologo', 'item-sekifuda-withlogo', 'item-hofucho-mermaid', 'item-hofucho-gayo', 'item-uketsuke', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
   inputs.forEach(id => {
     document.getElementById(id)?.addEventListener('input', calculateOrderMath);
     document.getElementById(id)?.addEventListener('change', calculateOrderMath);
@@ -1218,6 +1232,8 @@ function calculateOrderMath() {
   const atsugami = document.getElementById('item-atsugami').checked;
   const sealA = parseInt(document.getElementById('item-seal-a').value) || 0;
   const sealB = parseInt(document.getElementById('item-seal-b').value) || 0;
+  const sekifudaNoLogo = parseInt(document.getElementById('item-sekifuda-nologo').value) || 0;
+  const sekifudaWithLogo = parseInt(document.getElementById('item-sekifuda-withlogo').value) || 0;
   const hofuchoMermaid = parseInt(document.getElementById('item-hofucho-mermaid').value) || 0;
   const hofuchoGayo = parseInt(document.getElementById('item-hofucho-gayo').value) || 0;
   const uketsukeSign = parseInt(document.getElementById('item-uketsuke').value) || 0;
@@ -1234,13 +1250,20 @@ function calculateOrderMath() {
   const uketsukeSignPrice = uketsukeSign === 0 ? 0
     : 320 + (Math.max(0, uketsukeSign - 1) * 100);
 
-  // Dynamic shipping addition: 350 if any A4 item ordered, else date-aware standard fee
+  // Dynamic shipping addition: 350 if any A4 item or sekifuda ordered, else date-aware standard fee
   const hasA4Items = hofuchoMermaid > 0 || hofuchoGayo > 0 || uketsukeSign > 0;
+  const hasSekifuda = sekifudaNoLogo > 0 || sekifudaWithLogo > 0;
   const hasEnvelopes = noshi > 0 || nagagata > 0 || pochi > 0;
   const orderDateForCalc = document.getElementById('order-date')?.value || '';
-  const shippingAddition = hasA4Items && hasEnvelopes ? 650
-    : hasA4Items ? 350
-    : getShippingFeeAddition(orderDateForCalc);
+  
+  let shippingAddition = getShippingFeeAddition(orderDateForCalc);
+  if (hasA4Items && hasEnvelopes) {
+    shippingAddition = 650;
+  } else if (hasSekifuda && hasEnvelopes) {
+    shippingAddition = getShippingFeeAddition(orderDateForCalc) + 350 - 200;
+  } else if (hasA4Items || hasSekifuda) {
+    shippingAddition = 350;
+  }
 
   const shippingSel = document.getElementById('order-shipping-cost')?.value || '160';
   let actualShipping = 160;
@@ -1258,6 +1281,8 @@ function calculateOrderMath() {
     + (atsugami ? PRICES.atsugami : 0)
     + (sealA * PRICES.sealA)
     + (sealB * PRICES.sealB)
+    + (sekifudaNoLogo * PRICES.sekifudaNoLogo)
+    + (sekifudaWithLogo * PRICES.sekifudaWithLogo)
     + hofuchoMermaidPrice
     + hofuchoGayoPrice
     + uketsukeSignPrice;
@@ -1369,6 +1394,8 @@ function handleOrderSubmit(e) {
       atsugami: document.getElementById('item-atsugami').checked,
       sealA: parseInt(document.getElementById('item-seal-a').value) || 0,
       sealB: parseInt(document.getElementById('item-seal-b').value) || 0,
+      sekifudaNoLogo: parseInt(document.getElementById('item-sekifuda-nologo').value) || 0,
+      sekifudaWithLogo: parseInt(document.getElementById('item-sekifuda-withlogo').value) || 0,
       hofuchoMermaid: parseInt(document.getElementById('item-hofucho-mermaid').value) || 0,
       hofuchoGayo: parseInt(document.getElementById('item-hofucho-gayo').value) || 0,
       uketsukeSign: parseInt(document.getElementById('item-uketsuke').value) || 0,
@@ -1422,8 +1449,9 @@ function syncAutoTrackedClients() {
 
     const items = o.items || {};
     const envelopeQty = (items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0);
+    const sekifudaQty = (items.sekifudaNoLogo || 0) + (items.sekifudaWithLogo || 0);
     const a4Qty = (items.hofuchoMermaid || 0) + (items.hofuchoGayo || 0) + (items.uketsukeSign || 0);
-    const totalQty = envelopeQty + a4Qty;
+    const totalQty = envelopeQty + sekifudaQty + a4Qty;
 
     if (!orderStats[clientId]) {
       orderStats[clientId] = {
@@ -1583,8 +1611,9 @@ function trackClientFromOrder(clientId, amount, profit, orderDate, items, orderC
 
   const itemsObj = items || {};
   const envelopeQty = (itemsObj.noshi || 0) + (itemsObj.nagagata || 0) + (itemsObj.pochi || 0);
+  const sekifudaQty = (itemsObj.sekifudaNoLogo || 0) + (itemsObj.sekifudaWithLogo || 0);
   const a4Qty = (itemsObj.hofuchoMermaid || 0) + (itemsObj.hofuchoGayo || 0) + (itemsObj.uketsukeSign || 0);
-  const totalQty = envelopeQty + a4Qty;
+  const totalQty = envelopeQty + sekifudaQty + a4Qty;
 
   const clients = getAll('clients');
   const existing = clients.find(c => c.id === clientId);
@@ -1808,6 +1837,8 @@ function loadSettings() {
   document.getElementById('settings-price-atsugami').value = savedPrices.atsugami;
   document.getElementById('settings-price-sealA').value = savedPrices.sealA;
   document.getElementById('settings-price-sealB').value = savedPrices.sealB;
+  document.getElementById('settings-price-sekifuda-nologo').value = savedPrices.sekifudaNoLogo;
+  document.getElementById('settings-price-sekifuda-withlogo').value = savedPrices.sekifudaWithLogo;
 }
 
 function saveSettings() {
@@ -1830,6 +1861,8 @@ function saveSettings() {
     atsugami: parseInt(document.getElementById('settings-price-atsugami').value) || 0,
     sealA: parseInt(document.getElementById('settings-price-sealA').value) || 0,
     sealB: parseInt(document.getElementById('settings-price-sealB').value) || 0,
+    sekifudaNoLogo: parseInt(document.getElementById('settings-price-sekifuda-nologo').value) || 0,
+    sekifudaWithLogo: parseInt(document.getElementById('settings-price-sekifuda-withlogo').value) || 0,
   };
   savePrices(updatedPrices);
   PRICES = updatedPrices;
@@ -1847,6 +1880,8 @@ function updatePriceLabels() {
     'label-price-atsugami': `${t('atsugami')} (${formatCurrency(PRICES.atsugami)})`,
     'label-price-sealA': `${t('sealA')} (${formatCurrency(PRICES.sealA)}${perPiece})`,
     'label-price-sealB': `${t('sealB')} (${formatCurrency(PRICES.sealB)}${perPiece})`,
+    'label-price-sekifuda-nologo': `${t('sekifudaNoLogo')} (${formatCurrency(PRICES.sekifudaNoLogo)})`,
+    'label-price-sekifuda-withlogo': `${t('sekifudaWithLogo')} (${formatCurrency(PRICES.sekifudaWithLogo)})`,
     'label-price-hofucho-mermaid': `${t('hofuchoMermaid')} (¥280 / ¥180×2+)`,
     'label-price-hofucho-gayo': `${t('hofuchoGayo')} (¥260 / ¥160×2+)`,
     'label-price-uketsuke': `${t('uketsukeSign')} (¥320 +¥100/pc)`,

@@ -12,7 +12,7 @@ let _db = {
   invoices: [],
   inventory: { noshi: 0, nagagata: 0, pochi: 0, sealA: 0, sealB: 0 },
   waste: [],
-  prices: { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10 }
+  prices: { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10, sekifudaNoLogo: 50, sekifudaWithLogo: 55 }
 };
 
 // Called by app.js after Firestore data is fetched
@@ -125,7 +125,7 @@ function setLanguage(lang) {
 }
 
 function getPrices() {
-  if (!_db.prices) _db.prices = { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10 };
+  if (!_db.prices) _db.prices = { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10, sekifudaNoLogo: 50, sekifudaWithLogo: 55 };
   return _db.prices;
 }
 function savePrices(prices) {
