@@ -470,73 +470,51 @@ async function refreshData() {
   if (icon) icon.classList.remove('fa-spin');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   setupNavigation();
   setupBottomNav();
   setupModals();
 
-  auth.onAuthStateChanged(async (firebaseUser) => {
-    if (firebaseUser) {
-      showLoadingOverlay(true);
-      const data = await loadAllDataFromFirestore();
-      if (data) {
-        initDB(data);
-        migrateHistoricalData();
-      }
-      showLoadingOverlay(false);
+  // Show loading while we connect
+  showLoadingOverlay(true);
 
-      document.getElementById('home-view').style.display = 'none';
-      document.getElementById('dashboard-layout').style.display = 'flex';
-      const name = getUser().name || 'Oinar Studio';
-      const biz = getUser().businessName || name;
-      document.getElementById('topbar-user-name').textContent = name;
-      document.getElementById('sidebar-user-name').textContent = biz;
+  // Sign in anonymously (invisible, no login form needed)
+  await autoSignIn();
 
-      applyLanguage(getLanguage());
-      PRICES = getPrices();
-      loadDashboardData();
-      loadOrders();
-      loadClients();
-      loadInventory();
-      loadSettings();
-      loadProfitsView();
-      setupOrderCalculators();
-      setupClientDatePicker();
-      updatePriceLabels();
-    } else {
-      // Try auto-login with saved credentials before showing the form
-      const saved = _loadSavedCredentials();
-      if (saved) {
-        try {
-          await auth.signInWithEmailAndPassword(saved.e, saved.p);
-          // onAuthStateChanged will fire again with the user
-          return;
-        } catch (err) {
-          // Saved credentials are stale — clear them and show the form
-          _clearSavedCredentials();
-        }
-      }
-      document.getElementById('home-view').style.display = 'flex';
-      document.getElementById('dashboard-layout').style.display = 'none';
-    }
-  });
+  const data = await loadAllDataFromFirestore();
+  if (data) {
+    initDB(data);
+    migrateHistoricalData();
+  }
+
+  showLoadingOverlay(false);
+
+  // Hide login, show dashboard
+  const homeView = document.getElementById('home-view');
+  if (homeView) homeView.style.display = 'none';
+  document.getElementById('dashboard-layout').style.display = 'flex';
+  const name = getUser().name || 'Oinar Studio';
+  const biz  = getUser().businessName || name;
+  document.getElementById('topbar-user-name').textContent = name;
+  document.getElementById('sidebar-user-name').textContent = biz;
+
+  applyLanguage(getLanguage());
+  PRICES = getPrices();
+  loadDashboardData();
+  loadOrders();
+  loadClients();
+  loadInventory();
+  loadSettings();
+  loadProfitsView();
+  setupOrderCalculators();
+  setupClientDatePicker();
+  updatePriceLabels();
 });
 
-// ---- Credential helpers (base64-encoded, stored in localStorage) ----
-function _saveCredentials(email, password) {
-  try {
-    localStorage.setItem('_oc', btoa(JSON.stringify({ e: email, p: password })));
-  } catch (_) {}
-}
-function _loadSavedCredentials() {
-  try {
-    const raw = localStorage.getItem('_oc');
-    return raw ? JSON.parse(atob(raw)) : null;
-  } catch (_) { return null; }
-}
-function _clearSavedCredentials() {
-  localStorage.removeItem('_oc');
-}
+// ---- Credential helpers (kept for compatibility, no longer used for auth) ----
+function _saveCredentials() {}
+function _loadSavedCredentials() { return null; }
+function _clearSavedCredentials() { localStorage.removeItem('_oc'); }
 
 // --- LANGUAGE ---
 function toggleLanguage() {
@@ -587,36 +565,16 @@ function formatDate(dateStr) {
   return new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Tokyo' }).format(d);
 }
 
-// --- AUTH ---
+// --- AUTH (login/logout kept for compatibility but login screen is never shown) ---
 async function login(e) {
-  e.preventDefault();
-  const email = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value;
-  const btn = e.target.querySelector('[type="submit"]');
-  const errEl = document.getElementById('login-error');
-  if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
-  btn.value = '...'; btn.disabled = true;
-
-  try {
-    await auth.signInWithEmailAndPassword(email, password);
-    // Save credentials so future app opens skip the login form entirely
-    _saveCredentials(email, password);
-  } catch (err) {
-    let msg = t('login_failed') || 'Login failed. Please try again.';
-    if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-      msg = t('invalid_credentials') || 'Incorrect email or password.';
-    } else if (err.code === 'auth/network-request-failed') {
-      msg = 'Network error. Please check your connection.';
-    }
-    if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
-    else alert(msg);
-    btn.value = t('login_btn') || 'Access Dashboard'; btn.disabled = false;
-  }
+  if (e) e.preventDefault();
+  // No-op: app now uses anonymous auth automatically
 }
 
 async function logout() {
   _clearSavedCredentials();
-  await auth.signOut();
+  // Just reload — auto-signin will run again
+  window.location.reload();
 }
 
 // --- NAVIGATION ---
