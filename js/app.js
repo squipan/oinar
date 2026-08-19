@@ -3,7 +3,7 @@
 // =============================================
 
 // Pricing Constants
-let PRICES = {
+const DEFAULT_PRICES = {
   noshi: 60,
   nagagata: 45,
   pochi: 80,
@@ -19,6 +19,7 @@ let PRICES = {
   sekifudaNoLogo: 50,
   sekifudaWithLogo: 55
 };
+let PRICES = { ...DEFAULT_PRICES };
 function getShippingFeeAddition(dateStr) {
   // From July 27 2026, standard shipping fee addition increases from ¥300 to ¥310
   if (dateStr && dateStr >= '2026-07-27') return 310;
@@ -546,7 +547,8 @@ function applyLanguage(lang) {
 }
 
 function formatCurrency(amount) {
-  return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(amount);
+  const val = Number.isFinite(Number(amount)) ? Number(amount) : 0;
+  return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(val);
 }
 
 function formatDate(dateStr) {
@@ -1830,7 +1832,7 @@ function loadSettings() {
   document.getElementById('settings-mercari').value = user.mercari || '';
   document.getElementById('settings-business-name').textContent = user.businessName || user.name || 'Oinar Wedding';
   updateMercariLink();
-  const savedPrices = getPrices();
+  const savedPrices = { ...DEFAULT_PRICES, ...(getPrices() || {}) };
   document.getElementById('settings-price-noshi').value = savedPrices.noshi;
   document.getElementById('settings-price-nagagata').value = savedPrices.nagagata;
   document.getElementById('settings-price-pochi').value = savedPrices.pochi;
@@ -1855,6 +1857,7 @@ function saveSettings() {
   if (sidebarUserEl) sidebarUserEl.textContent = businessName;
 
   const updatedPrices = {
+    ...PRICES,
     noshi: parseInt(document.getElementById('settings-price-noshi').value) || 0,
     nagagata: parseInt(document.getElementById('settings-price-nagagata').value) || 0,
     pochi: parseInt(document.getElementById('settings-price-pochi').value) || 0,
@@ -1871,6 +1874,7 @@ function saveSettings() {
 }
 
 function updatePriceLabels() {
+  PRICES = { ...DEFAULT_PRICES, ...(PRICES || {}), ...(getPrices() || {}) };
   const lang = getLanguage();
   const perPiece = lang === 'en' ? ' / pc' : ' / 枚';
   const labels = {

@@ -2,6 +2,23 @@
 // OINAR - Data Layer (Firestore + Memory Cache)
 // =============================================
 
+const DEFAULT_PRICES = {
+  noshi: 60,
+  nagagata: 45,
+  pochi: 80,
+  atsugami: 100,
+  sealA: 20,
+  sealB: 10,
+  sekifudaNoLogo: 50,
+  sekifudaWithLogo: 55,
+  hofuchoMermaid1: 280,
+  hofuchoMermaid2: 180,
+  hofuchoGayo1: 260,
+  hofuchoGayo2: 160,
+  uketsukeSign1: 320,
+  uketsukeSignExtra: 100
+};
+
 // In-memory database - populated from Firestore after login
 let _db = {
   user: { name: 'Oinar Studio', email: '', phone: '', businessName: 'Oinar Wedding', mercari: 'https://jp.mercari.com/user/profile/177559465' },
@@ -12,12 +29,15 @@ let _db = {
   invoices: [],
   inventory: { noshi: 0, nagagata: 0, pochi: 0, sealA: 0, sealB: 0 },
   waste: [],
-  prices: { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10, sekifudaNoLogo: 50, sekifudaWithLogo: 55 }
+  prices: { ...DEFAULT_PRICES }
 };
 
 // Called by app.js after Firestore data is fetched
 function initDB(data) {
   if (data) {
+    if (data.prices) {
+      data.prices = { ...DEFAULT_PRICES, ...data.prices };
+    }
     if (data.inventory) {
       if (!Array.isArray(data.inventory)) {
         const rawInv = data.inventory;
@@ -125,7 +145,8 @@ function setLanguage(lang) {
 }
 
 function getPrices() {
-  if (!_db.prices) _db.prices = { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10, sekifudaNoLogo: 50, sekifudaWithLogo: 55 };
+  if (!_db.prices) _db.prices = { ...DEFAULT_PRICES };
+  else _db.prices = { ...DEFAULT_PRICES, ..._db.prices };
   return _db.prices;
 }
 function savePrices(prices) {

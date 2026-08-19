@@ -68,9 +68,28 @@ function savePrices(prices) {
   ref.set({ prices }, { merge: true }).catch(err => console.warn('[FS] Prices save error:', err));
 }
 
+const DEFAULT_PRICES = {
+  noshi: 60,
+  nagagata: 45,
+  pochi: 80,
+  atsugami: 100,
+  sealA: 20,
+  sealB: 10,
+  sekifudaNoLogo: 50,
+  sekifudaWithLogo: 55,
+  hofuchoMermaid1: 280,
+  hofuchoMermaid2: 180,
+  hofuchoGayo1: 260,
+  hofuchoGayo2: 160,
+  uketsukeSign1: 320,
+  uketsukeSignExtra: 100
+};
+
 // ---- Get prices (from localStorage cache) ----
 function getPrices() {
-  return getDB().prices || { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10, sekifudaNoLogo: 50, sekifudaWithLogo: 55 };
+  const db = getDB();
+  db.prices = { ...DEFAULT_PRICES, ...(db.prices || {}) };
+  return db.prices;
 }
 
 // ---- Load ALL data from Firestore on login ----
@@ -114,7 +133,7 @@ async function loadAllDataFromFirestore() {
       invoices:  [],
       inventory: userData.inventory || { noshi: 0, nagagata: 0, pochi: 0, sealA: 0, sealB: 0 },
       waste,
-      prices:    userData.prices    || { noshi: 60, nagagata: 45, pochi: 80, atsugami: 100, sealA: 20, sealB: 10, sekifudaNoLogo: 50, sekifudaWithLogo: 55 },
+      prices:    { ...DEFAULT_PRICES, ...(userData.prices || {}) },
       miscItems: userData.miscItems || []
     };
   } catch (err) {
