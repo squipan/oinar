@@ -504,11 +504,39 @@ document.addEventListener('DOMContentLoaded', () => {
       setupClientDatePicker();
       updatePriceLabels();
     } else {
+      // Try auto-login with saved credentials before showing the form
+      const saved = _loadSavedCredentials();
+      if (saved) {
+        try {
+          await auth.signInWithEmailAndPassword(saved.e, saved.p);
+          // onAuthStateChanged will fire again with the user
+          return;
+        } catch (err) {
+          // Saved credentials are stale — clear them and show the form
+          _clearSavedCredentials();
+        }
+      }
       document.getElementById('home-view').style.display = 'flex';
       document.getElementById('dashboard-layout').style.display = 'none';
     }
   });
 });
+
+// ---- Credential helpers (base64-encoded, stored in localStorage) ----
+function _saveCredentials(email, password) {
+  try {
+    localStorage.setItem('_oc', btoa(JSON.stringify({ e: email, p: password })));
+  } catch (_) {}
+}
+function _loadSavedCredentials() {
+  try {
+    const raw = localStorage.getItem('_oc');
+    return raw ? JSON.parse(atob(raw)) : null;
+  } catch (_) { return null; }
+}
+function _clearSavedCredentials() {
+  localStorage.removeItem('_oc');
+}
 
 // --- LANGUAGE ---
 function toggleLanguage() {
@@ -571,6 +599,8 @@ async function login(e) {
 
   try {
     await auth.signInWithEmailAndPassword(email, password);
+    // Save credentials so future app opens skip the login form entirely
+    _saveCredentials(email, password);
   } catch (err) {
     let msg = t('login_failed') || 'Login failed. Please try again.';
     if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
@@ -585,6 +615,7 @@ async function login(e) {
 }
 
 async function logout() {
+  _clearSavedCredentials();
   await auth.signOut();
 }
 
