@@ -1100,6 +1100,16 @@ tbody tr:hover {
   transform: scale(1.15);
 }
 
+.client-clickable-name {
+  color: var(--primary);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.client-clickable-name:hover {
+  color: var(--primary-hover);
+}
+
 /* Popup overlay */
 .client-detail-overlay {
   position: fixed;

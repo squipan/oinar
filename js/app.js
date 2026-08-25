@@ -111,6 +111,8 @@ const i18n = {
     'label_total_sales': 'Total Sales',
     'label_total_profit': 'Total Profit',
     'label_save_client': 'Save Client',
+    'client_orders_title': 'Order History',
+    'no_orders_found': 'No orders found.',
     'label_loading_data': 'Loading data...',
     'noshi': 'Noshi Envelopes',
     'nagagata': 'Long Envelope (Nagagata 4)',
@@ -311,6 +313,8 @@ const i18n = {
     'label_total_sales': '総売上金額',
     'label_total_profit': '総利益額',
     'label_save_client': '顧客情報を保存',
+    'client_orders_title': '注文履歴',
+    'no_orders_found': '注文履歴はありません。',
     'label_loading_data': 'データを読み込み中…',
     'noshi': 'のし袋',
     'nagagata': '長形４号',
@@ -1509,6 +1513,59 @@ function showClientDetail(id) {
     commentRow.style.display = 'none';
   }
 
+  // Populate client order history
+  const clientOrders = getAll('orders').filter(o => o.clientId === id);
+  const ordersListEl = document.getElementById('cdp-orders-list');
+  if (ordersListEl) {
+    ordersListEl.innerHTML = '';
+    if (clientOrders.length === 0) {
+      ordersListEl.innerHTML = `<div style="text-align: center; color: var(--text-light); font-size: 0.85rem; padding: 1rem 0;">${t('no_orders_found')}</div>`;
+    } else {
+      // Sort orders: newest first
+      clientOrders.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      
+      clientOrders.forEach(o => {
+        let itemsStr = [];
+        if (o.items.noshi > 0) itemsStr.push(`${t('noshi')} x${o.items.noshi}`);
+        if (o.items.nagagata > 0) itemsStr.push(`${t('nagagata')} x${o.items.nagagata}`);
+        if (o.items.pochi > 0) itemsStr.push(`${t('pochi')} x${o.items.pochi}`);
+        if (o.items.atsugami) itemsStr.push(`${t('atsugami')}`);
+        if (o.items.sekifudaNoLogo > 0) itemsStr.push(`${t('sekifudaNoLogo')} x${o.items.sekifudaNoLogo}`);
+        if (o.items.sekifudaWithLogo > 0) itemsStr.push(`${t('sekifudaWithLogo')} x${o.items.sekifudaWithLogo}`);
+        if (o.items.sealA > 0) itemsStr.push(`${t('sealA')} x${o.items.sealA}`);
+        if (o.items.sealB > 0) itemsStr.push(`${t('sealB')} x${o.items.sealB}`);
+        if (o.items.hofuchoMermaid > 0) itemsStr.push(`${t('hofuchoMermaid')} x${o.items.hofuchoMermaid}`);
+        if (o.items.hofuchoGayo > 0) itemsStr.push(`${t('hofuchoGayo')} x${o.items.hofuchoGayo}`);
+        if (o.items.uketsukeSign > 0) itemsStr.push(`${t('uketsukeSign')} x${o.items.uketsukeSign}`);
+        if (o.adjustment && o.adjustment !== 0) {
+          const sign = o.adjustment > 0 ? '+' : '';
+          const reasonText = o.adjustmentReason ? ` (${o.adjustmentReason})` : '';
+          itemsStr.push(`${t('label_adjustment')}: ${sign}${o.adjustment}${reasonText}`);
+        }
+
+        let statusClass = 'status-pending';
+        if (o.status === 'Finished' || o.status === '完了') statusClass = 'status-completed';
+        else if (o.status === 'Ready for Shipping' || o.status === '発送待ち') statusClass = 'status-todo';
+
+        const orderDiv = document.createElement('div');
+        orderDiv.className = 'client-order-item';
+        orderDiv.style.cssText = 'background: var(--background-color, #f9f9f9); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 0.6rem; font-size: 0.8rem; margin-bottom: 0.5rem;';
+        orderDiv.innerHTML = `
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; align-items: center;">
+            <span style="font-weight: 600; color: var(--text-primary);">${formatDate(o.date)}</span>
+            <span class="badge ${statusClass}" style="font-size: 0.65rem; padding: 0.15rem 0.4rem; border-radius: 4px;">${t(o.status)}</span>
+          </div>
+          <div style="color: var(--text-secondary); margin-bottom: 0.3rem; line-height: 1.4;">${itemsStr.join(', ') || '—'}</div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-light); border-top: 1px solid var(--border-color); padding-top: 0.3rem; margin-top: 0.3rem;">
+            <span>${t('order_amount')}: <strong style="color: var(--text-primary);">${formatCurrency(o.purchaseAmount)}</strong></span>
+            <span>${t('order_profit')}: <strong style="color: var(--status-active-text);">${formatCurrency(o.profit)}</strong></span>
+          </div>
+        `;
+        ordersListEl.appendChild(orderDiv);
+      });
+    }
+  }
+
   overlay.classList.add('active');
 }
 
@@ -1548,7 +1605,7 @@ function loadClients() {
     tr.innerHTML = `
       <td data-label="${t('order_buyer')}">
         <span style="display:inline-flex; align-items:center; gap:0.2rem; flex-wrap:wrap;">
-          <strong>${c.name}</strong>${infoBtnHtml}
+          <strong class="client-clickable-name" onclick="showClientDetail('${c.id}')">${c.name}</strong>${infoBtnHtml}
         </span>
         ${source}
       </td>

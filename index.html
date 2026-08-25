@@ -1044,6 +1044,17 @@
                 <span class="detail-label" data-i18n="label_comments">Comments</span>
                 <span class="detail-value comment-text" id="cdp-comment"></span>
             </div>
+
+            <!-- Client's order history section -->
+            <div class="client-orders-section" style="margin-top: 1.2rem; border-top: 1px dashed var(--border-color); padding-top: 1rem;">
+                <h5 style="margin: 0 0 0.8rem 0; font-size: 0.95rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fas fa-shopping-cart" style="font-size: 0.85rem; color: var(--primary);"></i>
+                    <span data-i18n="client_orders_title">Order History</span>
+                </h5>
+                <div id="cdp-orders-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; padding-right: 0.2rem;">
+                    <!-- Dynamically populated orders -->
+                </div>
+            </div>
         </div>
     </div>
 </body>
