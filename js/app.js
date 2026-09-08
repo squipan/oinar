@@ -117,6 +117,7 @@ const i18n = {
     'noshi': 'Noshi Envelopes',
     'nagagata': 'Long Envelope (Nagagata 4)',
     'pochi': 'Pochi Envelopes',
+    'coloredEnvelope': 'Colored Envelopes',
     'atsugami': 'Hard Board Reinforcement',
     'sealA': 'Sticker A',
     'sealB': 'Sticker B',
@@ -319,6 +320,7 @@ const i18n = {
     'noshi': 'のし袋',
     'nagagata': '長形４号',
     'pochi': 'ポチ袋',
+    'coloredEnvelope': 'カラー封筒',
     'atsugami': '厚紙補強',
     'sealA': 'シールA',
     'sealB': 'シールB',
@@ -761,6 +763,7 @@ function editOrder(id) {
   document.getElementById('item-noshi').value = o.items.noshi || 0;
   document.getElementById('item-nagagata').value = o.items.nagagata || 0;
   document.getElementById('item-pochi').value = o.items.pochi || 0;
+  document.getElementById('item-colored-envelope').value = o.items.coloredEnvelope || 0;
   document.getElementById('item-atsugami').checked = o.items.atsugami || false;
   document.getElementById('item-seal-a').value = o.items.sealA || 0;
   document.getElementById('item-seal-b').value = o.items.sealB || 0;
@@ -980,14 +983,16 @@ function renderRecentTasks() {
       const noshi = items.noshi || 0;
       const nagagata = items.nagagata || 0;
       const pochi = items.pochi || 0;
+      const coloredEnvelope = items.coloredEnvelope || 0;
       const sealA = items.sealA || 0;
       const sealB = items.sealB || 0;
       const sekifudaNoLogo = items.sekifudaNoLogo || 0;
       const sekifudaWithLogo = items.sekifudaWithLogo || 0;
-      totalItems = noshi + nagagata + pochi + sekifudaNoLogo + sekifudaWithLogo;
+      totalItems = noshi + nagagata + pochi + coloredEnvelope + sekifudaNoLogo + sekifudaWithLogo;
       if (noshi > 0) itemDetails.push(`${t('noshi')}\u00d7${noshi}`);
       if (nagagata > 0) itemDetails.push(`${t('nagagata')}\u00d7${nagagata}`);
       if (pochi > 0) itemDetails.push(`${t('pochi')}\u00d7${pochi}`);
+      if (coloredEnvelope > 0) itemDetails.push(`${t('coloredEnvelope')}\u00d7${coloredEnvelope}`);
       if (sekifudaNoLogo > 0) itemDetails.push(`${t('sekifudaNoLogo')}\u00d7${sekifudaNoLogo}`);
       if (sekifudaWithLogo > 0) itemDetails.push(`${t('sekifudaWithLogo')}\u00d7${sekifudaWithLogo}`);
       if (sealA > 0) itemDetails.push(`${t('sealA')}\u00d7${sealA}`);
@@ -1124,6 +1129,7 @@ function renderOrderRow(o, tbody, isPastOrder = false) {
   if (o.items.noshi > 0) itemsStr.push(`${t('noshi')} x${o.items.noshi}`);
   if (o.items.nagagata > 0) itemsStr.push(`${t('nagagata')} x${o.items.nagagata}`);
   if (o.items.pochi > 0) itemsStr.push(`${t('pochi')} x${o.items.pochi}`);
+  if (o.items.coloredEnvelope > 0) itemsStr.push(`${t('coloredEnvelope')} x${o.items.coloredEnvelope}`);
   if (o.items.atsugami) itemsStr.push(`${t('atsugami')}`);
   if (o.items.sekifudaNoLogo > 0) itemsStr.push(`${t('sekifudaNoLogo')} x${o.items.sekifudaNoLogo}`);
   if (o.items.sekifudaWithLogo > 0) itemsStr.push(`${t('sekifudaWithLogo')} x${o.items.sekifudaWithLogo}`);
@@ -1199,7 +1205,7 @@ function toggleShipped(orderId) {
 
 // --- ORDER CALCULATION ---
 function setupOrderCalculators() {
-  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-seal-a', 'item-seal-b', 'item-sekifuda-nologo', 'item-sekifuda-withlogo', 'item-hofucho-mermaid', 'item-hofucho-gayo', 'item-uketsuke', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
+  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-colored-envelope', 'item-seal-a', 'item-seal-b', 'item-sekifuda-nologo', 'item-sekifuda-withlogo', 'item-hofucho-mermaid', 'item-hofucho-gayo', 'item-uketsuke', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
   inputs.forEach(id => {
     document.getElementById(id)?.addEventListener('input', calculateOrderMath);
     document.getElementById(id)?.addEventListener('change', calculateOrderMath);
@@ -1226,6 +1232,7 @@ function calculateOrderMath() {
   const noshi = parseInt(document.getElementById('item-noshi').value) || 0;
   const nagagata = parseInt(document.getElementById('item-nagagata').value) || 0;
   const pochi = parseInt(document.getElementById('item-pochi').value) || 0;
+  const coloredEnvelope = parseInt(document.getElementById('item-colored-envelope').value) || 0;
   const atsugami = document.getElementById('item-atsugami').checked;
   const sealA = parseInt(document.getElementById('item-seal-a').value) || 0;
   const sealB = parseInt(document.getElementById('item-seal-b').value) || 0;
@@ -1250,7 +1257,7 @@ function calculateOrderMath() {
   // Dynamic shipping addition: 350 if any A4 item or sekifuda ordered, else date-aware standard fee
   const hasA4Items = hofuchoMermaid > 0 || hofuchoGayo > 0 || uketsukeSign > 0;
   const hasSekifuda = sekifudaNoLogo > 0 || sekifudaWithLogo > 0;
-  const hasEnvelopes = noshi > 0 || nagagata > 0 || pochi > 0;
+  const hasEnvelopes = noshi > 0 || nagagata > 0 || pochi > 0 || coloredEnvelope > 0;
   const orderDateForCalc = document.getElementById('order-date')?.value || '';
   
   let shippingAddition = getShippingFeeAddition(orderDateForCalc);
@@ -1275,6 +1282,7 @@ function calculateOrderMath() {
   const basePrice = (noshi * PRICES.noshi)
     + (nagagata * PRICES.nagagata)
     + (pochi * PRICES.pochi)
+    + (coloredEnvelope * PRICES.coloredEnvelope)
     + (atsugami ? PRICES.atsugami : 0)
     + (sealA * PRICES.sealA)
     + (sealB * PRICES.sealB)
@@ -1322,6 +1330,14 @@ function addDays(dateStr, n) {
   return d.toISOString().split('T')[0];
 }
 
+
+function stepperClick(inputId, delta) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  const cur = parseInt(el.value) || 0;
+  el.value = Math.max(0, cur + delta);
+  calculateOrderMath();
+}
 
 function handleOrderSubmit(e) {
   e.preventDefault();
@@ -1388,6 +1404,7 @@ function handleOrderSubmit(e) {
       noshi: parseInt(document.getElementById('item-noshi').value) || 0,
       nagagata: parseInt(document.getElementById('item-nagagata').value) || 0,
       pochi: parseInt(document.getElementById('item-pochi').value) || 0,
+      coloredEnvelope: parseInt(document.getElementById('item-colored-envelope').value) || 0,
       atsugami: document.getElementById('item-atsugami').checked,
       sealA: parseInt(document.getElementById('item-seal-a').value) || 0,
       sealB: parseInt(document.getElementById('item-seal-b').value) || 0,
@@ -1445,7 +1462,7 @@ function syncAutoTrackedClients() {
     if (!clientId) return;
 
     const items = o.items || {};
-    const envelopeQty = (items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0);
+    const envelopeQty = (items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0) + (items.coloredEnvelope || 0);
     const sekifudaQty = (items.sekifudaNoLogo || 0) + (items.sekifudaWithLogo || 0);
     const a4Qty = (items.hofuchoMermaid || 0) + (items.hofuchoGayo || 0) + (items.uketsukeSign || 0);
     const totalQty = envelopeQty + sekifudaQty + a4Qty;
@@ -1529,6 +1546,7 @@ function showClientDetail(id) {
         if (o.items.noshi > 0) itemsStr.push(`${t('noshi')} x${o.items.noshi}`);
         if (o.items.nagagata > 0) itemsStr.push(`${t('nagagata')} x${o.items.nagagata}`);
         if (o.items.pochi > 0) itemsStr.push(`${t('pochi')} x${o.items.pochi}`);
+        if (o.items.coloredEnvelope > 0) itemsStr.push(`${t('coloredEnvelope')} x${o.items.coloredEnvelope}`);
         if (o.items.atsugami) itemsStr.push(`${t('atsugami')}`);
         if (o.items.sekifudaNoLogo > 0) itemsStr.push(`${t('sekifudaNoLogo')} x${o.items.sekifudaNoLogo}`);
         if (o.items.sekifudaWithLogo > 0) itemsStr.push(`${t('sekifudaWithLogo')} x${o.items.sekifudaWithLogo}`);
@@ -1660,7 +1678,7 @@ function trackClientFromOrder(clientId, amount, profit, orderDate, items, orderC
   if (!clientId) return;
 
   const itemsObj = items || {};
-  const envelopeQty = (itemsObj.noshi || 0) + (itemsObj.nagagata || 0) + (itemsObj.pochi || 0);
+  const envelopeQty = (itemsObj.noshi || 0) + (itemsObj.nagagata || 0) + (itemsObj.pochi || 0) + (itemsObj.coloredEnvelope || 0);
   const sekifudaQty = (itemsObj.sekifudaNoLogo || 0) + (itemsObj.sekifudaWithLogo || 0);
   const a4Qty = (itemsObj.hofuchoMermaid || 0) + (itemsObj.hofuchoGayo || 0) + (itemsObj.uketsukeSign || 0);
   const totalQty = envelopeQty + sekifudaQty + a4Qty;
@@ -1884,6 +1902,7 @@ function loadSettings() {
   document.getElementById('settings-price-noshi').value = savedPrices.noshi;
   document.getElementById('settings-price-nagagata').value = savedPrices.nagagata;
   document.getElementById('settings-price-pochi').value = savedPrices.pochi;
+  document.getElementById('settings-price-colored-envelope').value = savedPrices.coloredEnvelope;
   document.getElementById('settings-price-atsugami').value = savedPrices.atsugami;
   document.getElementById('settings-price-sealA').value = savedPrices.sealA;
   document.getElementById('settings-price-sealB').value = savedPrices.sealB;
@@ -1909,6 +1928,7 @@ function saveSettings() {
     noshi: parseInt(document.getElementById('settings-price-noshi').value) || 0,
     nagagata: parseInt(document.getElementById('settings-price-nagagata').value) || 0,
     pochi: parseInt(document.getElementById('settings-price-pochi').value) || 0,
+    coloredEnvelope: parseInt(document.getElementById('settings-price-colored-envelope').value) || 0,
     atsugami: parseInt(document.getElementById('settings-price-atsugami').value) || 0,
     sealA: parseInt(document.getElementById('settings-price-sealA').value) || 0,
     sealB: parseInt(document.getElementById('settings-price-sealB').value) || 0,
@@ -1929,6 +1949,7 @@ function updatePriceLabels() {
     'label-price-noshi': `${t('noshi')} (${formatCurrency(PRICES.noshi)})`,
     'label-price-nagagata': `${t('nagagata')} (${formatCurrency(PRICES.nagagata)})`,
     'label-price-pochi': `${t('pochi')} (${formatCurrency(PRICES.pochi)})`,
+    'label-price-colored-envelope': `${t('coloredEnvelope')} (${formatCurrency(PRICES.coloredEnvelope)})`,
     'label-price-atsugami': `${t('atsugami')} (${formatCurrency(PRICES.atsugami)})`,
     'label-price-sealA': `${t('sealA')} (${formatCurrency(PRICES.sealA)}${perPiece})`,
     'label-price-sealB': `${t('sealB')} (${formatCurrency(PRICES.sealB)}${perPiece})`,

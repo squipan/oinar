@@ -533,6 +533,10 @@
                                         <input type="number" id="settings-price-pochi" min="0" required>
                                     </div>
                                     <div class="form-group" style="margin: 0;">
+                                        <label data-i18n="coloredEnvelope">Colored Envelopes</label>
+                                        <input type="number" id="settings-price-colored-envelope" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
                                         <label data-i18n="atsugami">Atsugami</label>
                                         <input type="number" id="settings-price-atsugami" min="0" required>
                                     </div>
@@ -588,150 +592,140 @@
                         </div>
                     </div>
 
-                    <div
-                        style="border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.2rem; background: #fafafa;">
-                        <label style="margin-bottom: 1rem; color: var(--text-primary);"
-                            data-i18n="order_items">Items</label>
+                    <!-- ── ACCORDION: ENVELOPES ── -->
+                    <details class="item-group item-group--envelope" open>
+                        <summary class="item-group__header">
+                            <span class="item-group__icon">📩</span>
+                            <span class="item-group__title">封筒 / Envelopes</span>
+                            <i class="fas fa-chevron-down item-group__chevron"></i>
+                        </summary>
+                        <div class="item-group__body">
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-noshi">のし袋 (¥60)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-noshi',-1)">−</button>
+                                    <input type="number" id="item-noshi" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-noshi',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-nagagata">長形４号 (¥45)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-nagagata',-1)">−</button>
+                                    <input type="number" id="item-nagagata" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-nagagata',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-pochi">ポチ袋 (¥80)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-pochi',-1)">−</button>
+                                    <input type="number" id="item-pochi" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-pochi',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-colored-envelope">カラー封筒 (¥100)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-colored-envelope',-1)">−</button>
+                                    <input type="number" id="item-colored-envelope" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-colored-envelope',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-sekifuda-nologo">席札 ロゴなし (¥50)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-sekifuda-nologo',-1)">−</button>
+                                    <input type="number" id="item-sekifuda-nologo" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-sekifuda-nologo',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-sekifuda-withlogo">席札 ロゴあり (¥55)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-sekifuda-withlogo',-1)">−</button>
+                                    <input type="number" id="item-sekifuda-withlogo" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-sekifuda-withlogo',1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
 
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                            <span style="font-weight:500;" id="label-price-noshi">のし袋 (¥60)</span>
-                            <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
-                                <input type="number" id="item-noshi" value="0" min="0"
-                                    style="width: 70px; padding:0.4rem;">
+                    <!-- ── ACCORDION: OPTIONS ── -->
+                    <details class="item-group item-group--options" open>
+                        <summary class="item-group__header">
+                            <span class="item-group__icon">✨</span>
+                            <span class="item-group__title" data-i18n="label_options">Options</span>
+                            <i class="fas fa-chevron-down item-group__chevron"></i>
+                        </summary>
+                        <div class="item-group__body">
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-atsugami">厚紙補強 (¥100)</span>
+                                <label class="item-row__toggle">
+                                    <input type="checkbox" id="item-atsugami" style="width:18px;height:18px;padding:0;cursor:pointer;accent-color:var(--primary);">
+                                    <span data-i18n="label_add_option">Add</span>
+                                </label>
+                            </div>
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-sealA">シールA (¥20 / 枚)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-seal-a',-1)">−</button>
+                                    <input type="number" id="item-seal-a" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-seal-a',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-sealB">シールB (¥10 / 枚)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-seal-b',-1)">−</button>
+                                    <input type="number" id="item-seal-b" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-seal-b',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="item-row">
+                                <span class="item-row__label" data-i18n="label_express_option">Express (+¥300)</span>
+                                <label class="item-row__toggle">
+                                    <input type="checkbox" id="order-express" style="width:18px;height:18px;padding:0;cursor:pointer;accent-color:var(--primary);">
+                                    <span data-i18n="label_add_option">Add</span>
+                                </label>
                             </div>
                         </div>
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                            <span style="font-weight:500;" id="label-price-nagagata">長形４号 (¥45)</span>
-                            <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
-                                <input type="number" id="item-nagagata" value="0" min="0"
-                                    style="width: 70px; padding:0.4rem;">
-                            </div>
-                        </div>
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                            <span style="font-weight:500;" id="label-price-pochi">ポチ袋 (¥80)</span>
-                            <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
-                                <input type="number" id="item-pochi" value="0" min="0"
-                                    style="width: 70px; padding:0.4rem;">
-                            </div>
-                        </div>
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                            <span style="font-weight:500;" id="label-price-sekifuda-nologo">席札 ロゴなし (¥50)</span>
-                            <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
-                                <input type="number" id="item-sekifuda-nologo" value="0" min="0"
-                                    style="width: 70px; padding:0.4rem;">
-                            </div>
-                        </div>
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                            <span style="font-weight:500;" id="label-price-sekifuda-withlogo">席札 ロゴあり (¥55)</span>
-                            <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
-                                <input type="number" id="item-sekifuda-withlogo" value="0" min="0"
-                                    style="width: 70px; padding:0.4rem;">
-                            </div>
-                        </div>
+                    </details>
 
-                        <div
-                            style="border-top: 1px dashed var(--border-color); margin: 0.8rem 0; display:flex; align-items:center; gap:0.5rem;">
-                            <span
-                                style="font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-light); white-space:nowrap;"
-                                data-i18n="label_options">Options</span>
-                            <div style="flex:1; border-top: 1px dashed var(--border-color);"></div>
-                        </div>
-
-                        <!-- 厚紙補強 checkbox -->
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                            <span style="font-weight:500;" id="label-price-atsugami">厚紙補強 (¥100)</span>
-                            <label
-                                style="display:flex; align-items:center; gap:0.4rem; margin:0; font-weight:400; color:var(--text-secondary); font-size:0.9rem;">
-                                <input type="checkbox" id="item-atsugami"
-                                    style="width:18px; height:18px; padding:0; cursor:pointer;">
-                                <span data-i18n="label_add_option">Add</span>
-                            </label>
-                        </div>
-
-                        <!-- シールA qty -->
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                            <span style="font-weight:500;" id="label-price-sealA">シールA (¥20 / 枚)</span>
-                            <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
-                                <input type="number" id="item-seal-a" value="0" min="0"
-                                    style="width: 70px; padding:0.4rem;">
+                    <!-- ── ACCORDION: A4 ITEMS (collapsed by default) ── -->
+                    <details class="item-group item-group--a4">
+                        <summary class="item-group__header">
+                            <span class="item-group__icon">📋</span>
+                            <span class="item-group__title">A4 アイテム</span>
+                            <i class="fas fa-chevron-down item-group__chevron"></i>
+                        </summary>
+                        <div class="item-group__body">
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-hofucho-mermaid">芳名帳/受付書 マーメイド紙 (¥280)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-hofucho-mermaid',-1)">−</button>
+                                    <input type="number" id="item-hofucho-mermaid" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-hofucho-mermaid',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-hofucho-gayo">芳名帳/受付書 画用紙 (¥260)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-hofucho-gayo',-1)">−</button>
+                                    <input type="number" id="item-hofucho-gayo" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-hofucho-gayo',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-uketsuke">受付サイン 画用紙特厚口 (¥320)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-uketsuke',-1)">−</button>
+                                    <input type="number" id="item-uketsuke" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-uketsuke',1)">+</button>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- シールB qty -->
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                            <span style="font-weight:500;" id="label-price-sealB">シールB (¥10 / 枚)</span>
-                            <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
-                                <input type="number" id="item-seal-b" value="0" min="0"
-                                    style="width: 70px; padding:0.4rem;">
-                            </div>
-                        </div>
-                        <div
-                            style="border-top: 1px dashed var(--border-color); margin: 0.8rem 0; display:flex; align-items:center; gap:0.5rem;">
-                            <span
-                                style="font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:#e07b4f; white-space:nowrap;">A4
-                                アイテム</span>
-                            <div style="flex:1; border-top: 1px dashed var(--border-color);"></div>
-                        </div>
-
-                        <!-- 芳名帳/受付書 マーメイド紙 -->
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                            <span style="font-weight:500;" id="label-price-hofucho-mermaid">芳名帳/受付書 マーメイド紙 (¥280)</span>
-                            <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
-                                <input type="number" id="item-hofucho-mermaid" value="0" min="0"
-                                    style="width:70px; padding:0.4rem;">
-                            </div>
-                        </div>
-
-                        <!-- 芳名帳/受付書 画用紙 -->
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                            <span style="font-weight:500;" id="label-price-hofucho-gayo">芳名帳/受付書 画用紙 (¥260)</span>
-                            <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
-                                <input type="number" id="item-hofucho-gayo" value="0" min="0"
-                                    style="width:70px; padding:0.4rem;">
-                            </div>
-                        </div>
-
-                        <!-- 受付サイン -->
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                            <span style="font-weight:500;" id="label-price-uketsuke">受付サイン 画用紙特厚口 (¥320)</span>
-                            <div style="display:flex; align-items:center; gap:0.5rem;">
-                                <span style="font-size:0.85rem; color:var(--text-secondary);" data-i18n="qty">Qty</span>
-                                <input type="number" id="item-uketsuke" value="0" min="0"
-                                    style="width:70px; padding:0.4rem;">
-                            </div>
-                        </div>
-                        <!-- 速達 checkbox -->
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.2rem;">
-                            <span style="font-weight:500;" data-i18n="label_express_option">Express (+¥300)</span>
-                            <label
-                                style="display:flex; align-items:center; gap:0.4rem; margin:0; font-weight:400; color:var(--text-secondary); font-size:0.9rem;">
-                                <input type="checkbox" id="order-express"
-                                    style="width:18px; height:18px; padding:0; cursor:pointer;">
-                                <span data-i18n="label_add_option">Add</span>
-                            </label>
-                        </div>
-                    </div>
+                    </details>
 
                     <div
                         style="background-color: var(--status-todo-bg); padding: 1rem; border-radius: 8px; margin-bottom: 1.2rem;">

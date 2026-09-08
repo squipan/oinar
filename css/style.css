@@ -1872,7 +1872,6 @@ tbody tr:hover {
   color: var(--accent);
 }
 
-/* Empty state */
 .month-modal-empty {
   display: flex;
   flex-direction: column;
@@ -1883,3 +1882,149 @@ tbody tr:hover {
   font-size: 0.9rem;
   text-align: center;
 }
+
+/* ══════════════════════════════════════════════
+   ORDER FORM — ACCORDION ITEM GROUPS
+══════════════════════════════════════════════ */
+.item-group {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+.item-group--envelope { border-left: 4px solid #5b9bd5; }
+.item-group--options  { border-left: 4px solid #9b7bc8; }
+.item-group--a4       { border-left: 4px solid #e07b4f; }
+
+.item-group__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  background: #fafafa;
+}
+
+.item-group__header::-webkit-details-marker { display: none; }
+
+.item-group__icon { font-size: 1rem; flex-shrink: 0; }
+
+.item-group__title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  font-family: var(--font-family);
+}
+
+.item-group__chevron {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+details[open] > summary .item-group__chevron {
+  transform: rotate(180deg);
+}
+
+.item-group__body {
+  padding: 0.5rem 1rem 0.75rem;
+}
+
+/* ── ITEM ROW ── */
+.item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.item-row:last-child { border-bottom: none; }
+
+.item-row__label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+  min-width: 0;
+}
+
+.item-row__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-weight: 400;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════
+   STEPPER CONTROL  [−] qty [+]
+══════════════════════════════════════════════ */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.stepper__btn {
+  background: var(--secondary);
+  border: none;
+  width: 32px;
+  height: 32px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-hover);
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+
+.stepper__btn:hover  { background: var(--primary); color: #fff; }
+.stepper__btn:active { background: var(--primary-hover); color: #fff; }
+
+.stepper__input {
+  width: 44px;
+  height: 32px;
+  border: none;
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: #fff;
+  padding: 0;
+  -moz-appearance: textfield;
+  font-family: var(--font-family);
+}
+
+.stepper__input::-webkit-outer-spin-button,
+.stepper__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.stepper__input:focus {
+  outline: none;
+  background: #fffbf5;
+}
+
