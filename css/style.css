@@ -1890,7 +1890,6 @@ tbody tr:hover {
   border: 1px solid var(--border-color);
   border-radius: 10px;
   margin-bottom: 0.75rem;
-  overflow: hidden;
   background: #fff;
 }
 
@@ -2026,5 +2025,114 @@ details[open] > summary .item-group__chevron {
 .stepper__input:focus {
   outline: none;
   background: #fffbf5;
+}
+
+/* ══════════════════════════════════════════════
+   SALES OVERVIEW CHART CARD
+══════════════════════════════════════════════ */
+.sales-chart-card {
+  padding-top: 1.2rem;
+}
+
+.sales-chart-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1rem;
+}
+
+/* Tab bar */
+.sales-chart-tabs {
+  display: flex;
+  gap: 0;
+  background: var(--secondary);
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.sales-tab {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.sales-tab.active {
+  background: var(--surface-color);
+  color: var(--primary-hover);
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.sales-tab:hover:not(.active) {
+  color: var(--primary-hover);
+}
+
+/* Chart wrapper */
+.sales-chart-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 0.5rem 0;
+}
+
+/* Stat chips row */
+.sales-chart-stats {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.sales-stat-chip {
+  flex: 1;
+  background: var(--bg-color);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.sales-stat-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.sales-stat-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-align: center;
+}
+
+/* Responsive: on very small screens tighten padding */
+@media (max-width: 400px) {
+  .sales-tab {
+    padding: 0.3rem 0.55rem;
+    font-size: 0.75rem;
+  }
+  .sales-stat-value {
+    font-size: 0.8rem;
+  }
 }
 

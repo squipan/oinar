@@ -719,6 +719,11 @@ function openModal(id) {
     document.getElementById('order-date').value = today;
     const customContainer = document.getElementById('custom-shipping-container');
     if (customContainer) customContainer.style.display = 'none';
+    // Reset accordions: envelopes & options open, a4 closed
+    document.querySelectorAll('#modal-order .item-group').forEach(d => {
+      const isA4 = d.classList.contains('item-group--a4');
+      if (isA4) d.removeAttribute('open'); else d.setAttribute('open', '');
+    });
     autoFillDeadline();
     calculateOrderMath();
   }
@@ -947,6 +952,7 @@ function loadDashboardData() {
   document.getElementById('metric-clients').textContent = totalClients;
 
   renderRecentTasks();
+  renderSalesChart();
 }
 
 function renderRecentTasks() {
@@ -2281,3 +2287,184 @@ function closeMonthDetailModal(e) {
   }, 300);
 }
 
+// =============================================
+// SALES OVERVIEW CHART
+// =============================================
+
+let _salesChartInstance = null;
+let _salesChartPeriod = 'monthly'; // 'yearly' | 'monthly' | 'daily'
+
+function setSalesTab(period) {
+  _salesChartPeriod = period;
+  // Update tab active state
+  document.querySelectorAll('.sales-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-period') === period);
+  });
+  renderSalesChart();
+}
+
+function _buildSalesData(period) {
+  const clients = getAll('clients');
+  const now = new Date();
+  const nowY = now.getFullYear();
+  const nowM = now.getMonth(); // 0-based
+  const nowD = now.getDate();
+
+  let labels = [];
+  let values = [];
+  let peakLabel = 'Best';
+
+  if (period === 'yearly') {
+    // Group by year: show all years present + current year
+    const yearMap = {};
+    clients.forEach(c => {
+      if (!c.date) return;
+      const y = c.date.split('-')[0];
+      yearMap[y] = (yearMap[y] || 0) + (c.sales || 0);
+    });
+    if (!yearMap[String(nowY)]) yearMap[String(nowY)] = 0;
+    labels = Object.keys(yearMap).sort();
+    values = labels.map(y => yearMap[y] || 0);
+    peakLabel = 'Best Year';
+  } else if (period === 'monthly') {
+    // Show all months of the current year up to today
+    const monthMap = {};
+    clients.forEach(c => {
+      if (!c.date || !c.date.startsWith(String(nowY))) return;
+      const m = parseInt(c.date.split('-')[1]) - 1; // 0-based
+      monthMap[m] = (monthMap[m] || 0) + (c.sales || 0);
+    });
+    const lang = getLanguage();
+    const monthNames = lang === 'jp'
+      ? ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+      : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    labels = monthNames.slice(0, nowM + 1);
+    values = [];
+    for (let m = 0; m <= nowM; m++) {
+      values.push(monthMap[m] || 0);
+    }
+    peakLabel = 'Best Month';
+  } else if (period === 'daily') {
+    // Show the last 14 days
+    const dayMap = {};
+    const dayLabels = [];
+    const dayKeys = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(nowD - i);
+      const key = d.toISOString().split('T')[0];
+      const label = `${d.getMonth() + 1}/${d.getDate()}`;
+      dayLabels.push(label);
+      dayKeys.push(key);
+      dayMap[key] = 0;
+    }
+    clients.forEach(c => {
+      if (Object.prototype.hasOwnProperty.call(dayMap, c.date)) {
+        dayMap[c.date] = (dayMap[c.date] || 0) + (c.sales || 0);
+      }
+    });
+    labels = dayLabels;
+    values = dayKeys.map(k => dayMap[k] || 0);
+    peakLabel = 'Best Day';
+  }
+
+  const total = values.reduce((a, b) => a + b, 0);
+  const peak = Math.max(...values, 0);
+  const avg = values.length > 0 ? Math.round(total / values.length) : 0;
+
+  return { labels, values, total, peak, avg, peakLabel };
+}
+
+function renderSalesChart() {
+  const canvas = document.getElementById('sales-chart');
+  if (!canvas || typeof Chart === 'undefined') return;
+
+  const { labels, values, total, peak, avg, peakLabel } = _buildSalesData(_salesChartPeriod);
+
+  // Update stat chips
+  const totalEl = document.getElementById('chart-stat-total');
+  const peakEl = document.getElementById('chart-stat-peak');
+  const peakLabelEl = document.getElementById('chart-stat-peak-label');
+  const avgEl = document.getElementById('chart-stat-avg');
+  if (totalEl) totalEl.textContent = formatCurrency(total);
+  if (peakEl) peakEl.textContent = formatCurrency(peak);
+  if (peakLabelEl) peakLabelEl.textContent = peakLabel;
+  if (avgEl) avgEl.textContent = formatCurrency(avg);
+
+  // Build gradient fill
+  const ctx = canvas.getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.offsetHeight || 220);
+  gradient.addColorStop(0, 'rgba(212,163,115,0.35)');
+  gradient.addColorStop(1, 'rgba(212,163,115,0.0)');
+
+  const chartData = {
+    labels,
+    datasets: [{
+      label: 'Sales',
+      data: values,
+      fill: true,
+      backgroundColor: gradient,
+      borderColor: '#d4a373',
+      borderWidth: 2.5,
+      tension: 0.4,
+      pointRadius: values.map((v, i) => i === values.length - 1 ? 5 : 3),
+      pointBackgroundColor: '#d4a373',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointHoverRadius: 7,
+    }]
+  };
+
+  if (_salesChartInstance) {
+    // Update existing chart instead of destroying/recreating to avoid flicker
+    _salesChartInstance.data = chartData;
+    _salesChartInstance.update('none');
+    return;
+  }
+
+  _salesChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: chartData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#fff',
+          titleColor: '#333',
+          bodyColor: '#b08257',
+          borderColor: '#e9ecef',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            label: function(ctx) { return formatCurrency(ctx.parsed.y); }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(0,0,0,0.04)' },
+          ticks: {
+            color: '#999',
+            font: { size: 11, family: "'Inter', sans-serif" },
+            maxRotation: 0,
+          }
+        },
+        y: {
+          grid: { color: 'rgba(0,0,0,0.04)' },
+          ticks: {
+            color: '#999',
+            font: { size: 11, family: "'Inter', sans-serif" },
+            callback: function(v) {
+              if (v >= 10000) return '¥' + Math.round(v / 1000) + 'k';
+              return '¥' + Number(v).toLocaleString('ja-JP');
+            }
+          },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}

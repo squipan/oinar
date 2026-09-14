@@ -178,6 +178,35 @@
                             </div>
                         </div>
 
+                        <!-- SALES OVERVIEW CHART CARD -->
+                        <div class="card sales-chart-card" id="sales-chart-card">
+                            <div class="card-header" style="margin-bottom:0; border-bottom:none; padding-bottom:0;">
+                                <span class="card-title">Sales Overview</span>
+                                <div class="sales-chart-tabs" id="sales-chart-tabs">
+                                    <button class="sales-tab" data-period="yearly" onclick="setSalesTab('yearly')">Yearly</button>
+                                    <button class="sales-tab active" data-period="monthly" onclick="setSalesTab('monthly')">Monthly</button>
+                                    <button class="sales-tab" data-period="daily" onclick="setSalesTab('daily')">Daily</button>
+                                </div>
+                            </div>
+                            <div class="sales-chart-wrapper">
+                                <canvas id="sales-chart" height="220"></canvas>
+                            </div>
+                            <div class="sales-chart-stats" id="sales-chart-stats">
+                                <div class="sales-stat-chip">
+                                    <span class="sales-stat-label">Total</span>
+                                    <span class="sales-stat-value" id="chart-stat-total">¥0</span>
+                                </div>
+                                <div class="sales-stat-chip">
+                                    <span class="sales-stat-label" id="chart-stat-peak-label">Best</span>
+                                    <span class="sales-stat-value" id="chart-stat-peak">¥0</span>
+                                </div>
+                                <div class="sales-stat-chip">
+                                    <span class="sales-stat-label">Average</span>
+                                    <span class="sales-stat-value" id="chart-stat-avg">¥0</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="card">
                             <div class="card-header">
                                 <span class="card-title" data-i18n="quick_actions">Quick Actions</span>
@@ -964,6 +993,9 @@
             }
         }
     </style>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
     <!-- Firebase SDKs (compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
