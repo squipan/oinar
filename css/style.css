@@ -2175,3 +2175,49 @@ details[open] > summary .item-group__chevron {
     height: 160px !important;
   }
 }
+
+/* -- Chart period navigation bar -- */
+.sales-chart-nav {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0 0.1rem;
+}
+
+.sales-nav-btn {
+  background: var(--secondary);
+  border: none;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--primary-hover);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family);
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.sales-nav-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: #fff;
+}
+
+.sales-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.sales-nav-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 80px;
+  text-align: center;
+  user-select: none;
+}

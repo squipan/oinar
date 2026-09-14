@@ -2294,28 +2294,86 @@ function closeMonthDetailModal(e) {
 let _salesChartInstance = null;
 let _salesChartPeriod = 'monthly'; // 'yearly' | 'monthly' | 'daily'
 
-function setSalesTab(period) {
-  _salesChartPeriod = period;
-  // Update tab active state
-  document.querySelectorAll('.sales-tab').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-period') === period);
-  });
+// Navigation state
+const _now = new Date();
+let _salesChartYear  = _now.getFullYear();        // year shown in Monthly tab
+let _salesChartNavM  = _now.getMonth();           // 0-based month shown in Daily tab
+let _salesChartNavY  = _now.getFullYear();        // year for Daily tab month
+
+// ── Helpers ───────────────────────────────────
+function _updateSalesNav() {
+  const nav   = document.getElementById('sales-chart-nav');
+  const label = document.getElementById('sales-nav-label');
+  const next  = document.getElementById('sales-nav-next');
+  const now   = new Date();
+
+  if (_salesChartPeriod === 'monthly') {
+    nav.style.display = 'flex';
+    label.textContent = String(_salesChartYear);
+    // disable "next" if already on current year
+    if (next) next.disabled = _salesChartYear >= now.getFullYear();
+  } else if (_salesChartPeriod === 'daily') {
+    nav.style.display = 'flex';
+    const lang = getLanguage();
+    const monthNames = lang === 'jp'
+      ? ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+      : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    label.textContent = `${monthNames[_salesChartNavM]} ${_salesChartNavY}`;
+    // disable "next" if already on current month
+    const atNow = _salesChartNavY >= now.getFullYear() && _salesChartNavM >= now.getMonth();
+    if (next) next.disabled = atNow;
+  } else {
+    nav.style.display = 'none';
+  }
+}
+
+function salesNavPrev() {
+  if (_salesChartPeriod === 'monthly') {
+    _salesChartYear--;
+  } else if (_salesChartPeriod === 'daily') {
+    if (_salesChartNavM === 0) { _salesChartNavM = 11; _salesChartNavY--; }
+    else { _salesChartNavM--; }
+  }
+  _updateSalesNav();
   renderSalesChart();
 }
 
+function salesNavNext() {
+  const now = new Date();
+  if (_salesChartPeriod === 'monthly') {
+    if (_salesChartYear < now.getFullYear()) _salesChartYear++;
+  } else if (_salesChartPeriod === 'daily') {
+    const atNow = _salesChartNavY >= now.getFullYear() && _salesChartNavM >= now.getMonth();
+    if (!atNow) {
+      if (_salesChartNavM === 11) { _salesChartNavM = 0; _salesChartNavY++; }
+      else { _salesChartNavM++; }
+    }
+  }
+  _updateSalesNav();
+  renderSalesChart();
+}
+
+function setSalesTab(period) {
+  _salesChartPeriod = period;
+  document.querySelectorAll('.sales-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-period') === period);
+  });
+  _updateSalesNav();
+  renderSalesChart();
+}
+
+// ── Data builder ──────────────────────────────
 function _buildSalesData(period) {
   const clients = getAll('clients');
   const now = new Date();
   const nowY = now.getFullYear();
-  const nowM = now.getMonth(); // 0-based
-  const nowD = now.getDate();
+  const nowM = now.getMonth();
 
   let labels = [];
   let values = [];
   let peakLabel = 'Best';
 
   if (period === 'yearly') {
-    // Group by year: show all years present + current year
     const yearMap = {};
     clients.forEach(c => {
       if (!c.date) return;
@@ -2326,34 +2384,38 @@ function _buildSalesData(period) {
     labels = Object.keys(yearMap).sort();
     values = labels.map(y => yearMap[y] || 0);
     peakLabel = 'Best Year';
+
   } else if (period === 'monthly') {
-    // Show all months of the current year up to today
+    // Use selected year (_salesChartYear)
+    const yr = _salesChartYear;
+    const isCurrentYear = yr === nowY;
+    const maxMonth = isCurrentYear ? nowM : 11; // full year if past year
     const monthMap = {};
     clients.forEach(c => {
-      if (!c.date || !c.date.startsWith(String(nowY))) return;
-      const m = parseInt(c.date.split('-')[1]) - 1; // 0-based
+      if (!c.date || !c.date.startsWith(String(yr))) return;
+      const m = parseInt(c.date.split('-')[1]) - 1;
       monthMap[m] = (monthMap[m] || 0) + (c.profit || 0);
     });
     const lang = getLanguage();
     const monthNames = lang === 'jp'
       ? ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
       : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    labels = monthNames.slice(0, nowM + 1);
+    labels = monthNames.slice(0, maxMonth + 1);
     values = [];
-    for (let m = 0; m <= nowM; m++) {
-      values.push(monthMap[m] || 0);
-    }
+    for (let m = 0; m <= maxMonth; m++) values.push(monthMap[m] || 0);
     peakLabel = 'Best Month';
+
   } else if (period === 'daily') {
-    // Show the last 14 days
+    // Use selected month (_salesChartNavM / _salesChartNavY)
+    const yr = _salesChartNavY;
+    const mo = _salesChartNavM; // 0-based
+    const daysInMonth = new Date(yr, mo + 1, 0).getDate();
     const dayMap = {};
     const dayLabels = [];
     const dayKeys = [];
-    for (let i = 13; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(nowD - i);
-      const key = d.toISOString().split('T')[0];
-      const label = `${d.getMonth() + 1}/${d.getDate()}`;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const key = `${yr}-${String(mo + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const label = String(d);
       dayLabels.push(label);
       dayKeys.push(key);
       dayMap[key] = 0;
@@ -2369,8 +2431,8 @@ function _buildSalesData(period) {
   }
 
   const total = values.reduce((a, b) => a + b, 0);
-  const peak = Math.max(...values, 0);
-  const avg = values.length > 0 ? Math.round(total / values.length) : 0;
+  const peak  = Math.max(...values, 0);
+  const avg   = values.length > 0 ? Math.round(total / values.length) : 0;
 
   return { labels, values, total, peak, avg, peakLabel };
 }
@@ -2379,6 +2441,7 @@ function renderSalesChart() {
   const canvas = document.getElementById('sales-chart');
   if (!canvas || typeof Chart === 'undefined') return;
 
+  _updateSalesNav();
   const { labels, values, total, peak, avg, peakLabel } = _buildSalesData(_salesChartPeriod);
 
   // Update stat chips

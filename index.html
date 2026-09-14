@@ -191,6 +191,12 @@
                                         <button class="sales-tab" data-period="daily" onclick="setSalesTab('daily')">Daily</button>
                                     </div>
                                 </div>
+                                <!-- period navigation: prev / label / next -->
+                                <div class="sales-chart-nav" id="sales-chart-nav" style="display:none;">
+                                    <button class="sales-nav-btn" id="sales-nav-prev" onclick="salesNavPrev()">&#8249;</button>
+                                    <span class="sales-nav-label" id="sales-nav-label"></span>
+                                    <button class="sales-nav-btn" id="sales-nav-next" onclick="salesNavNext()">&#8250;</button>
+                                </div>
                                 <div class="sales-chart-wrapper">
                                     <canvas id="sales-chart"></canvas>
                                 </div>
