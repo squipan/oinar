@@ -178,50 +178,57 @@
                             </div>
                         </div>
 
-                        <!-- SALES OVERVIEW CHART CARD -->
-                        <div class="card sales-chart-card" id="sales-chart-card">
-                            <div class="card-header" style="margin-bottom:0; border-bottom:none; padding-bottom:0;">
-                                <span class="card-title">Sales Overview</span>
-                                <div class="sales-chart-tabs" id="sales-chart-tabs">
-                                    <button class="sales-tab" data-period="yearly" onclick="setSalesTab('yearly')">Yearly</button>
-                                    <button class="sales-tab active" data-period="monthly" onclick="setSalesTab('monthly')">Monthly</button>
-                                    <button class="sales-tab" data-period="daily" onclick="setSalesTab('daily')">Daily</button>
-                                </div>
-                            </div>
-                            <div class="sales-chart-wrapper">
-                                <canvas id="sales-chart" height="220"></canvas>
-                            </div>
-                            <div class="sales-chart-stats" id="sales-chart-stats">
-                                <div class="sales-stat-chip">
-                                    <span class="sales-stat-label">Total</span>
-                                    <span class="sales-stat-value" id="chart-stat-total">¥0</span>
-                                </div>
-                                <div class="sales-stat-chip">
-                                    <span class="sales-stat-label" id="chart-stat-peak-label">Best</span>
-                                    <span class="sales-stat-value" id="chart-stat-peak">¥0</span>
-                                </div>
-                                <div class="sales-stat-chip">
-                                    <span class="sales-stat-label">Average</span>
-                                    <span class="sales-stat-value" id="chart-stat-avg">¥0</span>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- PROFIT OVERVIEW CHART + QUICK ACTIONS ROW -->
+                        <div class="dash-bottom-row">
 
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="card-title" data-i18n="quick_actions">Quick Actions</span>
+                            <!-- PROFIT CHART CARD -->
+                            <div class="card sales-chart-card" id="sales-chart-card">
+                                <div class="card-header" style="margin-bottom:0; border-bottom:none; padding-bottom:0;">
+                                    <span class="card-title">Profit Overview</span>
+                                    <div class="sales-chart-tabs" id="sales-chart-tabs">
+                                        <button class="sales-tab" data-period="yearly" onclick="setSalesTab('yearly')">Yearly</button>
+                                        <button class="sales-tab active" data-period="monthly" onclick="setSalesTab('monthly')">Monthly</button>
+                                        <button class="sales-tab" data-period="daily" onclick="setSalesTab('daily')">Daily</button>
+                                    </div>
+                                </div>
+                                <div class="sales-chart-wrapper">
+                                    <canvas id="sales-chart"></canvas>
+                                </div>
+                                <div class="sales-chart-stats" id="sales-chart-stats">
+                                    <div class="sales-stat-chip">
+                                        <span class="sales-stat-label">Total</span>
+                                        <span class="sales-stat-value" id="chart-stat-total">¥0</span>
+                                    </div>
+                                    <div class="sales-stat-chip">
+                                        <span class="sales-stat-label" id="chart-stat-peak-label">Best</span>
+                                        <span class="sales-stat-value" id="chart-stat-peak">¥0</span>
+                                    </div>
+                                    <div class="sales-stat-chip">
+                                        <span class="sales-stat-label">Average</span>
+                                        <span class="sales-stat-value" id="chart-stat-avg">¥0</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div style="display:flex; flex-direction:column; gap:10px;">
-                                <button class="btn btn-outline" style="justify-content:flex-start;"
-                                    onclick="openModal('modal-client'); setClientDatePicker(new Date().toISOString().split('T')[0])"><i
-                                        class="fas fa-user-plus"></i> <span data-i18n="add_client">Add
-                                        Client</span></button>
-                                <button class="btn btn-primary" style="justify-content:flex-start;"
-                                    onclick="openModal('modal-order')"><i class="fas fa-plus"></i> <span
-                                        data-i18n="btn_new_order">New Order</span></button>
+
+                            <!-- QUICK ACTIONS -->
+                            <div class="card dash-quick-actions">
+                                <div class="card-header">
+                                    <span class="card-title" data-i18n="quick_actions">Quick Actions</span>
+                                </div>
+                                <div style="display:flex; flex-direction:column; gap:10px;">
+                                    <button class="btn btn-outline" style="justify-content:flex-start;"
+                                        onclick="openModal('modal-client'); setClientDatePicker(new Date().toISOString().split('T')[0])"><i
+                                            class="fas fa-user-plus"></i> <span data-i18n="add_client">Add
+                                            Client</span></button>
+                                    <button class="btn btn-primary" style="justify-content:flex-start;"
+                                        onclick="openModal('modal-order')"><i class="fas fa-plus"></i> <span
+                                            data-i18n="btn_new_order">New Order</span></button>
+                                </div>
                             </div>
-                        </div>
+
+                        </div><!-- /.dash-bottom-row -->
                     </section>
+
 
                     <!-- VIEW: ORDERS -->
                     <section id="view-orders" class="view-section">

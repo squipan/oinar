@@ -2320,7 +2320,7 @@ function _buildSalesData(period) {
     clients.forEach(c => {
       if (!c.date) return;
       const y = c.date.split('-')[0];
-      yearMap[y] = (yearMap[y] || 0) + (c.sales || 0);
+      yearMap[y] = (yearMap[y] || 0) + (c.profit || 0);
     });
     if (!yearMap[String(nowY)]) yearMap[String(nowY)] = 0;
     labels = Object.keys(yearMap).sort();
@@ -2332,7 +2332,7 @@ function _buildSalesData(period) {
     clients.forEach(c => {
       if (!c.date || !c.date.startsWith(String(nowY))) return;
       const m = parseInt(c.date.split('-')[1]) - 1; // 0-based
-      monthMap[m] = (monthMap[m] || 0) + (c.sales || 0);
+      monthMap[m] = (monthMap[m] || 0) + (c.profit || 0);
     });
     const lang = getLanguage();
     const monthNames = lang === 'jp'
@@ -2360,7 +2360,7 @@ function _buildSalesData(period) {
     }
     clients.forEach(c => {
       if (Object.prototype.hasOwnProperty.call(dayMap, c.date)) {
-        dayMap[c.date] = (dayMap[c.date] || 0) + (c.sales || 0);
+        dayMap[c.date] = (dayMap[c.date] || 0) + (c.profit || 0);
       }
     });
     labels = dayLabels;
@@ -2400,7 +2400,7 @@ function renderSalesChart() {
   const chartData = {
     labels,
     datasets: [{
-      label: 'Sales',
+      label: 'Profit',
       data: values,
       fill: true,
       backgroundColor: gradient,
@@ -2427,7 +2427,7 @@ function renderSalesChart() {
     data: chartData,
     options: {
       responsive: true,
-      maintainAspectRatio: true,
+      maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: { display: false },

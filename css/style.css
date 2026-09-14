@@ -332,7 +332,7 @@ textarea:focus {
 }
 
 .topbar {
-  height: 70px;
+  height: 56px;
   background-color: var(--surface-color);
   border-bottom: 1px solid var(--border-color);
   display: flex;
@@ -379,7 +379,7 @@ textarea:focus {
 }
 
 .content-area {
-  padding: 2rem;
+  padding: 1.25rem 1.5rem;
   flex: 1;
 }
 
@@ -409,7 +409,7 @@ textarea:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 /* Cards */
@@ -417,8 +417,8 @@ textarea:focus {
   display: grid;
   grid-template-columns: 1fr repeat(3, 1fr);
   grid-template-rows: auto auto;
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
 }
 
 /* Hero card spans full left column across both rows */
@@ -428,7 +428,7 @@ textarea:focus {
 
 .metric-card {
   background: var(--surface-color);
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
   display: flex;
@@ -457,7 +457,7 @@ textarea:focus {
 .metric-card--hero {
   background: linear-gradient(135deg, #1a2a1a 0%, #1e3a28 40%, #2d5a3d 100%);
   border-radius: var(--border-radius);
-  padding: 2rem 2rem 1.8rem;
+  padding: 1.25rem 1.5rem 1rem;
   box-shadow: 0 8px 32px rgba(15, 81, 50, 0.35), 0 2px 8px rgba(0,0,0,0.18);
   border: 1px solid rgba(255,255,255,0.08);
   justify-content: center;
@@ -496,7 +496,7 @@ textarea:focus {
 }
 
 .metric-card--hero .metric-value {
-  font-size: 3rem;
+  font-size: 2.2rem;
   font-weight: 800;
   color: #ffffff;
   line-height: 1.1;
@@ -530,7 +530,7 @@ textarea:focus {
 }
 
 .metric-value {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -2136,3 +2136,42 @@ details[open] > summary .item-group__chevron {
   }
 }
 
+
+/* -- DASHBOARD BOTTOM ROW (chart + quick actions side-by-side on desktop) -- */
+.dash-bottom-row {
+  display: flex;
+  gap: 0.85rem;
+  align-items: stretch;
+}
+
+/* Chart card takes remaining space */
+.dash-bottom-row .sales-chart-card {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+/* Quick actions card: fixed width sidebar */
+.dash-quick-actions {
+  width: 200px;
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+/* Chart canvas height — CSS-controlled (maintainAspectRatio:false) */
+.sales-chart-wrapper {
+  height: 150px !important;
+}
+
+/* Mobile: stack bottom row */
+@media (max-width: 768px) {
+  .dash-bottom-row {
+    flex-direction: column;
+  }
+  .dash-quick-actions {
+    width: 100%;
+  }
+  .sales-chart-wrapper {
+    height: 160px !important;
+  }
+}
