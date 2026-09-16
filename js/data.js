@@ -17,7 +17,8 @@ const DEFAULT_PRICES = {
   hofuchoGayo1: 260,
   hofuchoGayo2: 160,
   uketsukeSign1: 320,
-  uketsukeSignExtra: 100
+  uketsukeSignExtra: 100,
+  poseCard: 60
 };
 
 // In-memory database - populated from Firestore after login

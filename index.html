@@ -598,6 +598,10 @@
                                         <label data-i18n="sekifudaWithLogo">Sekifuda (With Logo)</label>
                                         <input type="number" id="settings-price-sekifuda-withlogo" min="0" required>
                                     </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label data-i18n="poseCard">Pose Card</label>
+                                        <input type="number" id="settings-price-pose-card" min="0" required>
+                                    </div>
                                 </div>
                             </div>
 
@@ -688,6 +692,14 @@
                                     <button type="button" class="stepper__btn" onclick="stepperClick('item-sekifuda-withlogo',-1)">−</button>
                                     <input type="number" id="item-sekifuda-withlogo" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
                                     <button type="button" class="stepper__btn" onclick="stepperClick('item-sekifuda-withlogo',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-pose-card">ポーズカード (¥60)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-pose-card',-1)">−</button>
+                                    <input type="number" id="item-pose-card" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-pose-card',1)">+</button>
                                 </div>
                             </div>
                         </div>
