@@ -679,6 +679,14 @@
                                 </div>
                             </div>
                             <div class="item-row">
+                                <span class="item-row__label" id="label-price-washi">和紙封筒 (¥55)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-washi',-1)">−</button>
+                                    <input type="number" id="item-washi" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-washi',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="item-row">
                                 <span class="item-row__label" id="label-price-sekifuda-nologo">席札 ロゴなし (¥50)</span>
                                 <div class="stepper">
                                     <button type="button" class="stepper__btn" onclick="stepperClick('item-sekifuda-nologo',-1)">−</button>

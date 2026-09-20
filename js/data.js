@@ -7,6 +7,7 @@ const DEFAULT_PRICES = {
   nagagata: 45,
   pochi: 80,
   coloredEnvelope: 100,
+  washi: 55,
   atsugami: 100,
   sealA: 20,
   sealB: 10,

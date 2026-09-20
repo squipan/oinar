@@ -771,6 +771,7 @@ function editOrder(id) {
   document.getElementById('item-nagagata').value = o.items.nagagata || 0;
   document.getElementById('item-pochi').value = o.items.pochi || 0;
   document.getElementById('item-colored-envelope').value = o.items.coloredEnvelope || 0;
+  document.getElementById('item-washi').value = o.items.washi || 0;
   document.getElementById('item-atsugami').checked = o.items.atsugami || false;
   document.getElementById('item-seal-a').value = o.items.sealA || 0;
   document.getElementById('item-seal-b').value = o.items.sealB || 0;
@@ -1217,7 +1218,7 @@ function toggleShipped(orderId) {
 
 // --- ORDER CALCULATION ---
 function setupOrderCalculators() {
-  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-colored-envelope', 'item-seal-a', 'item-seal-b', 'item-sekifuda-nologo', 'item-sekifuda-withlogo', 'item-pose-card', 'item-hofucho-mermaid', 'item-hofucho-gayo', 'item-uketsuke', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
+  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-colored-envelope', 'item-washi', 'item-seal-a', 'item-seal-b', 'item-sekifuda-nologo', 'item-sekifuda-withlogo', 'item-pose-card', 'item-hofucho-mermaid', 'item-hofucho-gayo', 'item-uketsuke', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
   inputs.forEach(id => {
     document.getElementById(id)?.addEventListener('input', calculateOrderMath);
     document.getElementById(id)?.addEventListener('change', calculateOrderMath);
@@ -1245,6 +1246,7 @@ function calculateOrderMath() {
   const nagagata = parseInt(document.getElementById('item-nagagata').value) || 0;
   const pochi = parseInt(document.getElementById('item-pochi').value) || 0;
   const coloredEnvelope = parseInt(document.getElementById('item-colored-envelope').value) || 0;
+  const washi = parseInt(document.getElementById('item-washi').value) || 0;
   const atsugami = document.getElementById('item-atsugami').checked;
   const sealA = parseInt(document.getElementById('item-seal-a').value) || 0;
   const sealB = parseInt(document.getElementById('item-seal-b').value) || 0;
@@ -1270,7 +1272,7 @@ function calculateOrderMath() {
   // Dynamic shipping addition: 350 if any A4 item or sekifuda ordered, else date-aware standard fee
   const hasA4Items = hofuchoMermaid > 0 || hofuchoGayo > 0 || uketsukeSign > 0;
   const hasSekifuda = sekifudaNoLogo > 0 || sekifudaWithLogo > 0;
-  const hasEnvelopes = noshi > 0 || nagagata > 0 || pochi > 0 || coloredEnvelope > 0 || poseCard > 0;
+  const hasEnvelopes = noshi > 0 || nagagata > 0 || pochi > 0 || coloredEnvelope > 0 || washi > 0 || poseCard > 0;
   const orderDateForCalc = document.getElementById('order-date')?.value || '';
   
   let shippingAddition = getShippingFeeAddition(orderDateForCalc);
@@ -1296,6 +1298,7 @@ function calculateOrderMath() {
     + (nagagata * PRICES.nagagata)
     + (pochi * PRICES.pochi)
     + (coloredEnvelope * PRICES.coloredEnvelope)
+    + (washi * PRICES.washi)
     + (atsugami ? PRICES.atsugami : 0)
     + (sealA * PRICES.sealA)
     + (sealB * PRICES.sealB)
@@ -1419,6 +1422,7 @@ function handleOrderSubmit(e) {
       nagagata: parseInt(document.getElementById('item-nagagata').value) || 0,
       pochi: parseInt(document.getElementById('item-pochi').value) || 0,
       coloredEnvelope: parseInt(document.getElementById('item-colored-envelope').value) || 0,
+      washi: parseInt(document.getElementById('item-washi').value) || 0,
       atsugami: document.getElementById('item-atsugami').checked,
       sealA: parseInt(document.getElementById('item-seal-a').value) || 0,
       sealB: parseInt(document.getElementById('item-seal-b').value) || 0,
