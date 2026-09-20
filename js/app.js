@@ -997,20 +997,20 @@ function renderRecentTasks() {
       const pochi = items.pochi || 0;
       const coloredEnvelope = items.coloredEnvelope || 0;
       const washi = items.washi || 0;
+      const poseCard = items.poseCard || 0;
       const sealA = items.sealA || 0;
       const sealB = items.sealB || 0;
       const sekifudaNoLogo = items.sekifudaNoLogo || 0;
       const sekifudaWithLogo = items.sekifudaWithLogo || 0;
-      totalItems = noshi + nagagata + pochi + coloredEnvelope + washi + sekifudaNoLogo + sekifudaWithLogo;
+      totalItems = noshi + nagagata + pochi + coloredEnvelope + washi + poseCard + sekifudaNoLogo + sekifudaWithLogo;
       if (noshi > 0) itemDetails.push(`${t('noshi')}\u00d7${noshi}`);
       if (nagagata > 0) itemDetails.push(`${t('nagagata')}\u00d7${nagagata}`);
       if (pochi > 0) itemDetails.push(`${t('pochi')}\u00d7${pochi}`);
       if (coloredEnvelope > 0) itemDetails.push(`${t('coloredEnvelope')}\u00d7${coloredEnvelope}`);
       if (washi > 0) itemDetails.push(`${t('washi')}\u00d7${washi}`);
+      if (poseCard > 0) itemDetails.push(`${t('poseCard')}\u00d7${poseCard}`);
       if (sekifudaNoLogo > 0) itemDetails.push(`${t('sekifudaNoLogo')}\u00d7${sekifudaNoLogo}`);
       if (sekifudaWithLogo > 0) itemDetails.push(`${t('sekifudaWithLogo')}\u00d7${sekifudaWithLogo}`);
-      const poseCard = items.poseCard || 0;
-      if (poseCard > 0) itemDetails.push(`${t('poseCard')}\u00d7${poseCard}`);
       if (sealA > 0) itemDetails.push(`${t('sealA')}\u00d7${sealA}`);
       if (sealB > 0) itemDetails.push(`${t('sealB')}\u00d7${sealB}`);
       const hofuchoMermaid = items.hofuchoMermaid || 0;
@@ -1487,9 +1487,10 @@ function syncAutoTrackedClients() {
 
     const items = o.items || {};
     const envelopeQty = (items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0) + (items.coloredEnvelope || 0) + (items.washi || 0);
+    const poseCardQty = (items.poseCard || 0);
     const sekifudaQty = (items.sekifudaNoLogo || 0) + (items.sekifudaWithLogo || 0);
     const a4Qty = (items.hofuchoMermaid || 0) + (items.hofuchoGayo || 0) + (items.uketsukeSign || 0);
-    const totalQty = envelopeQty + sekifudaQty + a4Qty;
+    const totalQty = envelopeQty + poseCardQty + sekifudaQty + a4Qty;
 
     if (!orderStats[clientId]) {
       orderStats[clientId] = {
@@ -1704,9 +1705,10 @@ function trackClientFromOrder(clientId, amount, profit, orderDate, items, orderC
 
   const itemsObj = items || {};
   const envelopeQty = (itemsObj.noshi || 0) + (itemsObj.nagagata || 0) + (itemsObj.pochi || 0) + (itemsObj.coloredEnvelope || 0) + (itemsObj.washi || 0);
+  const poseCardQty = (itemsObj.poseCard || 0);
   const sekifudaQty = (itemsObj.sekifudaNoLogo || 0) + (itemsObj.sekifudaWithLogo || 0);
   const a4Qty = (itemsObj.hofuchoMermaid || 0) + (itemsObj.hofuchoGayo || 0) + (itemsObj.uketsukeSign || 0);
-  const totalQty = envelopeQty + sekifudaQty + a4Qty;
+  const totalQty = envelopeQty + poseCardQty + sekifudaQty + a4Qty;
 
   const clients = getAll('clients');
   const existing = clients.find(c => c.id === clientId);
