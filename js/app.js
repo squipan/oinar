@@ -118,6 +118,7 @@ const i18n = {
     'nagagata': 'Long Envelope (Nagagata 4)',
     'pochi': 'Pochi Envelopes',
     'coloredEnvelope': 'Colored Envelopes',
+    'washi': 'Washi Envelopes',
     'atsugami': 'Hard Board Reinforcement',
     'sealA': 'Sticker A',
     'sealB': 'Sticker B',
@@ -322,6 +323,7 @@ const i18n = {
     'nagagata': '長形４号',
     'pochi': 'ポチ袋',
     'coloredEnvelope': 'カラー封筒',
+    'washi': '和紙封筒',
     'atsugami': '厚紙補強',
     'sealA': 'シールA',
     'sealB': 'シールB',
@@ -994,15 +996,17 @@ function renderRecentTasks() {
       const nagagata = items.nagagata || 0;
       const pochi = items.pochi || 0;
       const coloredEnvelope = items.coloredEnvelope || 0;
+      const washi = items.washi || 0;
       const sealA = items.sealA || 0;
       const sealB = items.sealB || 0;
       const sekifudaNoLogo = items.sekifudaNoLogo || 0;
       const sekifudaWithLogo = items.sekifudaWithLogo || 0;
-      totalItems = noshi + nagagata + pochi + coloredEnvelope + sekifudaNoLogo + sekifudaWithLogo;
+      totalItems = noshi + nagagata + pochi + coloredEnvelope + washi + sekifudaNoLogo + sekifudaWithLogo;
       if (noshi > 0) itemDetails.push(`${t('noshi')}\u00d7${noshi}`);
       if (nagagata > 0) itemDetails.push(`${t('nagagata')}\u00d7${nagagata}`);
       if (pochi > 0) itemDetails.push(`${t('pochi')}\u00d7${pochi}`);
       if (coloredEnvelope > 0) itemDetails.push(`${t('coloredEnvelope')}\u00d7${coloredEnvelope}`);
+      if (washi > 0) itemDetails.push(`${t('washi')}\u00d7${washi}`);
       if (sekifudaNoLogo > 0) itemDetails.push(`${t('sekifudaNoLogo')}\u00d7${sekifudaNoLogo}`);
       if (sekifudaWithLogo > 0) itemDetails.push(`${t('sekifudaWithLogo')}\u00d7${sekifudaWithLogo}`);
       const poseCard = items.poseCard || 0;
@@ -1142,6 +1146,7 @@ function renderOrderRow(o, tbody, isPastOrder = false) {
   if (o.items.nagagata > 0) itemsStr.push(`${t('nagagata')} x${o.items.nagagata}`);
   if (o.items.pochi > 0) itemsStr.push(`${t('pochi')} x${o.items.pochi}`);
   if (o.items.coloredEnvelope > 0) itemsStr.push(`${t('coloredEnvelope')} x${o.items.coloredEnvelope}`);
+  if (o.items.washi > 0) itemsStr.push(`${t('washi')} x${o.items.washi}`);
   if (o.items.atsugami) itemsStr.push(`${t('atsugami')}`);
   if (o.items.sekifudaNoLogo > 0) itemsStr.push(`${t('sekifudaNoLogo')} x${o.items.sekifudaNoLogo}`);
   if (o.items.sekifudaWithLogo > 0) itemsStr.push(`${t('sekifudaWithLogo')} x${o.items.sekifudaWithLogo}`);
@@ -1481,7 +1486,7 @@ function syncAutoTrackedClients() {
     if (!clientId) return;
 
     const items = o.items || {};
-    const envelopeQty = (items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0) + (items.coloredEnvelope || 0);
+    const envelopeQty = (items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0) + (items.coloredEnvelope || 0) + (items.washi || 0);
     const sekifudaQty = (items.sekifudaNoLogo || 0) + (items.sekifudaWithLogo || 0);
     const a4Qty = (items.hofuchoMermaid || 0) + (items.hofuchoGayo || 0) + (items.uketsukeSign || 0);
     const totalQty = envelopeQty + sekifudaQty + a4Qty;
@@ -1566,6 +1571,7 @@ function showClientDetail(id) {
         if (o.items.nagagata > 0) itemsStr.push(`${t('nagagata')} x${o.items.nagagata}`);
         if (o.items.pochi > 0) itemsStr.push(`${t('pochi')} x${o.items.pochi}`);
         if (o.items.coloredEnvelope > 0) itemsStr.push(`${t('coloredEnvelope')} x${o.items.coloredEnvelope}`);
+        if (o.items.washi > 0) itemsStr.push(`${t('washi')} x${o.items.washi}`);
         if (o.items.atsugami) itemsStr.push(`${t('atsugami')}`);
         if (o.items.sekifudaNoLogo > 0) itemsStr.push(`${t('sekifudaNoLogo')} x${o.items.sekifudaNoLogo}`);
         if (o.items.sekifudaWithLogo > 0) itemsStr.push(`${t('sekifudaWithLogo')} x${o.items.sekifudaWithLogo}`);
@@ -1697,7 +1703,7 @@ function trackClientFromOrder(clientId, amount, profit, orderDate, items, orderC
   if (!clientId) return;
 
   const itemsObj = items || {};
-  const envelopeQty = (itemsObj.noshi || 0) + (itemsObj.nagagata || 0) + (itemsObj.pochi || 0) + (itemsObj.coloredEnvelope || 0);
+  const envelopeQty = (itemsObj.noshi || 0) + (itemsObj.nagagata || 0) + (itemsObj.pochi || 0) + (itemsObj.coloredEnvelope || 0) + (itemsObj.washi || 0);
   const sekifudaQty = (itemsObj.sekifudaNoLogo || 0) + (itemsObj.sekifudaWithLogo || 0);
   const a4Qty = (itemsObj.hofuchoMermaid || 0) + (itemsObj.hofuchoGayo || 0) + (itemsObj.uketsukeSign || 0);
   const totalQty = envelopeQty + sekifudaQty + a4Qty;
@@ -1971,6 +1977,7 @@ function updatePriceLabels() {
     'label-price-nagagata': `${t('nagagata')} (${formatCurrency(PRICES.nagagata)})`,
     'label-price-pochi': `${t('pochi')} (${formatCurrency(PRICES.pochi)})`,
     'label-price-colored-envelope': `${t('coloredEnvelope')} (${formatCurrency(PRICES.coloredEnvelope)})`,
+    'label-price-washi': `${t('washi')} (${formatCurrency(PRICES.washi)})`,
     'label-price-atsugami': `${t('atsugami')} (${formatCurrency(PRICES.atsugami)})`,
     'label-price-sealA': `${t('sealA')} (${formatCurrency(PRICES.sealA)}${perPiece})`,
     'label-price-sealB': `${t('sealB')} (${formatCurrency(PRICES.sealB)}${perPiece})`,
