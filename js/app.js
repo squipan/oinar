@@ -11,7 +11,7 @@ function getShippingFeeAddition(dateStr) {
   return 300;
 }
 const EXPRESS_FEE = 300;
-const PLATFORM_FEES = { Mercari: 0.10, Rakuma: 0.10, Yahoo: 0.05 };
+const PLATFORM_FEES = { Mercari: 0.10, Rakuma: 0.10, Yahoo: 0.05, Creema: 0.1067 };
 
 // Translation Dictionary
 const i18n = {
@@ -218,7 +218,14 @@ const i18n = {
     'label_adjustment': 'Add-ons / Deductions',
     'label_adjustment_reason_placeholder': 'Reason (e.g. discount, custom charge)',
     'shipping_custom': 'Custom',
-    'shipping_custom_label': 'Custom Cost (¥)'
+    'shipping_custom_label': 'Custom Cost (¥)',
+    'choose_platform': 'Which platform is this order from?',
+    'platform_creema': 'Creema',
+    'tab_mercari': 'Mercari / Rakuma / Yahoo',
+    'tab_creema': 'Creema',
+    'creema_fee_label': 'Creema Fee (-10.67%)',
+    'creema_shipping_fixed': 'Shipping (Fixed)',
+    'label_qty_nagagata': '長形４号 Qty (min. 10)'
   },
   jp: {
     'login_btn': 'ダッシュボードへ',
@@ -423,7 +430,14 @@ const i18n = {
     'label_adjustment': '追加・割引',
     'label_adjustment_reason_placeholder': '理由（例：割引、カスタム追加など）',
     'shipping_custom': 'カスタム',
-    'shipping_custom_label': 'カスタム送料 (¥)'
+    'shipping_custom_label': 'カスタム送料 (¥)',
+    'choose_platform': 'どのプラットフォームの注文ですか？',
+    'platform_creema': 'クリーマ',
+    'tab_mercari': 'メルカリ / ラクマ / Yahoo',
+    'tab_creema': 'クリーマ',
+    'creema_fee_label': 'クリーマ手数料 (-10.67%)',
+    'creema_shipping_fixed': '送料（固定）',
+    'label_qty_nagagata': '長形４号 枚数 (最低10枚)'
   }
 };
 
@@ -703,6 +717,7 @@ function setupModals() {
   });
 
   document.getElementById('form-order')?.addEventListener('submit', handleOrderSubmit);
+  document.getElementById('form-order-creema')?.addEventListener('submit', handleCreemaOrderSubmit);
   document.getElementById('form-waste')?.addEventListener('submit', handleWasteSubmit);
   document.getElementById('form-client')?.addEventListener('submit', handleClientSubmit);
 }
@@ -735,6 +750,168 @@ function openModal(id) {
     document.getElementById('waste-date').value = new Date().toISOString().split('T')[0];
   }
 }
+
+// ── Platform Picker ──
+function openPlatformPicker() {
+  const modal = document.getElementById('modal-platform-picker');
+  if (modal) modal.classList.add('active');
+}
+
+function closePlatformPicker() {
+  const modal = document.getElementById('modal-platform-picker');
+  if (modal) modal.classList.remove('active');
+}
+
+function openMercariOrder() {
+  closePlatformPicker();
+  openModal('modal-order');
+}
+
+function openCreemaModal() {
+  closePlatformPicker();
+  const modal = document.getElementById('modal-order-creema');
+  if (!modal) return;
+  modal.classList.add('active');
+  const form = modal.querySelector('form');
+  if (form) {
+    form.reset();
+    form.querySelectorAll('input[type="hidden"]').forEach(h => h.value = '');
+  }
+  const today = new Date().toISOString().split('T')[0];
+  const dateEl = document.getElementById('creema-order-date');
+  if (dateEl) dateEl.value = today;
+  // Set minimum qty to 10
+  const qtyEl = document.getElementById('creema-item-nagagata');
+  if (qtyEl) qtyEl.value = 10;
+  autoFillCreemaDeadline();
+  calculateCreemaOrderMath();
+}
+
+function autoFillCreemaDeadline() {
+  const dateVal = document.getElementById('creema-order-date')?.value;
+  if (!dateVal) return;
+  const express = document.getElementById('creema-order-express')?.checked;
+  const deadlineEl = document.getElementById('creema-order-deadline');
+  if (deadlineEl) deadlineEl.value = addDays(dateVal, express ? 2 : 5);
+}
+
+function calculateCreemaOrderMath() {
+  const qty = parseInt(document.getElementById('creema-item-nagagata')?.value) || 0;
+  const express = document.getElementById('creema-order-express')?.checked || false;
+  const CREEMA_ITEM_PRICE = 50;
+  const CREEMA_SHIPPING = 250;
+  const expressCharge = express ? EXPRESS_FEE : 0;
+  const basePrice = qty * CREEMA_ITEM_PRICE;
+  const purchaseAmount = basePrice > 0 ? (basePrice + expressCharge + CREEMA_SHIPPING) : 0;
+  const fee = purchaseAmount > 0 ? Math.floor(purchaseAmount * PLATFORM_FEES.Creema) : 0;
+  const profit = purchaseAmount > 0 ? (purchaseAmount - fee - CREEMA_SHIPPING) : 0;
+
+  const baseEl = document.getElementById('creema-calc-base');
+  const shippingEl = document.getElementById('creema-calc-shipping');
+  const purchaseEl = document.getElementById('creema-calc-purchase');
+  const feeEl = document.getElementById('creema-calc-fee');
+  const profitEl = document.getElementById('creema-calc-profit');
+
+  if (baseEl) baseEl.textContent = formatCurrency(basePrice);
+  if (shippingEl) shippingEl.textContent = `+${formatCurrency(expressCharge + CREEMA_SHIPPING)}`;
+  if (purchaseEl) purchaseEl.textContent = formatCurrency(purchaseAmount);
+  if (feeEl) feeEl.textContent = formatCurrency(fee);
+  if (profitEl) profitEl.textContent = formatCurrency(profit);
+
+  const hiddenPurchase = document.getElementById('creema-hidden-purchase');
+  const hiddenFee = document.getElementById('creema-hidden-fee');
+  const hiddenProfit = document.getElementById('creema-hidden-profit');
+  if (hiddenPurchase) hiddenPurchase.value = purchaseAmount;
+  if (hiddenFee) hiddenFee.value = fee;
+  if (hiddenProfit) hiddenProfit.value = profit;
+}
+
+function handleCreemaOrderSubmit(e) {
+  e.preventDefault();
+  calculateCreemaOrderMath();
+
+  const isEdit = !!document.getElementById('creema-order-id')?.value;
+  const id = document.getElementById('creema-order-id')?.value;
+  const orderDate = document.getElementById('creema-order-date')?.value;
+  const deadline = document.getElementById('creema-order-deadline')?.value;
+  const express = document.getElementById('creema-order-express')?.checked || false;
+  const qty = parseInt(document.getElementById('creema-item-nagagata')?.value) || 0;
+  const buyerName = document.getElementById('creema-order-buyer')?.value.trim();
+
+  let clientId = '';
+  if (isEdit) {
+    const oldOrder = getAll('orders').find(o => o.id === id);
+    clientId = oldOrder ? oldOrder.clientId : '';
+    if (!clientId) clientId = 'c' + Date.now() + Math.random().toString(36).slice(2, 7);
+  } else {
+    clientId = 'c' + Date.now() + Math.random().toString(36).slice(2, 7);
+  }
+
+  const clients = getAll('clients');
+  let client = clients.find(c => c.id === clientId);
+  const comments = document.getElementById('creema-order-comments')?.value || '';
+  if (!client) {
+    addItem('clients', {
+      id: clientId,
+      name: buyerName,
+      date: orderDate || new Date().toISOString().split('T')[0],
+      orders: 0,
+      sales: 0,
+      profit: 0,
+      comments,
+      isFromOrder: true
+    });
+  } else {
+    const updates = {};
+    if (client.name !== buyerName) updates.name = buyerName;
+    if (comments && client.comments !== comments) updates.comments = comments;
+    if (client.isFromOrder !== true) updates.isFromOrder = true;
+    if (Object.keys(updates).length > 0) updateItem('clients', client.id, updates);
+  }
+
+  const purchaseAmount = parseInt(document.getElementById('creema-hidden-purchase')?.value) || 0;
+  const fee = parseInt(document.getElementById('creema-hidden-fee')?.value) || 0;
+  const profit = parseInt(document.getElementById('creema-hidden-profit')?.value) || 0;
+
+  const order = {
+    date: orderDate,
+    clientId,
+    buyerName,
+    platform: 'Creema',
+    items: {
+      noshi: 0, nagagata: qty, pochi: 0, coloredEnvelope: 0, washi: 0,
+      atsugami: false, sealA: 0, sealB: 0, sekifudaNoLogo: 0, sekifudaWithLogo: 0,
+      poseCard: 0, hofuchoMermaid: 0, hofuchoGayo: 0, uketsukeSign: 0
+    },
+    shippingCost: 250,
+    express,
+    status: document.getElementById('creema-order-status')?.value || 'Pending',
+    deadline,
+    comments,
+    adjustment: 0,
+    adjustmentReason: '',
+    purchaseAmount,
+    fee,
+    profit
+  };
+
+  if (isEdit) {
+    updateItem('orders', id, order);
+    if (order.comments && order.clientId) {
+      updateItem('clients', order.clientId, { comments: order.comments });
+    }
+  } else {
+    addItem('orders', order);
+    deductStock(order.items);
+    trackClientFromOrder(order.clientId, order.purchaseAmount, order.profit, order.date, order.items, order.comments);
+  }
+
+  closeModal('modal-order-creema');
+  loadOrders();
+  loadInventory();
+  loadDashboardData();
+  loadClients();
+}
 function closeModal(id) {
   const modal = document.getElementById(id);
   if (modal) modal.classList.remove('active');
@@ -761,6 +938,27 @@ function editClient(id) {
 function editOrder(id) {
   const o = getAll('orders').find(x => x.id === id);
   if (!o) return;
+
+  // Route Creema orders to the Creema modal
+  if (o.platform === 'Creema') {
+    const modal = document.getElementById('modal-order-creema');
+    if (!modal) return;
+    modal.classList.add('active');
+    const form = modal.querySelector('form');
+    if (form) form.reset();
+    document.getElementById('creema-order-id').value = o.id;
+    document.getElementById('creema-order-date').value = o.date;
+    document.getElementById('creema-order-buyer').value = o.buyerName || '';
+    document.getElementById('creema-item-nagagata').value = o.items.nagagata || 0;
+    document.getElementById('creema-order-express').checked = o.express || false;
+    document.getElementById('creema-order-status').value = o.status;
+    document.getElementById('creema-order-deadline').value = o.deadline;
+    document.getElementById('creema-order-comments').value = o.comments || '';
+    calculateCreemaOrderMath();
+    return;
+  }
+
+  // Default: Mercari / Rakuma / Yahoo
   const modal = document.getElementById('modal-order');
   modal.classList.add('active');
   const form = modal.querySelector('form');
@@ -1244,6 +1442,17 @@ function setupOrderCalculators() {
     autoFillDeadline();
   });
   document.getElementById('order-date')?.addEventListener('change', autoFillDeadline);
+
+  // Creema calculators
+  document.getElementById('creema-item-nagagata')?.addEventListener('input', calculateCreemaOrderMath);
+  document.getElementById('creema-order-express')?.addEventListener('change', () => {
+    calculateCreemaOrderMath();
+    autoFillCreemaDeadline();
+  });
+  document.getElementById('creema-order-date')?.addEventListener('change', () => {
+    autoFillCreemaDeadline();
+    calculateCreemaOrderMath();
+  });
 }
 
 function calculateOrderMath() {
@@ -1619,12 +1828,40 @@ function closeClientDetail() {
 }
 
 // --- CLIENTS ---
+let _activeClientsTab = 'mercari';
+
+function setClientsTab(tab) {
+  _activeClientsTab = tab;
+  document.querySelectorAll('.clients-platform-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+  loadClients();
+}
+
+function getClientPlatform(client) {
+  // Determine which platform a client belongs to based on their orders
+  const orders = getAll('orders').filter(o => o.clientId === client.id);
+  if (orders.length === 0) return 'mercari'; // manually added clients go to mercari tab
+  const hasCreema = orders.some(o => o.platform === 'Creema');
+  const hasMercari = orders.some(o => o.platform !== 'Creema');
+  if (hasCreema && !hasMercari) return 'creema';
+  if (hasMercari && !hasCreema) return 'mercari';
+  return 'both'; // has orders from both platforms
+}
+
 function loadClients() {
   syncAutoTrackedClients();
-  const clients = getAll('clients');
+  const allClients = getAll('clients');
   const tbody = document.getElementById('clients-tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
+
+  // Filter by active tab
+  const clients = allClients.filter(c => {
+    const platform = getClientPlatform(c);
+    if (_activeClientsTab === 'creema') return platform === 'creema' || platform === 'both';
+    return platform === 'mercari' || platform === 'both';
+  });
 
   if (clients.length === 0) {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-light);">${t('no_clients_found')}</td></tr>`;
@@ -1639,6 +1876,12 @@ function loadClients() {
   });
 
   clients.forEach(c => {
+    const platform = getClientPlatform(c);
+    const platformBadge = platform === 'both'
+      ? `<span class="platform-badge platform-badge--both">M+C</span>`
+      : platform === 'creema'
+        ? `<span class="platform-badge platform-badge--creema">🌸</span>`
+        : '';
     const source = c.isFromOrder
       ? `<span style="font-size:0.7rem; color:var(--text-light); display:block;">${t('client_auto_tracked')}</span>`
       : '';
@@ -1649,7 +1892,7 @@ function loadClients() {
     tr.innerHTML = `
       <td data-label="${t('order_buyer')}">
         <span style="display:inline-flex; align-items:center; gap:0.2rem; flex-wrap:wrap;">
-          <strong class="client-clickable-name" onclick="showClientDetail('${c.id}')">${c.name}</strong>${infoBtnHtml}
+          <strong class="client-clickable-name" onclick="showClientDetail('${c.id}')">${c.name}</strong>${platformBadge}${infoBtnHtml}
         </span>
         ${source}
       </td>

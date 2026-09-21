@@ -98,7 +98,7 @@
                         <button class="mobile-toggle" id="mobile-toggle"><i class="fas fa-bars"></i></button>
                         <h3 style="font-family: var(--font-family); font-weight:600; font-size:1.1rem; color: var(--text-secondary);"
                             data-i18n="top_overview">Business Overview</h3>
-                        <button class="btn btn-primary topbar-left-new-order" onclick="openModal('modal-order')" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; align-items: center; gap: 0.4rem;">
+                        <button class="btn btn-primary topbar-left-new-order" onclick="openPlatformPicker()" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; align-items: center; gap: 0.4rem;">
                             <i class="fas fa-plus"></i> <span data-i18n="btn_new_order">New Order</span>
                         </button>
                     </div>
@@ -108,7 +108,7 @@
                         <button class="btn btn-outline" id="btn-refresh" onclick="refreshData()"
                             title="Sync latest data" style="font-size:0.8rem; padding: 0.4rem 0.8rem;"><i
                                 class="fas fa-sync-alt"></i></button>
-                        <button class="btn btn-primary" onclick="openModal('modal-order')"><i class="fas fa-plus"></i>
+                        <button class="btn btn-primary" onclick="openPlatformPicker()"><i class="fas fa-plus"></i>
                             <span data-i18n="btn_new_order">New Order</span></button>
                         <div class="user-profile-sm">
                             <img src="assets/logo.png" alt="Profile">
@@ -227,7 +227,7 @@
                                             class="fas fa-user-plus"></i> <span data-i18n="add_client">Add
                                             Client</span></button>
                                     <button class="btn btn-primary" style="justify-content:flex-start;"
-                                        onclick="openModal('modal-order')"><i class="fas fa-plus"></i> <span
+                                        onclick="openPlatformPicker()"><i class="fas fa-plus"></i> <span
                                             data-i18n="btn_new_order">New Order</span></button>
                                 </div>
                             </div>
@@ -240,7 +240,7 @@
                     <section id="view-orders" class="view-section">
                         <div class="section-header">
                             <h2 data-i18n="nav_orders">Orders</h2>
-                            <button class="btn btn-primary" onclick="openModal('modal-order')"><i
+                            <button class="btn btn-primary" onclick="openPlatformPicker()"><i
                                     class="fas fa-plus"></i> <span data-i18n="btn_new_order">New Order</span></button>
                         </div>
 
@@ -328,6 +328,19 @@
                                 onclick="openModal('modal-client'); setClientDatePicker(new Date().toISOString().split('T')[0])"><i
                                     class="fas fa-plus"></i> <span data-i18n="add_client">Add Client</span></button>
                         </div>
+
+                        <!-- Platform Tabs -->
+                        <div class="clients-platform-tabs">
+                            <button class="clients-platform-tab active" data-tab="mercari" onclick="setClientsTab('mercari')">
+                                <i class="fas fa-shopping-bag"></i>
+                                <span data-i18n="tab_mercari">Mercari / Rakuma / Yahoo</span>
+                            </button>
+                            <button class="clients-platform-tab" data-tab="creema" onclick="setClientsTab('creema')">
+                                🌸
+                                <span data-i18n="tab_creema">Creema</span>
+                            </button>
+                        </div>
+
                         <div class="card">
                             <div class="table-responsive">
                                 <table class="clients-table">
@@ -616,6 +629,30 @@
 
     </div>
 
+    <!-- PLATFORM PICKER MODAL -->
+    <div class="modal-overlay" id="modal-platform-picker">
+        <div class="modal modal--picker">
+            <div class="modal-header">
+                <h3 data-i18n="choose_platform">Which platform is this order from?</h3>
+                <button class="btn-close" onclick="closePlatformPicker()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="platform-picker-grid">
+                    <button class="platform-picker-btn platform-picker-btn--mercari" onclick="openMercariOrder()">
+                        <span class="platform-picker-icon">🛍️</span>
+                        <span class="platform-picker-name">Mercari</span>
+                        <span class="platform-picker-sub">Rakuma / Yahoo</span>
+                    </button>
+                    <button class="platform-picker-btn platform-picker-btn--creema" onclick="openCreemaModal()">
+                        <span class="platform-picker-icon">🌸</span>
+                        <span class="platform-picker-name">Creema</span>
+                        <span class="platform-picker-sub">長形４号のみ</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ORDER MODAL -->
     <div class="modal-overlay" id="modal-order">
         <div class="modal">
@@ -890,6 +927,118 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline modal-cancel" data-i18n="cancel">Cancel</button>
                         <button type="submit" class="btn btn-primary" data-i18n="save_order">Save Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREEMA ORDER MODAL -->
+    <div class="modal-overlay" id="modal-order-creema">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🌸 Creema — Order Details</h3>
+                <button class="btn-close" onclick="closeModal('modal-order-creema')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-order-creema">
+                    <input type="hidden" id="creema-order-id">
+
+                    <div class="form-group" style="display:flex; gap:1rem;">
+                        <div style="flex:1;">
+                            <label data-i18n="order_date">Date</label>
+                            <input type="date" id="creema-order-date" required>
+                        </div>
+                        <div style="flex:2;">
+                            <label data-i18n="order_buyer">Buyer Name</label>
+                            <input type="text" id="creema-order-buyer" placeholder="e.g. Yamada Hanako" required>
+                        </div>
+                    </div>
+
+                    <!-- 長形４号 Qty -->
+                    <div class="creema-item-section">
+                        <div class="creema-item-header">
+                            <span class="creema-item-header__icon">📩</span>
+                            <span class="creema-item-header__title">長形４号 <span style="font-size:0.8rem; color:var(--text-secondary);">(¥50 / 枚)</span></span>
+                        </div>
+                        <div class="item-row" style="padding: 0.5rem 0;">
+                            <span class="item-row__label" data-i18n="label_qty_nagagata">長形４号 Qty (min. 10)</span>
+                            <div class="stepper">
+                                <button type="button" class="stepper__btn" onclick="(() => { const el = document.getElementById('creema-item-nagagata'); el.value = Math.max(10, (parseInt(el.value)||10) - 1); calculateCreemaOrderMath(); })()">−</button>
+                                <input type="number" id="creema-item-nagagata" class="stepper__input" value="10" min="10" oninput="calculateCreemaOrderMath()">
+                                <button type="button" class="stepper__btn" onclick="(() => { const el = document.getElementById('creema-item-nagagata'); el.value = (parseInt(el.value)||10) + 1; calculateCreemaOrderMath(); })()">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Express -->
+                        <div class="item-row" style="padding: 0.5rem 0;">
+                            <span class="item-row__label" data-i18n="label_express_option">Express (+¥300)</span>
+                            <label class="item-row__toggle">
+                                <input type="checkbox" id="creema-order-express" style="width:18px;height:18px;padding:0;cursor:pointer;accent-color:var(--primary);">
+                                <span data-i18n="label_add_option">Add</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Calculation Summary -->
+                    <div style="background-color: var(--status-todo-bg); padding: 1rem; border-radius: 8px; margin-bottom: 1.2rem;">
+                        <h4 style="font-size:0.9rem; margin-bottom:1rem; color:var(--status-todo-text);" data-i18n="calc_summary">Calculation Summary</h4>
+
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.9rem;">
+                            <span data-i18n="base_price">Base Price</span>
+                            <strong id="creema-calc-base">¥0</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.9rem;">
+                            <span data-i18n="shipping_added">Shipping Added</span>
+                            <strong id="creema-calc-shipping" style="color:var(--text-secondary);">+¥250</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:1.1rem; border-top:1px solid rgba(0,0,0,0.1); padding-top:0.5rem;">
+                            <span data-i18n="order_amount">Purchase Amount</span>
+                            <strong id="creema-calc-purchase" style="color:var(--primary-hover);">¥0</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-top:0.5rem; font-size:0.9rem; color:var(--accent);">
+                            <span data-i18n="creema_fee_label">Creema Fee (-10.67%)</span>
+                            <strong id="creema-calc-fee">¥0</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-top:0.4rem; font-size:0.85rem; color:var(--text-secondary);">
+                            <span data-i18n="creema_shipping_fixed">Shipping (Fixed)</span>
+                            <strong>-¥250</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-top:1rem; font-size:1.2rem; border-top:1px solid rgba(0,0,0,0.1); padding-top:0.8rem; color:var(--status-active-text);">
+                            <span data-i18n="calc_profit">Calculated Profit</span>
+                            <strong id="creema-calc-profit">¥0</strong>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="creema-hidden-purchase">
+                    <input type="hidden" id="creema-hidden-fee">
+                    <input type="hidden" id="creema-hidden-profit">
+
+                    <div class="form-group" style="display:flex; gap:1rem;">
+                        <div style="flex:1;">
+                            <label data-i18n="order_status">Status</label>
+                            <select id="creema-order-status">
+                                <option value="Pending" data-i18n="Pending">Pending</option>
+                                <option value="Ready for Shipping" data-i18n="Ready for Shipping">Ready for Shipping</option>
+                                <option value="Finished" data-i18n="Finished">Finished</option>
+                            </select>
+                        </div>
+                        <div style="flex:1;">
+                            <label data-i18n="order_deadline">Deadline</label>
+                            <input type="date" id="creema-order-deadline">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="label_comments">Comments</label>
+                        <input type="text" id="creema-order-comments" placeholder="Optional notes..." data-i18n="label_comments_placeholder">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline" onclick="closeModal('modal-order-creema')" data-i18n="cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary creema-save-btn">
+                            🌸 <span data-i18n="save_order">Save Order</span>
+                        </button>
                     </div>
                 </form>
             </div>
