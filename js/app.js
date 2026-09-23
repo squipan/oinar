@@ -1497,16 +1497,12 @@ function calculateOrderMath() {
   const hasEnvelopes = noshi > 0 || nagagata > 0 || pochi > 0 || coloredEnvelope > 0 || washi > 0 || poseCard > 0;
   const orderDateForCalc = document.getElementById('order-date')?.value || '';
 
-  let shippingAddition = getShippingFeeAddition(orderDateForCalc);
-  if (hasA4Items && hasEnvelopes) {
-    shippingAddition = 650;
-  } else if (has350Items && hasEnvelopes) {
-    shippingAddition = getShippingFeeAddition(orderDateForCalc) + 350 - 200; // = 460
-  } else if (hasA4Items) {
-    shippingAddition = 400;
-  } else if (has350Items) {
-    shippingAddition = 350;
-  }
+  // Shipping addition — each category stacks independently, NO automatic discounts.
+  // Use the Adjustment field in the form to apply any manual discount.
+  let shippingAddition = 0;
+  if (hasEnvelopes) shippingAddition += getShippingFeeAddition(orderDateForCalc); // ¥310
+  if (hasA4Items)   shippingAddition += 400;
+  if (has350Items)  shippingAddition += 350;
 
   const shippingSel = document.getElementById('order-shipping-cost')?.value || '160';
   let actualShipping = 160;
