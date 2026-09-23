@@ -2394,3 +2394,31 @@ details[open] > summary .item-group__chevron {
   background: linear-gradient(135deg, #a84d68, #c97a8c);
   transform: translateY(-1px);
 }
+
+/* ===================================================
+   PLATFORM PICKER - Always centered (not bottom sheet)
+   =================================================== */
+@media (max-width: 580px) {
+  #modal-platform-picker {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 1rem !important;
+  }
+
+  #modal-platform-picker .modal {
+    width: auto !important;
+    max-width: 340px !important;
+    border-radius: 20px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6) !important;
+    transform: scale(0.92) !important;
+    max-height: none !important;
+  }
+
+  #modal-platform-picker.active .modal {
+    transform: scale(1) !important;
+  }
+
+  #modal-platform-picker .modal-header::before {
+    display: none !important;
+  }
+}

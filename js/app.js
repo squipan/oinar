@@ -128,6 +128,7 @@ const i18n = {
     'hofuchoMermaid': 'Guest Book / Reception (Mermaid)',
     'hofuchoGayo': 'Guest Book / Reception (Drawing Paper)',
     'uketsukeSign': 'Reception Sign',
+    'uketsukeShow': 'Uketsuke-sho (Reception Form)',
     'badge_express': 'Express',
     'status_ready': 'Ready',
     'status_pending': 'Pending',
@@ -340,6 +341,7 @@ const i18n = {
     'hofuchoMermaid': '芳名帳/受付書 マーメイド紙',
     'hofuchoGayo': '芳名帳/受付書 画用紙',
     'uketsukeSign': '受付サイン',
+    'uketsukeShow': '受付書',
     'badge_express': '速達',
     'status_ready': '発送待ち',
     'status_pending': '進行中',
@@ -881,7 +883,7 @@ function handleCreemaOrderSubmit(e) {
     items: {
       noshi: 0, nagagata: qty, pochi: 0, coloredEnvelope: 0, washi: 0,
       atsugami: false, sealA: 0, sealB: 0, sekifudaNoLogo: 0, sekifudaWithLogo: 0,
-      poseCard: 0, hofuchoMermaid: 0, hofuchoGayo: 0, uketsukeSign: 0
+      poseCard: 0, hofuchoMermaid: 0, hofuchoGayo: 0, uketsukeSign: 0, uketsukeShow: 0
     },
     shippingCost: 250,
     express,
@@ -981,6 +983,7 @@ function editOrder(id) {
   document.getElementById('item-hofucho-mermaid').value = o.items.hofuchoMermaid || 0;
   document.getElementById('item-hofucho-gayo').value = o.items.hofuchoGayo || 0;
   document.getElementById('item-uketsuke').value = o.items.uketsukeSign || 0;
+  document.getElementById('item-uketsuke-show').value = o.items.uketsukeShow || 0;
   const costVal = o.shippingCost || 160;
   const costSel = document.getElementById('order-shipping-cost');
   const customContainer = document.getElementById('custom-shipping-container');
@@ -1200,7 +1203,11 @@ function renderRecentTasks() {
       const sealB = items.sealB || 0;
       const sekifudaNoLogo = items.sekifudaNoLogo || 0;
       const sekifudaWithLogo = items.sekifudaWithLogo || 0;
-      totalItems = noshi + nagagata + pochi + coloredEnvelope + washi + poseCard + sekifudaNoLogo + sekifudaWithLogo;
+      const hofuchoMermaid = items.hofuchoMermaid || 0;
+      const hofuchoGayo = items.hofuchoGayo || 0;
+      const uketsukeSign = items.uketsukeSign || 0;
+      const uketsukeShow = items.uketsukeShow || 0;
+      totalItems = noshi + nagagata + pochi + coloredEnvelope + washi + poseCard + sekifudaNoLogo + sekifudaWithLogo + hofuchoMermaid + hofuchoGayo + uketsukeSign + uketsukeShow;
       if (noshi > 0) itemDetails.push(`${t('noshi')}\u00d7${noshi}`);
       if (nagagata > 0) itemDetails.push(`${t('nagagata')}\u00d7${nagagata}`);
       if (pochi > 0) itemDetails.push(`${t('pochi')}\u00d7${pochi}`);
@@ -1211,12 +1218,10 @@ function renderRecentTasks() {
       if (sekifudaWithLogo > 0) itemDetails.push(`${t('sekifudaWithLogo')}\u00d7${sekifudaWithLogo}`);
       if (sealA > 0) itemDetails.push(`${t('sealA')}\u00d7${sealA}`);
       if (sealB > 0) itemDetails.push(`${t('sealB')}\u00d7${sealB}`);
-      const hofuchoMermaid = items.hofuchoMermaid || 0;
-      const hofuchoGayo = items.hofuchoGayo || 0;
-      const uketsukeSign = items.uketsukeSign || 0;
       if (hofuchoMermaid > 0) itemDetails.push(`${t('hofuchoMermaid')}\u00d7${hofuchoMermaid}`);
       if (hofuchoGayo > 0) itemDetails.push(`${t('hofuchoGayo')}\u00d7${hofuchoGayo}`);
       if (uketsukeSign > 0) itemDetails.push(`${t('uketsukeSign')}\u00d7${uketsukeSign}`);
+      if (uketsukeShow > 0) itemDetails.push(`${t('uketsukeShow')}\u00d7${uketsukeShow}`);
       if (items.atsugami) itemDetails.push(t('atsugami'));
     }
     const itemsDisplay = totalItems > 0
@@ -1354,6 +1359,7 @@ function renderOrderRow(o, tbody, isPastOrder = false) {
   if (o.items.hofuchoMermaid > 0) itemsStr.push(`${t('hofuchoMermaid')} x${o.items.hofuchoMermaid}`);
   if (o.items.hofuchoGayo > 0) itemsStr.push(`${t('hofuchoGayo')} x${o.items.hofuchoGayo}`);
   if (o.items.uketsukeSign > 0) itemsStr.push(`${t('uketsukeSign')} x${o.items.uketsukeSign}`);
+  if (o.items.uketsukeShow > 0) itemsStr.push(`${t('uketsukeShow')} x${o.items.uketsukeShow}`);
   if (o.adjustment && o.adjustment !== 0) {
     const sign = o.adjustment > 0 ? '+' : '';
     const reasonText = o.adjustmentReason ? ` (${o.adjustmentReason})` : '';
@@ -1421,7 +1427,7 @@ function toggleShipped(orderId) {
 
 // --- ORDER CALCULATION ---
 function setupOrderCalculators() {
-  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-colored-envelope', 'item-washi', 'item-seal-a', 'item-seal-b', 'item-sekifuda-nologo', 'item-sekifuda-withlogo', 'item-pose-card', 'item-hofucho-mermaid', 'item-hofucho-gayo', 'item-uketsuke', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
+  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-colored-envelope', 'item-washi', 'item-seal-a', 'item-seal-b', 'item-sekifuda-nologo', 'item-sekifuda-withlogo', 'item-pose-card', 'item-hofucho-mermaid', 'item-hofucho-gayo', 'item-uketsuke', 'item-uketsuke-show', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
   inputs.forEach(id => {
     document.getElementById(id)?.addEventListener('input', calculateOrderMath);
     document.getElementById(id)?.addEventListener('change', calculateOrderMath);
@@ -1470,31 +1476,35 @@ function calculateOrderMath() {
   const hofuchoMermaid = parseInt(document.getElementById('item-hofucho-mermaid').value) || 0;
   const hofuchoGayo = parseInt(document.getElementById('item-hofucho-gayo').value) || 0;
   const uketsukeSign = parseInt(document.getElementById('item-uketsuke').value) || 0;
+  const uketsukeShow = parseInt(document.getElementById('item-uketsuke-show').value) || 0;
 
-  // A4 items pricing logic
-  const hofuchoMermaidPrice = hofuchoMermaid === 0 ? 0
-    : hofuchoMermaid === 1 ? 280
-      : hofuchoMermaid * 180;
+  // A4 items pricing logic — minimum order is 2, flat per-unit price
+  const hofuchoMermaidPrice = hofuchoMermaid * PRICES.hofuchoMermaid2;
 
-  const hofuchoGayoPrice = hofuchoGayo === 0 ? 0
-    : hofuchoGayo === 1 ? 260
-      : hofuchoGayo * 160;
+  const hofuchoGayoPrice = hofuchoGayo * PRICES.hofuchoGayo2;
 
   const uketsukeSignPrice = uketsukeSign === 0 ? 0
-    : 320 + (Math.max(0, uketsukeSign - 1) * 100);
+    : PRICES.uketsukeSign1 + (Math.max(0, uketsukeSign - 1) * PRICES.uketsukeSignExtra);
 
-  // Dynamic shipping addition: 350 if any A4 item or sekifuda ordered, else date-aware standard fee
+  const uketsukeShowPrice = uketsukeShow === 0 ? 0
+    : PRICES.uketsukeShow1 + (Math.max(0, uketsukeShow - 1) * PRICES.uketsukeShowExtra);
+
+  // Shipping addition logic
   const hasA4Items = hofuchoMermaid > 0 || hofuchoGayo > 0 || uketsukeSign > 0;
   const hasSekifuda = sekifudaNoLogo > 0 || sekifudaWithLogo > 0;
+  const hasUketsukeShow = uketsukeShow > 0;
+  const has350Items = hasSekifuda || hasUketsukeShow;
   const hasEnvelopes = noshi > 0 || nagagata > 0 || pochi > 0 || coloredEnvelope > 0 || washi > 0 || poseCard > 0;
   const orderDateForCalc = document.getElementById('order-date')?.value || '';
-  
+
   let shippingAddition = getShippingFeeAddition(orderDateForCalc);
   if (hasA4Items && hasEnvelopes) {
     shippingAddition = 650;
-  } else if (hasSekifuda && hasEnvelopes) {
-    shippingAddition = getShippingFeeAddition(orderDateForCalc) + 350 - 200;
-  } else if (hasA4Items || hasSekifuda) {
+  } else if (has350Items && hasEnvelopes) {
+    shippingAddition = getShippingFeeAddition(orderDateForCalc) + 350 - 200; // = 460
+  } else if (hasA4Items) {
+    shippingAddition = 400;
+  } else if (has350Items) {
     shippingAddition = 350;
   }
 
@@ -1521,7 +1531,8 @@ function calculateOrderMath() {
     + (poseCard * PRICES.poseCard)
     + hofuchoMermaidPrice
     + hofuchoGayoPrice
-    + uketsukeSignPrice;
+    + uketsukeSignPrice
+    + uketsukeShowPrice;
 
   const expressCharge = express ? EXPRESS_FEE : 0;
   const purchaseAmount = (basePrice > 0 || adjustment !== 0) ? Math.max(0, basePrice + adjustment + shippingAddition + expressCharge) : 0;
@@ -1646,6 +1657,7 @@ function handleOrderSubmit(e) {
       hofuchoMermaid: parseInt(document.getElementById('item-hofucho-mermaid').value) || 0,
       hofuchoGayo: parseInt(document.getElementById('item-hofucho-gayo').value) || 0,
       uketsukeSign: parseInt(document.getElementById('item-uketsuke').value) || 0,
+      uketsukeShow: parseInt(document.getElementById('item-uketsuke-show').value) || 0,
     },
     shippingCost,
     express,
@@ -1698,7 +1710,7 @@ function syncAutoTrackedClients() {
     const envelopeQty = (items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0) + (items.coloredEnvelope || 0) + (items.washi || 0);
     const poseCardQty = (items.poseCard || 0);
     const sekifudaQty = (items.sekifudaNoLogo || 0) + (items.sekifudaWithLogo || 0);
-    const a4Qty = (items.hofuchoMermaid || 0) + (items.hofuchoGayo || 0) + (items.uketsukeSign || 0);
+    const a4Qty = (items.hofuchoMermaid || 0) + (items.hofuchoGayo || 0) + (items.uketsukeSign || 0) + (items.uketsukeShow || 0);
     const totalQty = envelopeQty + poseCardQty + sekifudaQty + a4Qty;
 
     if (!orderStats[clientId]) {
@@ -1790,6 +1802,8 @@ function showClientDetail(id) {
         if (o.items.hofuchoMermaid > 0) itemsStr.push(`${t('hofuchoMermaid')} x${o.items.hofuchoMermaid}`);
         if (o.items.hofuchoGayo > 0) itemsStr.push(`${t('hofuchoGayo')} x${o.items.hofuchoGayo}`);
         if (o.items.uketsukeSign > 0) itemsStr.push(`${t('uketsukeSign')} x${o.items.uketsukeSign}`);
+        if (o.items.uketsukeShow > 0) itemsStr.push(`${t('uketsukeShow')} x${o.items.uketsukeShow}`);
+        if (o.items.poseCard > 0) itemsStr.push(`${t('poseCard')} x${o.items.poseCard}`);
         if (o.adjustment && o.adjustment !== 0) {
           const sign = o.adjustment > 0 ? '+' : '';
           const reasonText = o.adjustmentReason ? ` (${o.adjustmentReason})` : '';
@@ -1950,7 +1964,7 @@ function trackClientFromOrder(clientId, amount, profit, orderDate, items, orderC
   const envelopeQty = (itemsObj.noshi || 0) + (itemsObj.nagagata || 0) + (itemsObj.pochi || 0) + (itemsObj.coloredEnvelope || 0) + (itemsObj.washi || 0);
   const poseCardQty = (itemsObj.poseCard || 0);
   const sekifudaQty = (itemsObj.sekifudaNoLogo || 0) + (itemsObj.sekifudaWithLogo || 0);
-  const a4Qty = (itemsObj.hofuchoMermaid || 0) + (itemsObj.hofuchoGayo || 0) + (itemsObj.uketsukeSign || 0);
+  const a4Qty = (itemsObj.hofuchoMermaid || 0) + (itemsObj.hofuchoGayo || 0) + (itemsObj.uketsukeSign || 0) + (itemsObj.uketsukeShow || 0);
   const totalQty = envelopeQty + poseCardQty + sekifudaQty + a4Qty;
 
   const clients = getAll('clients');
@@ -2229,9 +2243,10 @@ function updatePriceLabels() {
     'label-price-sekifuda-nologo': `${t('sekifudaNoLogo')} (${formatCurrency(PRICES.sekifudaNoLogo)})`,
     'label-price-sekifuda-withlogo': `${t('sekifudaWithLogo')} (${formatCurrency(PRICES.sekifudaWithLogo)})`,
     'label-price-pose-card': `${t('poseCard')} (${formatCurrency(PRICES.poseCard)})`,
-    'label-price-hofucho-mermaid': `${t('hofuchoMermaid')} (¥280 / ¥180×2+)`,
-    'label-price-hofucho-gayo': `${t('hofuchoGayo')} (¥260 / ¥160×2+)`,
+    'label-price-hofucho-mermaid': `${t('hofuchoMermaid')} (¥190/枚 min.2)`,
+    'label-price-hofucho-gayo': `${t('hofuchoGayo')} (¥160/枚 min.2)`,
     'label-price-uketsuke': `${t('uketsukeSign')} (¥320 +¥100/pc)`,
+    'label-price-uketsuke-show': `${t('uketsukeShow')} (¥300 +¥100/pc)`,
   };
   Object.entries(labels).forEach(([id, text]) => {
     const el = document.getElementById(id);

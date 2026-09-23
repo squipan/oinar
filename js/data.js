@@ -13,12 +13,12 @@ const DEFAULT_PRICES = {
   sealB: 10,
   sekifudaNoLogo: 50,
   sekifudaWithLogo: 55,
-  hofuchoMermaid1: 280,
-  hofuchoMermaid2: 180,
-  hofuchoGayo1: 260,
+  hofuchoMermaid2: 190,
   hofuchoGayo2: 160,
   uketsukeSign1: 320,
   uketsukeSignExtra: 100,
+  uketsukeShow1: 300,
+  uketsukeShowExtra: 100,
   poseCard: 60
 };
 
