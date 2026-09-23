@@ -2422,3 +2422,17 @@ details[open] > summary .item-group__chevron {
     display: none !important;
   }
 }
+
+/* ===================================================
+   STEPPER CONTROLS - Prevent Mobile Double-Tap Zoom
+   =================================================== */
+.stepper,
+.stepper__btn,
+.stepper__input,
+.btn-stepper {
+  touch-action: manipulation !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}

@@ -707,7 +707,15 @@
                                     <button type="button" class="stepper__btn" onclick="stepperClick('item-pochi',1)">+</button>
                                 </div>
                             </div>
-                            <div style="background: rgba(212,163,115,0.08); border: 1px dashed rgba(212,163,115,0.4); border-radius: 8px; padding: 0.4rem 0.6rem; margin-top: 0.5rem;">
+                            <div class="item-row">
+                                <span class="item-row__label" id="label-price-washi">和紙封筒 (¥55)</span>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-washi',-1)">−</button>
+                                    <input type="number" id="item-washi" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
+                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-washi',1)">+</button>
+                                </div>
+                            </div>
+                            <div style="background: rgba(212,163,115,0.08); border: 1px dashed rgba(212,163,115,0.4); border-radius: 8px; padding: 0.4rem 0.6rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">
                                 <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.3rem; font-weight: 600; letter-spacing: 0.03em;">🎨 カラー封筒</div>
                                 <div class="item-row" style="margin-bottom:0;">
                                     <span class="item-row__label" id="label-price-colored-envelope">カラー封筒 (¥100)</span>
@@ -716,14 +724,6 @@
                                         <input type="number" id="item-colored-envelope" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
                                         <button type="button" class="stepper__btn" onclick="stepperClick('item-colored-envelope',1)">+</button>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="item-row">
-                                <span class="item-row__label" id="label-price-washi">和紙封筒 (¥55)</span>
-                                <div class="stepper">
-                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-washi',-1)">−</button>
-                                    <input type="number" id="item-washi" class="stepper__input" value="0" min="0" oninput="calculateOrderMath()">
-                                    <button type="button" class="stepper__btn" onclick="stepperClick('item-washi',1)">+</button>
                                 </div>
                             </div>
                             <div class="item-row">
