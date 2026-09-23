@@ -2225,6 +2225,7 @@ function saveSettings() {
 
 function updatePriceLabels() {
   PRICES = { ...DEFAULT_PRICES, ...(PRICES || {}), ...(getPrices() || {}) };
+  if (PRICES.hofuchoMermaid2 === 180) PRICES.hofuchoMermaid2 = 190;
   const lang = getLanguage();
   const perPiece = lang === 'en' ? ' / pc' : ' / 枚';
   const labels = {
