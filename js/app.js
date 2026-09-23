@@ -2189,13 +2189,6 @@ function loadSettings() {
   document.getElementById('settings-price-sekifuda-nologo').value = savedPrices.sekifudaNoLogo;
   document.getElementById('settings-price-sekifuda-withlogo').value = savedPrices.sekifudaWithLogo;
   document.getElementById('settings-price-pose-card').value = savedPrices.poseCard;
-  if (document.getElementById('settings-price-washi')) document.getElementById('settings-price-washi').value = savedPrices.washi;
-  if (document.getElementById('settings-price-hofucho-mermaid')) document.getElementById('settings-price-hofucho-mermaid').value = savedPrices.hofuchoMermaid2;
-  if (document.getElementById('settings-price-hofucho-gayo')) document.getElementById('settings-price-hofucho-gayo').value = savedPrices.hofuchoGayo2;
-  if (document.getElementById('settings-price-uketsuke-sign1')) document.getElementById('settings-price-uketsuke-sign1').value = savedPrices.uketsukeSign1;
-  if (document.getElementById('settings-price-uketsuke-sign-extra')) document.getElementById('settings-price-uketsuke-sign-extra').value = savedPrices.uketsukeSignExtra;
-  if (document.getElementById('settings-price-uketsuke-show1')) document.getElementById('settings-price-uketsuke-show1').value = savedPrices.uketsukeShow1;
-  if (document.getElementById('settings-price-uketsuke-show-extra')) document.getElementById('settings-price-uketsuke-show-extra').value = savedPrices.uketsukeShowExtra;
 }
 
 function saveSettings() {
@@ -2211,31 +2204,18 @@ function saveSettings() {
   const sidebarUserEl = document.getElementById('sidebar-user-name');
   if (sidebarUserEl) sidebarUserEl.textContent = businessName;
 
-  const getVal = (id, defKey) => {
-    const el = document.getElementById(id);
-    if (!el || el.value === '') return DEFAULT_PRICES[defKey];
-    return parseInt(el.value) || 0;
-  };
-
   const updatedPrices = {
     ...PRICES,
-    noshi: getVal('settings-price-noshi', 'noshi'),
-    nagagata: getVal('settings-price-nagagata', 'nagagata'),
-    pochi: getVal('settings-price-pochi', 'pochi'),
-    coloredEnvelope: getVal('settings-price-colored-envelope', 'coloredEnvelope'),
-    washi: getVal('settings-price-washi', 'washi'),
-    atsugami: getVal('settings-price-atsugami', 'atsugami'),
-    sealA: getVal('settings-price-sealA', 'sealA'),
-    sealB: getVal('settings-price-sealB', 'sealB'),
-    sekifudaNoLogo: getVal('settings-price-sekifuda-nologo', 'sekifudaNoLogo'),
-    sekifudaWithLogo: getVal('settings-price-sekifuda-withlogo', 'sekifudaWithLogo'),
-    poseCard: getVal('settings-price-pose-card', 'poseCard'),
-    hofuchoMermaid2: getVal('settings-price-hofucho-mermaid', 'hofuchoMermaid2'),
-    hofuchoGayo2: getVal('settings-price-hofucho-gayo', 'hofuchoGayo2'),
-    uketsukeSign1: getVal('settings-price-uketsuke-sign1', 'uketsukeSign1'),
-    uketsukeSignExtra: getVal('settings-price-uketsuke-sign-extra', 'uketsukeSignExtra'),
-    uketsukeShow1: getVal('settings-price-uketsuke-show1', 'uketsukeShow1'),
-    uketsukeShowExtra: getVal('settings-price-uketsuke-show-extra', 'uketsukeShowExtra'),
+    noshi: parseInt(document.getElementById('settings-price-noshi').value) || 0,
+    nagagata: parseInt(document.getElementById('settings-price-nagagata').value) || 0,
+    pochi: parseInt(document.getElementById('settings-price-pochi').value) || 0,
+    coloredEnvelope: parseInt(document.getElementById('settings-price-colored-envelope').value) || 0,
+    atsugami: parseInt(document.getElementById('settings-price-atsugami').value) || 0,
+    sealA: parseInt(document.getElementById('settings-price-sealA').value) || 0,
+    sealB: parseInt(document.getElementById('settings-price-sealB').value) || 0,
+    sekifudaNoLogo: parseInt(document.getElementById('settings-price-sekifuda-nologo').value) || 0,
+    sekifudaWithLogo: parseInt(document.getElementById('settings-price-sekifuda-withlogo').value) || 0,
+    poseCard: parseInt(document.getElementById('settings-price-pose-card').value) || 0,
   };
   savePrices(updatedPrices);
   PRICES = updatedPrices;
@@ -2245,7 +2225,6 @@ function saveSettings() {
 
 function updatePriceLabels() {
   PRICES = { ...DEFAULT_PRICES, ...(PRICES || {}), ...(getPrices() || {}) };
-  if (PRICES.hofuchoMermaid2 === 180) PRICES.hofuchoMermaid2 = 190;
   const lang = getLanguage();
   const perPiece = lang === 'en' ? ' / pc' : ' / 枚';
   const labels = {
@@ -2260,15 +2239,157 @@ function updatePriceLabels() {
     'label-price-sekifuda-nologo': `${t('sekifudaNoLogo')} (${formatCurrency(PRICES.sekifudaNoLogo)})`,
     'label-price-sekifuda-withlogo': `${t('sekifudaWithLogo')} (${formatCurrency(PRICES.sekifudaWithLogo)})`,
     'label-price-pose-card': `${t('poseCard')} (${formatCurrency(PRICES.poseCard)})`,
-    'label-price-hofucho-mermaid': `${t('hofuchoMermaid')} (${formatCurrency(PRICES.hofuchoMermaid2)}${perPiece} min.2)`,
-    'label-price-hofucho-gayo': `${t('hofuchoGayo')} (${formatCurrency(PRICES.hofuchoGayo2)}${perPiece} min.2)`,
-    'label-price-uketsuke': `${t('uketsukeSign')} (${formatCurrency(PRICES.uketsukeSign1)} +${formatCurrency(PRICES.uketsukeSignExtra)}${perPiece})`,
-    'label-price-uketsuke-show': `${t('uketsukeShow')} (${formatCurrency(PRICES.uketsukeShow1)} +${formatCurrency(PRICES.uketsukeShowExtra)}${perPiece})`,
+    'label-price-hofucho-mermaid': `${t('hofuchoMermaid')} (¥190/枚 min.2)`,
+    'label-price-hofucho-gayo': `${t('hofuchoGayo')} (¥160/枚 min.2)`,
+    'label-price-uketsuke': `${t('uketsukeSign')} (¥320 +¥100/pc)`,
+    'label-price-uketsuke-show': `${t('uketsukeShow')} (¥300 +¥100/pc)`,
   };
   Object.entries(labels).forEach(([id, text]) => {
     const el = document.getElementById(id);
     if (el) el.textContent = text;
   });
+}
+
+function updateMercariLink() {
+  const url = document.getElementById('settings-mercari').value;
+  const link = document.getElementById('mercari-link');
+  if (link && url) link.href = url;
+}
+
+// --- CLIENT DATE PICKER ---
+function setupClientDatePicker() {
+  const yearSel = document.getElementById('client-date-year');
+  const monthSel = document.getElementById('client-date-month');
+  const daySel = document.getElementById('client-date-day');
+  const hidden = document.getElementById('client-date');
+  if (!yearSel || !monthSel || !daySel) return;
+
+  const currentYear = new Date().getFullYear();
+  const lang = getLanguage();
+  const yearSuffix = lang === 'jp' ? '年' : '';
+  const monthSuffix = lang === 'jp' ? '月' : '';
+  const daySuffix = lang === 'jp' ? '日' : '';
+
+  const selectedYear = yearSel.value;
+  const selectedMonth = monthSel.value;
+  const selectedDay = daySel.value;
+
+  yearSel.innerHTML = `<option value="" data-i18n="client_year_placeholder">${t('client_year_placeholder')}</option>`;
+  monthSel.innerHTML = `<option value="" data-i18n="client_month_placeholder">${t('client_month_placeholder')}</option>`;
+  daySel.innerHTML = `<option value="" data-i18n="client_day_placeholder">${t('client_day_placeholder')}</option>`;
+
+  for (let y = currentYear; y >= currentYear - 5; y--) {
+    yearSel.innerHTML += `<option value="${y}">${y}${yearSuffix}</option>`;
+  }
+  for (let m = 1; m <= 12; m++) {
+    monthSel.innerHTML += `<option value="${String(m).padStart(2, '0')}">${m}${monthSuffix}</option>`;
+  }
+  for (let d = 1; d <= 31; d++) {
+    daySel.innerHTML += `<option value="${String(d).padStart(2, '0')}">${d}${daySuffix}</option>`;
+  }
+
+  yearSel.value = selectedYear;
+  monthSel.value = selectedMonth;
+  daySel.value = selectedDay;
+
+  const sync = () => {
+    const y = yearSel.value, m = monthSel.value, d = daySel.value;
+    hidden.value = (y && m && d) ? `${y}-${m}-${d}` : '';
+  };
+  // Ensure we don't attach multiple event listeners if called repeatedly
+  yearSel.removeEventListener('change', sync);
+  monthSel.removeEventListener('change', sync);
+  daySel.removeEventListener('change', sync);
+  yearSel.addEventListener('change', sync);
+  monthSel.addEventListener('change', sync);
+  daySel.addEventListener('change', sync);
+}
+
+function setClientDatePicker(dateStr) {
+  if (!dateStr) return;
+  const [y, m, d] = dateStr.split('-');
+  const yearSel = document.getElementById('client-date-year');
+  const monthSel = document.getElementById('client-date-month');
+  const daySel = document.getElementById('client-date-day');
+  const hidden = document.getElementById('client-date');
+  if (yearSel) yearSel.value = y;
+  if (monthSel) monthSel.value = m;
+  if (daySel) daySel.value = d;
+  if (hidden) hidden.value = dateStr;
+}
+
+// ── BOTTOM NAV ──
+function setupBottomNav() {
+  const bottomLinks = document.querySelectorAll('.bottom-nav-link');
+  const sidebarLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.view-section');
+
+  bottomLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      const targetId = link.getAttribute('data-target');
+      if (!targetId) return;
+
+      // Update bottom nav active state
+      bottomLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+
+      // Sync sidebar active state
+      sidebarLinks.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('data-target') === targetId);
+      });
+
+      // Show correct section
+      sections.forEach(s => s.classList.remove('active'));
+      document.getElementById(targetId)?.classList.add('active');
+      if (targetId === 'view-profits') {
+        loadProfitsView();
+      }
+    });
+  });
+}
+
+function migrateHistoricalData() {
+  const orders = getAll('orders');
+  const clients = getAll('clients');
+  let migrated = false;
+
+  orders.forEach(o => {
+    if (!o.clientId) {
+      // Create a brand new auto-tracked client for this order to keep it completely unique
+      const newClientId = 'c' + Date.now() + Math.random().toString(36).slice(2, 7);
+      const client = {
+        id: newClientId,
+        name: (o.buyerName || '').trim() || 'Unknown',
+        date: o.date || new Date().toISOString().split('T')[0],
+        orders: 0,
+        sales: 0,
+        profit: 0,
+        comments: o.comments || '',
+        isFromOrder: true
+      };
+      clients.push(client);
+      fsAddItem('clients', client);
+      
+      o.clientId = newClientId;
+      // Save the order updates
+      updateItem('orders', o.id, { clientId: newClientId });
+      migrated = true;
+    }
+  });
+
+  // Fix client records that are referenced by orders but lack isFromOrder = true (prevents double-counting in dashboard)
+  const orderClientIds = new Set(orders.map(o => o.clientId).filter(Boolean));
+  clients.forEach(c => {
+    if (orderClientIds.has(c.id) && c.isFromOrder !== true) {
+      c.isFromOrder = true;
+      updateItem('clients', c.id, { isFromOrder: true });
+      migrated = true;
+    }
+  });
+
+  if (migrated) {
+    console.log('[Migration] Migrated legacy orders and synchronized client states');
+  }
 }
 
 // --- PROFITS CALENDAR ---

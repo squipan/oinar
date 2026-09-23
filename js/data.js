@@ -39,7 +39,6 @@ let _db = {
 function initDB(data) {
   if (data) {
     if (data.prices) {
-      if (data.prices.hofuchoMermaid2 === 180) { data.prices.hofuchoMermaid2 = 190; }
       data.prices = { ...DEFAULT_PRICES, ...data.prices };
     }
     if (data.inventory) {
