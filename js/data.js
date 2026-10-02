@@ -3,14 +3,17 @@
 // =============================================
 
 const DEFAULT_PRICES = {
+  // Envelopes
   noshi: 60,
   nagagata: 45,
   pochi: 80,
   coloredEnvelope: 100,
   washi: 55,
   atsugami: 100,
+  // Stickers
   sealA: 20,
   sealB: 10,
+  // A4 Items
   sekifudaNoLogo: 50,
   sekifudaWithLogo: 55,
   hofuchoMermaid2: 190,
@@ -19,7 +22,13 @@ const DEFAULT_PRICES = {
   uketsukeSignExtra: 100,
   uketsukeShow1: 300,
   uketsukeShowExtra: 100,
-  poseCard: 60
+  poseCard: 60,
+  // Shipping
+  shippingStandard: 310,
+  shippingA4: 400,
+  shipping350: 350,
+  shippingExpress: 300,
+  shippingCreema: 250
 };
 
 // In-memory database - populated from Firestore after login

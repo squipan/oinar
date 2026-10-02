@@ -566,15 +566,15 @@
                             </div>
 
                             <!-- Price Configurations -->
-                            <div
-                                style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
-                                <h3
-                                    style="font-family: var(--font-family); font-size: 1.1rem; margin-bottom: 1.2rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                                <h3 style="font-family: var(--font-family); font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
                                     <i class="fas fa-tags" style="color: var(--primary);"></i>
                                     <span data-i18n="settings_item_prices_title">Item Prices (¥)</span>
                                 </h3>
-                                <div
-                                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+
+                                <!-- Group: Envelopes -->
+                                <p style="font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:0.75rem;">📦 Envelopes</p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
                                     <div class="form-group" style="margin: 0;">
                                         <label data-i18n="noshi">Noshi</label>
                                         <input type="number" id="settings-price-noshi" min="0" required>
@@ -592,9 +592,18 @@
                                         <input type="number" id="settings-price-colored-envelope" min="0" required>
                                     </div>
                                     <div class="form-group" style="margin: 0;">
-                                        <label data-i18n="atsugami">Atsugami</label>
+                                        <label data-i18n="washi">Washi</label>
+                                        <input type="number" id="settings-price-washi" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label data-i18n="atsugami">Atsugami (Backing)</label>
                                         <input type="number" id="settings-price-atsugami" min="0" required>
                                     </div>
+                                </div>
+
+                                <!-- Group: Stickers -->
+                                <p style="font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:0.75rem;">🏷️ Stickers</p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
                                     <div class="form-group" style="margin: 0;">
                                         <label data-i18n="sealA">Seal A</label>
                                         <input type="number" id="settings-price-sealA" min="0" required>
@@ -603,6 +612,11 @@
                                         <label data-i18n="sealB">Seal B</label>
                                         <input type="number" id="settings-price-sealB" min="0" required>
                                     </div>
+                                </div>
+
+                                <!-- Group: A4 Items -->
+                                <p style="font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:0.75rem;">📄 A4 Items</p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
                                     <div class="form-group" style="margin: 0;">
                                         <label data-i18n="sekifudaNoLogo">Sekifuda (No Logo)</label>
                                         <input type="number" id="settings-price-sekifuda-nologo" min="0" required>
@@ -614,6 +628,55 @@
                                     <div class="form-group" style="margin: 0;">
                                         <label data-i18n="poseCard">Pose Card</label>
                                         <input type="number" id="settings-price-pose-card" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label data-i18n="hofuchoMermaid">Hofucho Mermaid /pc</label>
+                                        <input type="number" id="settings-price-hofucho-mermaid" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label data-i18n="hofuchoGayo">Hofucho Gayo /pc</label>
+                                        <input type="number" id="settings-price-hofucho-gayo" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label>Uketsuke Sign (1st)</label>
+                                        <input type="number" id="settings-price-uketsuke-sign1" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label>Uketsuke Sign (extra /pc)</label>
+                                        <input type="number" id="settings-price-uketsuke-sign-extra" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label>Uketsuke Show (1st)</label>
+                                        <input type="number" id="settings-price-uketsuke-show1" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label>Uketsuke Show (extra /pc)</label>
+                                        <input type="number" id="settings-price-uketsuke-show-extra" min="0" required>
+                                    </div>
+                                </div>
+
+                                <!-- Group: Shipping -->
+                                <p style="font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:0.75rem;">🚚 Shipping</p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                                    <div class="form-group" style="margin: 0;">
+                                        <label>Standard Addition</label>
+                                        <input type="number" id="settings-price-shipping-standard" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label>A4 Addition</label>
+                                        <input type="number" id="settings-price-shipping-a4" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label>Sekifuda / 350-item</label>
+                                        <input type="number" id="settings-price-shipping-350" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label>Express Fee</label>
+                                        <input type="number" id="settings-price-shipping-express" min="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin: 0;">
+                                        <label>Creema Fixed Shipping</label>
+                                        <input type="number" id="settings-price-shipping-creema" min="0" required>
                                     </div>
                                 </div>
                             </div>

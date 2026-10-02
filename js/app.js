@@ -800,13 +800,11 @@ function autoFillCreemaDeadline() {
 function calculateCreemaOrderMath() {
   const qty = parseInt(document.getElementById('creema-item-nagagata')?.value) || 0;
   const express = document.getElementById('creema-order-express')?.checked || false;
-  const CREEMA_ITEM_PRICE = 50;
-  const CREEMA_SHIPPING = 250;
-  const expressCharge = express ? EXPRESS_FEE : 0;
-  const basePrice = qty * CREEMA_ITEM_PRICE;
-  const purchaseAmount = basePrice > 0 ? (basePrice + expressCharge + CREEMA_SHIPPING) : 0;
+  const expressCharge = express ? PRICES.shippingExpress : 0;
+  const basePrice = qty * PRICES.nagagata;
+  const purchaseAmount = basePrice > 0 ? (basePrice + expressCharge + PRICES.shippingCreema) : 0;
   const fee = purchaseAmount > 0 ? Math.floor(purchaseAmount * PLATFORM_FEES.Creema) : 0;
-  const profit = purchaseAmount > 0 ? (purchaseAmount - fee - CREEMA_SHIPPING) : 0;
+  const profit = purchaseAmount > 0 ? (purchaseAmount - fee - PRICES.shippingCreema) : 0;
 
   const baseEl = document.getElementById('creema-calc-base');
   const shippingEl = document.getElementById('creema-calc-shipping');
@@ -1500,9 +1498,9 @@ function calculateOrderMath() {
   // Shipping addition — each category stacks independently, NO automatic discounts.
   // Use the Adjustment field in the form to apply any manual discount.
   let shippingAddition = 0;
-  if (hasEnvelopes) shippingAddition += getShippingFeeAddition(orderDateForCalc); // ¥310
-  if (hasA4Items)   shippingAddition += 400;
-  if (has350Items)  shippingAddition += 350;
+  if (hasEnvelopes) shippingAddition += PRICES.shippingStandard;
+  if (hasA4Items)   shippingAddition += PRICES.shippingA4;
+  if (has350Items)  shippingAddition += PRICES.shipping350;
 
   const shippingSel = document.getElementById('order-shipping-cost')?.value || '160';
   let actualShipping = 160;
@@ -2179,16 +2177,32 @@ function loadSettings() {
   document.getElementById('settings-business-name').textContent = user.businessName || user.name || 'Oinar Wedding';
   updateMercariLink();
   const savedPrices = { ...DEFAULT_PRICES, ...(getPrices() || {}) };
+  // Envelopes
   document.getElementById('settings-price-noshi').value = savedPrices.noshi;
   document.getElementById('settings-price-nagagata').value = savedPrices.nagagata;
   document.getElementById('settings-price-pochi').value = savedPrices.pochi;
   document.getElementById('settings-price-colored-envelope').value = savedPrices.coloredEnvelope;
+  document.getElementById('settings-price-washi').value = savedPrices.washi;
   document.getElementById('settings-price-atsugami').value = savedPrices.atsugami;
+  // Stickers
   document.getElementById('settings-price-sealA').value = savedPrices.sealA;
   document.getElementById('settings-price-sealB').value = savedPrices.sealB;
+  // A4 Items
   document.getElementById('settings-price-sekifuda-nologo').value = savedPrices.sekifudaNoLogo;
   document.getElementById('settings-price-sekifuda-withlogo').value = savedPrices.sekifudaWithLogo;
   document.getElementById('settings-price-pose-card').value = savedPrices.poseCard;
+  document.getElementById('settings-price-hofucho-mermaid').value = savedPrices.hofuchoMermaid2;
+  document.getElementById('settings-price-hofucho-gayo').value = savedPrices.hofuchoGayo2;
+  document.getElementById('settings-price-uketsuke-sign1').value = savedPrices.uketsukeSign1;
+  document.getElementById('settings-price-uketsuke-sign-extra').value = savedPrices.uketsukeSignExtra;
+  document.getElementById('settings-price-uketsuke-show1').value = savedPrices.uketsukeShow1;
+  document.getElementById('settings-price-uketsuke-show-extra').value = savedPrices.uketsukeShowExtra;
+  // Shipping
+  document.getElementById('settings-price-shipping-standard').value = savedPrices.shippingStandard;
+  document.getElementById('settings-price-shipping-a4').value = savedPrices.shippingA4;
+  document.getElementById('settings-price-shipping-350').value = savedPrices.shipping350;
+  document.getElementById('settings-price-shipping-express').value = savedPrices.shippingExpress;
+  document.getElementById('settings-price-shipping-creema').value = savedPrices.shippingCreema;
 }
 
 function saveSettings() {
@@ -2206,16 +2220,32 @@ function saveSettings() {
 
   const updatedPrices = {
     ...PRICES,
+    // Envelopes
     noshi: parseInt(document.getElementById('settings-price-noshi').value) || 0,
     nagagata: parseInt(document.getElementById('settings-price-nagagata').value) || 0,
     pochi: parseInt(document.getElementById('settings-price-pochi').value) || 0,
     coloredEnvelope: parseInt(document.getElementById('settings-price-colored-envelope').value) || 0,
+    washi: parseInt(document.getElementById('settings-price-washi').value) || 0,
     atsugami: parseInt(document.getElementById('settings-price-atsugami').value) || 0,
+    // Stickers
     sealA: parseInt(document.getElementById('settings-price-sealA').value) || 0,
     sealB: parseInt(document.getElementById('settings-price-sealB').value) || 0,
+    // A4 Items
     sekifudaNoLogo: parseInt(document.getElementById('settings-price-sekifuda-nologo').value) || 0,
     sekifudaWithLogo: parseInt(document.getElementById('settings-price-sekifuda-withlogo').value) || 0,
     poseCard: parseInt(document.getElementById('settings-price-pose-card').value) || 0,
+    hofuchoMermaid2: parseInt(document.getElementById('settings-price-hofucho-mermaid').value) || 0,
+    hofuchoGayo2: parseInt(document.getElementById('settings-price-hofucho-gayo').value) || 0,
+    uketsukeSign1: parseInt(document.getElementById('settings-price-uketsuke-sign1').value) || 0,
+    uketsukeSignExtra: parseInt(document.getElementById('settings-price-uketsuke-sign-extra').value) || 0,
+    uketsukeShow1: parseInt(document.getElementById('settings-price-uketsuke-show1').value) || 0,
+    uketsukeShowExtra: parseInt(document.getElementById('settings-price-uketsuke-show-extra').value) || 0,
+    // Shipping
+    shippingStandard: parseInt(document.getElementById('settings-price-shipping-standard').value) || 0,
+    shippingA4: parseInt(document.getElementById('settings-price-shipping-a4').value) || 0,
+    shipping350: parseInt(document.getElementById('settings-price-shipping-350').value) || 0,
+    shippingExpress: parseInt(document.getElementById('settings-price-shipping-express').value) || 0,
+    shippingCreema: parseInt(document.getElementById('settings-price-shipping-creema').value) || 0,
   };
   savePrices(updatedPrices);
   PRICES = updatedPrices;
@@ -2240,10 +2270,10 @@ function updatePriceLabels() {
     'label-price-sekifuda-nologo': `${t('sekifudaNoLogo')} (${formatCurrency(PRICES.sekifudaNoLogo)})`,
     'label-price-sekifuda-withlogo': `${t('sekifudaWithLogo')} (${formatCurrency(PRICES.sekifudaWithLogo)})`,
     'label-price-pose-card': `${t('poseCard')} (${formatCurrency(PRICES.poseCard)})`,
-    'label-price-hofucho-mermaid': `${t('hofuchoMermaid')} (¥190/枚 min.2)`,
-    'label-price-hofucho-gayo': `${t('hofuchoGayo')} (¥160/枚 min.2)`,
-    'label-price-uketsuke': `${t('uketsukeSign')} (¥320 +¥100/pc)`,
-    'label-price-uketsuke-show': `${t('uketsukeShow')} (¥300 +¥100/pc)`,
+    'label-price-hofucho-mermaid': `${t('hofuchoMermaid')} (${formatCurrency(PRICES.hofuchoMermaid2)}/枕 min.2)`,
+    'label-price-hofucho-gayo': `${t('hofuchoGayo')} (${formatCurrency(PRICES.hofuchoGayo2)}/枕 min.2)`,
+    'label-price-uketsuke': `${t('uketsukeSign')} (${formatCurrency(PRICES.uketsukeSign1)} +${formatCurrency(PRICES.uketsukeSignExtra)}/pc)`,
+    'label-price-uketsuke-show': `${t('uketsukeShow')} (${formatCurrency(PRICES.uketsukeShow1)} +${formatCurrency(PRICES.uketsukeShowExtra)}/pc)`,
   };
   Object.entries(labels).forEach(([id, text]) => {
     const el = document.getElementById(id);
