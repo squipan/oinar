@@ -27,7 +27,7 @@ const mockDoc = {
   },
   querySelectorAll: () => [],
   addEventListener: () => {},
-  createElement: (tag) => ({ appendChild: () => {}, value: '', textContent: '', setAttribute: () => {}, style: {} })
+  createElement: (tag) => ({ appendChild: () => {}, value: '', textContent: '', setAttribute: () => {}, style: {}, addEventListener: () => {} })
 };
 
 const mockWindow = {
