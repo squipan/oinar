@@ -815,10 +815,14 @@ function calculateCreemaOrderMath() {
   if (baseEl) baseEl.textContent = formatCurrency(basePrice);
   const priceDisplayEl = document.getElementById('creema-nagagata-price-display');
   if (priceDisplayEl) priceDisplayEl.textContent = formatCurrency(PRICES.nagagataCreema);
+  const expressLabelEl = document.getElementById('creema-express-fee-label');
+  if (expressLabelEl) expressLabelEl.textContent = `+${formatCurrency(PRICES.shippingExpress)}`;
   if (shippingEl) shippingEl.textContent = `+${formatCurrency(expressCharge + PRICES.shippingCreema)}`;
   if (purchaseEl) purchaseEl.textContent = formatCurrency(purchaseAmount);
   if (feeEl) feeEl.textContent = formatCurrency(fee);
   if (profitEl) profitEl.textContent = formatCurrency(profit);
+  const shippingDeductEl = document.getElementById('creema-calc-shipping-deduct');
+  if (shippingDeductEl) shippingDeductEl.textContent = `-${formatCurrency(PRICES.shippingCreema)}`;
 
   const hiddenPurchase = document.getElementById('creema-hidden-purchase');
   const hiddenFee = document.getElementById('creema-hidden-fee');
@@ -2265,7 +2269,6 @@ function updatePriceLabels() {
   const labels = {
     'label-price-noshi': `${t('noshi')} (${formatCurrency(PRICES.noshi)})`,
     'label-price-nagagata': `${t('nagagata')} (${formatCurrency(PRICES.nagagata)})`,
-    'label-price-nagagata-creema': `長形４号 Creema (${formatCurrency(PRICES.nagagataCreema)})`,
     'label-price-pochi': `${t('pochi')} (${formatCurrency(PRICES.pochi)})`,
     'label-price-colored-envelope': `${t('coloredEnvelope')} (${formatCurrency(PRICES.coloredEnvelope)})`,
     'label-price-washi': `${t('washi')} (${formatCurrency(PRICES.washi)})`,
