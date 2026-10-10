@@ -681,7 +681,34 @@
                                 </div>
                             </div>
 
-                            <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> <span
+                            <!-- ===== Creema Platform Prices ===== -->
+                            <div style="margin-top: 2rem; border-top: 2px solid var(--border-color); padding-top: 1.5rem;">
+                                <h3 style="font-family: var(--font-family); font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-store" style="color: #e07b54;"></i>
+                                    Creema Platform Prices
+                                </h3>
+                                <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 1.25rem;">These prices are used exclusively for Creema orders and are independent from general item prices.</p>
+                                <div style="background: var(--status-todo-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.25rem;">
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                                        <div class="form-group" style="margin: 0;">
+                                            <label id="label-price-nagagata-creema" style="display:flex; align-items:center; gap:0.4rem;">
+                                                <span style="font-size:0.85em; background:var(--primary); color:#fff; border-radius:4px; padding:1px 6px;">C</span>
+                                                長形４号 / Nagagata
+                                            </label>
+                                            <input type="number" id="settings-price-nagagata-creema" min="0" required>
+                                        </div>
+                                        <div class="form-group" style="margin: 0;">
+                                            <label style="display:flex; align-items:center; gap:0.4rem;">
+                                                <span style="font-size:0.85em; background:var(--primary); color:#fff; border-radius:4px; padding:1px 6px;">C</span>
+                                                Fixed Shipping
+                                            </label>
+                                            <input type="number" id="settings-price-shipping-creema" min="0" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" onclick="saveSettings()" style="margin-top: 2rem;"><i class="fas fa-save"></i> <span
                                     data-i18n="save_settings_btn">Save Settings</span></button>
                         </div>
                     </section>
@@ -1033,7 +1060,7 @@
                     <div class="creema-item-section">
                         <div class="creema-item-header">
                             <span class="creema-item-header__icon">📩</span>
-                            <span class="creema-item-header__title">長形４号 <span style="font-size:0.8rem; color:var(--text-secondary);">(¥50 / 枚)</span></span>
+                            <span class="creema-item-header__title">長形４号 <span id="creema-nagagata-price-label" style="font-size:0.8rem; color:var(--text-secondary);">(<span id="creema-nagagata-price-display">¥50</span> / 枚)</span></span>
                         </div>
                         <div class="item-row" style="padding: 0.5rem 0;">
                             <span class="item-row__label" data-i18n="label_qty_nagagata">長形４号 Qty (min. 10)</span>

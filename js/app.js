@@ -801,7 +801,7 @@ function calculateCreemaOrderMath() {
   const qty = parseInt(document.getElementById('creema-item-nagagata')?.value) || 0;
   const express = document.getElementById('creema-order-express')?.checked || false;
   const expressCharge = express ? PRICES.shippingExpress : 0;
-  const basePrice = qty * PRICES.nagagata;
+  const basePrice = qty * PRICES.nagagataCreema;
   const purchaseAmount = basePrice > 0 ? (basePrice + expressCharge + PRICES.shippingCreema) : 0;
   const fee = purchaseAmount > 0 ? Math.floor(purchaseAmount * PLATFORM_FEES.Creema) : 0;
   const profit = purchaseAmount > 0 ? (purchaseAmount - fee - PRICES.shippingCreema) : 0;
@@ -813,7 +813,9 @@ function calculateCreemaOrderMath() {
   const profitEl = document.getElementById('creema-calc-profit');
 
   if (baseEl) baseEl.textContent = formatCurrency(basePrice);
-  if (shippingEl) shippingEl.textContent = `+${formatCurrency(expressCharge + CREEMA_SHIPPING)}`;
+  const priceDisplayEl = document.getElementById('creema-nagagata-price-display');
+  if (priceDisplayEl) priceDisplayEl.textContent = formatCurrency(PRICES.nagagataCreema);
+  if (shippingEl) shippingEl.textContent = `+${formatCurrency(expressCharge + PRICES.shippingCreema)}`;
   if (purchaseEl) purchaseEl.textContent = formatCurrency(purchaseAmount);
   if (feeEl) feeEl.textContent = formatCurrency(fee);
   if (profitEl) profitEl.textContent = formatCurrency(profit);
@@ -2180,6 +2182,7 @@ function loadSettings() {
   // Envelopes
   document.getElementById('settings-price-noshi').value = savedPrices.noshi;
   document.getElementById('settings-price-nagagata').value = savedPrices.nagagata;
+  document.getElementById('settings-price-nagagata-creema').value = savedPrices.nagagataCreema;
   document.getElementById('settings-price-pochi').value = savedPrices.pochi;
   document.getElementById('settings-price-colored-envelope').value = savedPrices.coloredEnvelope;
   document.getElementById('settings-price-washi').value = savedPrices.washi;
@@ -2223,6 +2226,7 @@ function saveSettings() {
     // Envelopes
     noshi: parseInt(document.getElementById('settings-price-noshi').value) || 0,
     nagagata: parseInt(document.getElementById('settings-price-nagagata').value) || 0,
+    nagagataCreema: parseInt(document.getElementById('settings-price-nagagata-creema').value) || 0,
     pochi: parseInt(document.getElementById('settings-price-pochi').value) || 0,
     coloredEnvelope: parseInt(document.getElementById('settings-price-colored-envelope').value) || 0,
     washi: parseInt(document.getElementById('settings-price-washi').value) || 0,
@@ -2261,6 +2265,7 @@ function updatePriceLabels() {
   const labels = {
     'label-price-noshi': `${t('noshi')} (${formatCurrency(PRICES.noshi)})`,
     'label-price-nagagata': `${t('nagagata')} (${formatCurrency(PRICES.nagagata)})`,
+    'label-price-nagagata-creema': `長形４号 Creema (${formatCurrency(PRICES.nagagataCreema)})`,
     'label-price-pochi': `${t('pochi')} (${formatCurrency(PRICES.pochi)})`,
     'label-price-colored-envelope': `${t('coloredEnvelope')} (${formatCurrency(PRICES.coloredEnvelope)})`,
     'label-price-washi': `${t('washi')} (${formatCurrency(PRICES.washi)})`,

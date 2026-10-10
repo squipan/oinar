@@ -6,6 +6,7 @@ const DEFAULT_PRICES = {
   // Envelopes
   noshi: 60,
   nagagata: 45,
+  nagagataCreema: 50,
   pochi: 80,
   coloredEnvelope: 100,
   washi: 55,
