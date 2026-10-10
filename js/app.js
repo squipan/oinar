@@ -2548,12 +2548,13 @@ function openMonthDetailModal(monthStr, monthFullName) {
   const clientMap = {};
   monthClients.forEach(c => {
     const key = c.name || (lang === 'jp' ? '不明' : 'Unknown');
-    if (!clientMap[key]) clientMap[key] = { orders: 0, profit: 0 };
+    if (!clientMap[key]) clientMap[key] = { orders: 0, profit: 0, latestDate: '' };
     clientMap[key].orders += 1;
     clientMap[key].profit += (c.profit || 0);
+    if ((c.date || '') > clientMap[key].latestDate) clientMap[key].latestDate = c.date || '';
   });
 
-  const rows = Object.entries(clientMap).sort((a, b) => b[1].profit - a[1].profit);
+  const rows = Object.entries(clientMap).sort((a, b) => b[1].latestDate.localeCompare(a[1].latestDate));
   const totalMonthProfit = rows.reduce((sum, [, v]) => sum + v.profit, 0);
   const totalClients = rows.length;
 
