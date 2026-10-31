@@ -124,7 +124,11 @@ const i18n = {
     'sealB': 'Sticker B',
     'sekifudaNoLogo': 'Sekifuda (No Logo)',
     'sekifudaWithLogo': 'Sekifuda (With Logo)',
+    'sekifudaJosshitsu': '席札 上質紙',
+    'sekifudaMermaidPaper': '席札 マーメイド紙',
+    'sekifudaKira': '席札 キラキラ',
     'poseCard': 'Pose Card',
+    'atsugamiCreema': 'Hard Board (Creema)',
     'hofuchoMermaid': 'Guest Book / Reception (Mermaid)',
     'hofuchoGayo': 'Guest Book / Reception (Drawing Paper)',
     'uketsukeSign': 'Reception Sign',
@@ -337,7 +341,11 @@ const i18n = {
     'sealB': 'シールB',
     'sekifudaNoLogo': '席札 (ロゴなし)',
     'sekifudaWithLogo': '席札 (ロゴあり)',
+    'sekifudaJosshitsu': '席札 上質紙',
+    'sekifudaMermaidPaper': '席札 マーメイド紙',
+    'sekifudaKira': '席札 キラキラ',
     'poseCard': 'ポーズカード',
+    'atsugamiCreema': '厚紙 (クリーマ)',
     'hofuchoMermaid': '芳名帳/受付書 マーメイド紙',
     'hofuchoGayo': '芳名帳/受付書 画用紙',
     'uketsukeSign': '受付サイン',
@@ -800,8 +808,10 @@ function autoFillCreemaDeadline() {
 function calculateCreemaOrderMath() {
   const qty = parseInt(document.getElementById('creema-item-nagagata')?.value) || 0;
   const express = document.getElementById('creema-order-express')?.checked || false;
+  const atsugamiCreema = document.getElementById('creema-item-atsugami')?.checked || false;
   const expressCharge = express ? PRICES.shippingExpress : 0;
-  const basePrice = qty * PRICES.nagagataCreema;
+  const atsugamiCharge = atsugamiCreema ? PRICES.atsugamiCreema : 0;
+  const basePrice = qty > 0 ? (qty * PRICES.nagagataCreema + atsugamiCharge) : 0;
   const purchaseAmount = basePrice > 0 ? (basePrice + expressCharge + PRICES.shippingCreema) : 0;
   const fee = purchaseAmount > 0 ? Math.floor(purchaseAmount * PLATFORM_FEES.Creema) : 0;
   const profit = purchaseAmount > 0 ? (purchaseAmount - fee - PRICES.shippingCreema) : 0;
@@ -817,6 +827,8 @@ function calculateCreemaOrderMath() {
   if (priceDisplayEl) priceDisplayEl.textContent = formatCurrency(PRICES.nagagataCreema);
   const expressLabelEl = document.getElementById('creema-express-fee-label');
   if (expressLabelEl) expressLabelEl.textContent = `+${formatCurrency(PRICES.shippingExpress)}`;
+  const atsugamiLabelEl = document.getElementById('creema-atsugami-fee-label');
+  if (atsugamiLabelEl) atsugamiLabelEl.textContent = `+${formatCurrency(PRICES.atsugamiCreema)}`;
   if (shippingEl) shippingEl.textContent = `+${formatCurrency(expressCharge + PRICES.shippingCreema)}`;
   if (purchaseEl) purchaseEl.textContent = formatCurrency(purchaseAmount);
   if (feeEl) feeEl.textContent = formatCurrency(fee);
@@ -841,6 +853,7 @@ function handleCreemaOrderSubmit(e) {
   const orderDate = document.getElementById('creema-order-date')?.value;
   const deadline = document.getElementById('creema-order-deadline')?.value;
   const express = document.getElementById('creema-order-express')?.checked || false;
+  const atsugamiCreema = document.getElementById('creema-item-atsugami')?.checked || false;
   const qty = parseInt(document.getElementById('creema-item-nagagata')?.value) || 0;
   const buyerName = document.getElementById('creema-order-buyer')?.value.trim();
 
@@ -886,7 +899,9 @@ function handleCreemaOrderSubmit(e) {
     platform: 'Creema',
     items: {
       noshi: 0, nagagata: qty, pochi: 0, coloredEnvelope: 0, washi: 0,
-      atsugami: false, sealA: 0, sealB: 0, sekifudaNoLogo: 0, sekifudaWithLogo: 0,
+      atsugami: false, atsugamiCreema,
+      sealA: 0, sealB: 0, sekifudaNoLogo: 0, sekifudaWithLogo: 0,
+      sekifudaJosshitsu: 0, sekifudaMermaidPaper: 0, sekifudaKira: 0,
       poseCard: 0, hofuchoMermaid: 0, hofuchoGayo: 0, uketsukeSign: 0, uketsukeShow: 0
     },
     shippingCost: 250,
@@ -957,6 +972,8 @@ function editOrder(id) {
     document.getElementById('creema-order-buyer').value = o.buyerName || '';
     document.getElementById('creema-item-nagagata').value = o.items.nagagata || 0;
     document.getElementById('creema-order-express').checked = o.express || false;
+    const atsugamiCreemaEl = document.getElementById('creema-item-atsugami');
+    if (atsugamiCreemaEl) atsugamiCreemaEl.checked = o.items.atsugamiCreema || false;
     document.getElementById('creema-order-status').value = o.status;
     document.getElementById('creema-order-deadline').value = o.deadline;
     document.getElementById('creema-order-comments').value = o.comments || '';
@@ -981,8 +998,10 @@ function editOrder(id) {
   document.getElementById('item-atsugami').checked = o.items.atsugami || false;
   document.getElementById('item-seal-a').value = o.items.sealA || 0;
   document.getElementById('item-seal-b').value = o.items.sealB || 0;
-  document.getElementById('item-sekifuda-nologo').value = o.items.sekifudaNoLogo || 0;
-  document.getElementById('item-sekifuda-withlogo').value = o.items.sekifudaWithLogo || 0;
+  // New sekifuda paper types
+  document.getElementById('item-sekifuda-josshitsu').value = o.items.sekifudaJosshitsu || 0;
+  document.getElementById('item-sekifuda-mermaid-paper').value = o.items.sekifudaMermaidPaper || 0;
+  document.getElementById('item-sekifuda-kira').value = o.items.sekifudaKira || 0;
   document.getElementById('item-pose-card').value = o.items.poseCard || 0;
   document.getElementById('item-hofucho-mermaid').value = o.items.hofuchoMermaid || 0;
   document.getElementById('item-hofucho-gayo').value = o.items.hofuchoGayo || 0;
@@ -1205,19 +1224,28 @@ function renderRecentTasks() {
       const poseCard = items.poseCard || 0;
       const sealA = items.sealA || 0;
       const sealB = items.sealB || 0;
+      const sekifudaJosshitsu = items.sekifudaJosshitsu || 0;
+      const sekifudaMermaidPaper = items.sekifudaMermaidPaper || 0;
+      const sekifudaKira = items.sekifudaKira || 0;
+      // Legacy sekifuda keys (old orders)
       const sekifudaNoLogo = items.sekifudaNoLogo || 0;
       const sekifudaWithLogo = items.sekifudaWithLogo || 0;
       const hofuchoMermaid = items.hofuchoMermaid || 0;
       const hofuchoGayo = items.hofuchoGayo || 0;
       const uketsukeSign = items.uketsukeSign || 0;
       const uketsukeShow = items.uketsukeShow || 0;
-      totalItems = noshi + nagagata + pochi + coloredEnvelope + washi + poseCard + sekifudaNoLogo + sekifudaWithLogo + hofuchoMermaid + hofuchoGayo + uketsukeSign + uketsukeShow;
+      totalItems = noshi + nagagata + pochi + coloredEnvelope + washi + poseCard + sekifudaJosshitsu + sekifudaMermaidPaper + sekifudaKira + sekifudaNoLogo + sekifudaWithLogo + hofuchoMermaid + hofuchoGayo + uketsukeSign + uketsukeShow;
       if (noshi > 0) itemDetails.push(`${t('noshi')}\u00d7${noshi}`);
       if (nagagata > 0) itemDetails.push(`${t('nagagata')}\u00d7${nagagata}`);
       if (pochi > 0) itemDetails.push(`${t('pochi')}\u00d7${pochi}`);
       if (coloredEnvelope > 0) itemDetails.push(`${t('coloredEnvelope')}\u00d7${coloredEnvelope}`);
       if (washi > 0) itemDetails.push(`${t('washi')}\u00d7${washi}`);
       if (poseCard > 0) itemDetails.push(`${t('poseCard')}\u00d7${poseCard}`);
+      // New sekifuda paper types
+      if (sekifudaJosshitsu > 0) itemDetails.push(`${t('sekifudaJosshitsu')}\u00d7${sekifudaJosshitsu}`);
+      if (sekifudaMermaidPaper > 0) itemDetails.push(`${t('sekifudaMermaidPaper')}\u00d7${sekifudaMermaidPaper}`);
+      if (sekifudaKira > 0) itemDetails.push(`${t('sekifudaKira')}\u00d7${sekifudaKira}`);
+      // Legacy sekifuda (backward compat)
       if (sekifudaNoLogo > 0) itemDetails.push(`${t('sekifudaNoLogo')}\u00d7${sekifudaNoLogo}`);
       if (sekifudaWithLogo > 0) itemDetails.push(`${t('sekifudaWithLogo')}\u00d7${sekifudaWithLogo}`);
       if (sealA > 0) itemDetails.push(`${t('sealA')}\u00d7${sealA}`);
@@ -1227,6 +1255,7 @@ function renderRecentTasks() {
       if (uketsukeSign > 0) itemDetails.push(`${t('uketsukeSign')}\u00d7${uketsukeSign}`);
       if (uketsukeShow > 0) itemDetails.push(`${t('uketsukeShow')}\u00d7${uketsukeShow}`);
       if (items.atsugami) itemDetails.push(t('atsugami'));
+      if (items.atsugamiCreema) itemDetails.push(t('atsugamiCreema'));
     }
     const itemsDisplay = totalItems > 0
       ? `<strong style="font-size:1.05rem;">${totalItems}</strong><div style="font-size:0.7rem; color:var(--text-light); margin-top:0.1rem; line-height:1.3;">${itemDetails.join(', ')}</div>`
@@ -1355,6 +1384,12 @@ function renderOrderRow(o, tbody, isPastOrder = false) {
   if (o.items.coloredEnvelope > 0) itemsStr.push(`${t('coloredEnvelope')} x${o.items.coloredEnvelope}`);
   if (o.items.washi > 0) itemsStr.push(`${t('washi')} x${o.items.washi}`);
   if (o.items.atsugami) itemsStr.push(`${t('atsugami')}`);
+  if (o.items.atsugamiCreema) itemsStr.push(`${t('atsugamiCreema')}`);
+  // New sekifuda paper types
+  if (o.items.sekifudaJosshitsu > 0) itemsStr.push(`${t('sekifudaJosshitsu')} x${o.items.sekifudaJosshitsu}`);
+  if (o.items.sekifudaMermaidPaper > 0) itemsStr.push(`${t('sekifudaMermaidPaper')} x${o.items.sekifudaMermaidPaper}`);
+  if (o.items.sekifudaKira > 0) itemsStr.push(`${t('sekifudaKira')} x${o.items.sekifudaKira}`);
+  // Legacy sekifuda (backward compat with old orders)
   if (o.items.sekifudaNoLogo > 0) itemsStr.push(`${t('sekifudaNoLogo')} x${o.items.sekifudaNoLogo}`);
   if (o.items.sekifudaWithLogo > 0) itemsStr.push(`${t('sekifudaWithLogo')} x${o.items.sekifudaWithLogo}`);
   if (o.items.poseCard > 0) itemsStr.push(`${t('poseCard')} x${o.items.poseCard}`);
@@ -1431,7 +1466,7 @@ function toggleShipped(orderId) {
 
 // --- ORDER CALCULATION ---
 function setupOrderCalculators() {
-  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-colored-envelope', 'item-washi', 'item-seal-a', 'item-seal-b', 'item-sekifuda-nologo', 'item-sekifuda-withlogo', 'item-pose-card', 'item-hofucho-mermaid', 'item-hofucho-gayo', 'item-uketsuke', 'item-uketsuke-show', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
+  const inputs = ['item-noshi', 'item-nagagata', 'item-pochi', 'item-colored-envelope', 'item-washi', 'item-seal-a', 'item-seal-b', 'item-sekifuda-josshitsu', 'item-sekifuda-mermaid-paper', 'item-sekifuda-kira', 'item-pose-card', 'item-hofucho-mermaid', 'item-hofucho-gayo', 'item-uketsuke', 'item-uketsuke-show', 'order-shipping-cost', 'order-adjustment', 'order-shipping-cost-custom'];
   inputs.forEach(id => {
     document.getElementById(id)?.addEventListener('input', calculateOrderMath);
     document.getElementById(id)?.addEventListener('change', calculateOrderMath);
@@ -1455,6 +1490,7 @@ function setupOrderCalculators() {
 
   // Creema calculators
   document.getElementById('creema-item-nagagata')?.addEventListener('input', calculateCreemaOrderMath);
+  document.getElementById('creema-item-atsugami')?.addEventListener('change', calculateCreemaOrderMath);
   document.getElementById('creema-order-express')?.addEventListener('change', () => {
     calculateCreemaOrderMath();
     autoFillCreemaDeadline();
@@ -1474,8 +1510,9 @@ function calculateOrderMath() {
   const atsugami = document.getElementById('item-atsugami').checked;
   const sealA = parseInt(document.getElementById('item-seal-a').value) || 0;
   const sealB = parseInt(document.getElementById('item-seal-b').value) || 0;
-  const sekifudaNoLogo = parseInt(document.getElementById('item-sekifuda-nologo').value) || 0;
-  const sekifudaWithLogo = parseInt(document.getElementById('item-sekifuda-withlogo').value) || 0;
+  const sekifudaJosshitsu = parseInt(document.getElementById('item-sekifuda-josshitsu').value) || 0;
+  const sekifudaMermaidPaper = parseInt(document.getElementById('item-sekifuda-mermaid-paper').value) || 0;
+  const sekifudaKira = parseInt(document.getElementById('item-sekifuda-kira').value) || 0;
   const poseCard = parseInt(document.getElementById('item-pose-card').value) || 0;
   const hofuchoMermaid = parseInt(document.getElementById('item-hofucho-mermaid').value) || 0;
   const hofuchoGayo = parseInt(document.getElementById('item-hofucho-gayo').value) || 0;
@@ -1495,16 +1532,18 @@ function calculateOrderMath() {
 
   // Shipping addition logic
   const hasA4Items = hofuchoMermaid > 0 || hofuchoGayo > 0 || uketsukeSign > 0;
-  const hasSekifuda = sekifudaNoLogo > 0 || sekifudaWithLogo > 0;
+  const hasSekifuda = sekifudaJosshitsu > 0 || sekifudaMermaidPaper > 0 || sekifudaKira > 0;
   const hasUketsukeShow = uketsukeShow > 0;
   const has350Items = hasSekifuda || hasUketsukeShow;
-  const hasEnvelopes = noshi > 0 || nagagata > 0 || pochi > 0 || coloredEnvelope > 0 || washi > 0 || poseCard > 0;
+  const hasEnvelopes = noshi > 0 || nagagata > 0 || pochi > 0 || coloredEnvelope > 0 || washi > 0;
+  const hasPoseCard = poseCard > 0;
   const orderDateForCalc = document.getElementById('order-date')?.value || '';
 
   // Shipping addition — each category stacks independently, NO automatic discounts.
   // Use the Adjustment field in the form to apply any manual discount.
   let shippingAddition = 0;
   if (hasEnvelopes) shippingAddition += PRICES.shippingStandard;
+  if (hasPoseCard)  shippingAddition += (PRICES.shippingPoseCard || 320);
   if (hasA4Items)   shippingAddition += PRICES.shippingA4;
   if (has350Items)  shippingAddition += PRICES.shipping350;
 
@@ -1526,8 +1565,9 @@ function calculateOrderMath() {
     + (atsugami ? PRICES.atsugami : 0)
     + (sealA * PRICES.sealA)
     + (sealB * PRICES.sealB)
-    + (sekifudaNoLogo * PRICES.sekifudaNoLogo)
-    + (sekifudaWithLogo * PRICES.sekifudaWithLogo)
+    + (sekifudaJosshitsu * (PRICES.sekifudaJosshitsu || 40))
+    + (sekifudaMermaidPaper * (PRICES.sekifudaMermaidPaper || 60))
+    + (sekifudaKira * (PRICES.sekifudaKira || 80))
     + (poseCard * PRICES.poseCard)
     + hofuchoMermaidPrice
     + hofuchoGayoPrice
@@ -1651,8 +1691,11 @@ function handleOrderSubmit(e) {
       atsugami: document.getElementById('item-atsugami').checked,
       sealA: parseInt(document.getElementById('item-seal-a').value) || 0,
       sealB: parseInt(document.getElementById('item-seal-b').value) || 0,
-      sekifudaNoLogo: parseInt(document.getElementById('item-sekifuda-nologo').value) || 0,
-      sekifudaWithLogo: parseInt(document.getElementById('item-sekifuda-withlogo').value) || 0,
+      sekifudaJosshitsu: parseInt(document.getElementById('item-sekifuda-josshitsu').value) || 0,
+      sekifudaMermaidPaper: parseInt(document.getElementById('item-sekifuda-mermaid-paper').value) || 0,
+      sekifudaKira: parseInt(document.getElementById('item-sekifuda-kira').value) || 0,
+      sekifudaNoLogo: 0,
+      sekifudaWithLogo: 0,
       poseCard: parseInt(document.getElementById('item-pose-card').value) || 0,
       hofuchoMermaid: parseInt(document.getElementById('item-hofucho-mermaid').value) || 0,
       hofuchoGayo: parseInt(document.getElementById('item-hofucho-gayo').value) || 0,
@@ -1709,7 +1752,8 @@ function syncAutoTrackedClients() {
     const items = o.items || {};
     const envelopeQty = (items.noshi || 0) + (items.nagagata || 0) + (items.pochi || 0) + (items.coloredEnvelope || 0) + (items.washi || 0);
     const poseCardQty = (items.poseCard || 0);
-    const sekifudaQty = (items.sekifudaNoLogo || 0) + (items.sekifudaWithLogo || 0);
+    const sekifudaQty = (items.sekifudaJosshitsu || 0) + (items.sekifudaMermaidPaper || 0) + (items.sekifudaKira || 0)
+                      + (items.sekifudaNoLogo || 0) + (items.sekifudaWithLogo || 0);
     const a4Qty = (items.hofuchoMermaid || 0) + (items.hofuchoGayo || 0) + (items.uketsukeSign || 0) + (items.uketsukeShow || 0);
     const totalQty = envelopeQty + poseCardQty + sekifudaQty + a4Qty;
 
@@ -1795,6 +1839,12 @@ function showClientDetail(id) {
         if (o.items.coloredEnvelope > 0) itemsStr.push(`${t('coloredEnvelope')} x${o.items.coloredEnvelope}`);
         if (o.items.washi > 0) itemsStr.push(`${t('washi')} x${o.items.washi}`);
         if (o.items.atsugami) itemsStr.push(`${t('atsugami')}`);
+        if (o.items.atsugamiCreema) itemsStr.push(`${t('atsugamiCreema')}`);
+        // New sekifuda paper types
+        if (o.items.sekifudaJosshitsu > 0) itemsStr.push(`${t('sekifudaJosshitsu')} x${o.items.sekifudaJosshitsu}`);
+        if (o.items.sekifudaMermaidPaper > 0) itemsStr.push(`${t('sekifudaMermaidPaper')} x${o.items.sekifudaMermaidPaper}`);
+        if (o.items.sekifudaKira > 0) itemsStr.push(`${t('sekifudaKira')} x${o.items.sekifudaKira}`);
+        // Legacy sekifuda (backward compat)
         if (o.items.sekifudaNoLogo > 0) itemsStr.push(`${t('sekifudaNoLogo')} x${o.items.sekifudaNoLogo}`);
         if (o.items.sekifudaWithLogo > 0) itemsStr.push(`${t('sekifudaWithLogo')} x${o.items.sekifudaWithLogo}`);
         if (o.items.sealA > 0) itemsStr.push(`${t('sealA')} x${o.items.sealA}`);
@@ -1963,7 +2013,8 @@ function trackClientFromOrder(clientId, amount, profit, orderDate, items, orderC
   const itemsObj = items || {};
   const envelopeQty = (itemsObj.noshi || 0) + (itemsObj.nagagata || 0) + (itemsObj.pochi || 0) + (itemsObj.coloredEnvelope || 0) + (itemsObj.washi || 0);
   const poseCardQty = (itemsObj.poseCard || 0);
-  const sekifudaQty = (itemsObj.sekifudaNoLogo || 0) + (itemsObj.sekifudaWithLogo || 0);
+  const sekifudaQty = (itemsObj.sekifudaJosshitsu || 0) + (itemsObj.sekifudaMermaidPaper || 0) + (itemsObj.sekifudaKira || 0)
+                    + (itemsObj.sekifudaNoLogo || 0) + (itemsObj.sekifudaWithLogo || 0);
   const a4Qty = (itemsObj.hofuchoMermaid || 0) + (itemsObj.hofuchoGayo || 0) + (itemsObj.uketsukeSign || 0) + (itemsObj.uketsukeShow || 0);
   const totalQty = envelopeQty + poseCardQty + sekifudaQty + a4Qty;
 
@@ -2195,8 +2246,9 @@ function loadSettings() {
   document.getElementById('settings-price-sealA').value = savedPrices.sealA;
   document.getElementById('settings-price-sealB').value = savedPrices.sealB;
   // A4 Items
-  document.getElementById('settings-price-sekifuda-nologo').value = savedPrices.sekifudaNoLogo;
-  document.getElementById('settings-price-sekifuda-withlogo').value = savedPrices.sekifudaWithLogo;
+  document.getElementById('settings-price-sekifuda-josshitsu').value = savedPrices.sekifudaJosshitsu;
+  document.getElementById('settings-price-sekifuda-mermaid-paper').value = savedPrices.sekifudaMermaidPaper;
+  document.getElementById('settings-price-sekifuda-kira').value = savedPrices.sekifudaKira;
   document.getElementById('settings-price-pose-card').value = savedPrices.poseCard;
   document.getElementById('settings-price-hofucho-mermaid').value = savedPrices.hofuchoMermaid2;
   document.getElementById('settings-price-hofucho-gayo').value = savedPrices.hofuchoGayo2;
@@ -2206,10 +2258,12 @@ function loadSettings() {
   document.getElementById('settings-price-uketsuke-show-extra').value = savedPrices.uketsukeShowExtra;
   // Shipping
   document.getElementById('settings-price-shipping-standard').value = savedPrices.shippingStandard;
+  document.getElementById('settings-price-shipping-pose-card').value = savedPrices.shippingPoseCard;
   document.getElementById('settings-price-shipping-a4').value = savedPrices.shippingA4;
   document.getElementById('settings-price-shipping-350').value = savedPrices.shipping350;
   document.getElementById('settings-price-shipping-express').value = savedPrices.shippingExpress;
   document.getElementById('settings-price-shipping-creema').value = savedPrices.shippingCreema;
+  document.getElementById('settings-price-atsugami-creema').value = savedPrices.atsugamiCreema;
 }
 
 function saveSettings() {
@@ -2239,8 +2293,9 @@ function saveSettings() {
     sealA: parseInt(document.getElementById('settings-price-sealA').value) || 0,
     sealB: parseInt(document.getElementById('settings-price-sealB').value) || 0,
     // A4 Items
-    sekifudaNoLogo: parseInt(document.getElementById('settings-price-sekifuda-nologo').value) || 0,
-    sekifudaWithLogo: parseInt(document.getElementById('settings-price-sekifuda-withlogo').value) || 0,
+    sekifudaJosshitsu: parseInt(document.getElementById('settings-price-sekifuda-josshitsu').value) || 0,
+    sekifudaMermaidPaper: parseInt(document.getElementById('settings-price-sekifuda-mermaid-paper').value) || 0,
+    sekifudaKira: parseInt(document.getElementById('settings-price-sekifuda-kira').value) || 0,
     poseCard: parseInt(document.getElementById('settings-price-pose-card').value) || 0,
     hofuchoMermaid2: parseInt(document.getElementById('settings-price-hofucho-mermaid').value) || 0,
     hofuchoGayo2: parseInt(document.getElementById('settings-price-hofucho-gayo').value) || 0,
@@ -2250,10 +2305,12 @@ function saveSettings() {
     uketsukeShowExtra: parseInt(document.getElementById('settings-price-uketsuke-show-extra').value) || 0,
     // Shipping
     shippingStandard: parseInt(document.getElementById('settings-price-shipping-standard').value) || 0,
+    shippingPoseCard: parseInt(document.getElementById('settings-price-shipping-pose-card').value) || 0,
     shippingA4: parseInt(document.getElementById('settings-price-shipping-a4').value) || 0,
     shipping350: parseInt(document.getElementById('settings-price-shipping-350').value) || 0,
     shippingExpress: parseInt(document.getElementById('settings-price-shipping-express').value) || 0,
     shippingCreema: parseInt(document.getElementById('settings-price-shipping-creema').value) || 0,
+    atsugamiCreema: parseInt(document.getElementById('settings-price-atsugami-creema').value) || 0,
   };
   savePrices(updatedPrices);
   PRICES = updatedPrices;
@@ -2275,8 +2332,9 @@ function updatePriceLabels() {
     'label-price-atsugami': `${t('atsugami')} (${formatCurrency(PRICES.atsugami)})`,
     'label-price-sealA': `${t('sealA')} (${formatCurrency(PRICES.sealA)}${perPiece})`,
     'label-price-sealB': `${t('sealB')} (${formatCurrency(PRICES.sealB)}${perPiece})`,
-    'label-price-sekifuda-nologo': `${t('sekifudaNoLogo')} (${formatCurrency(PRICES.sekifudaNoLogo)})`,
-    'label-price-sekifuda-withlogo': `${t('sekifudaWithLogo')} (${formatCurrency(PRICES.sekifudaWithLogo)})`,
+    'label-price-sekifuda-josshitsu': `${t('sekifudaJosshitsu')} (${formatCurrency(PRICES.sekifudaJosshitsu || 40)})`,
+    'label-price-sekifuda-mermaid-paper': `${t('sekifudaMermaidPaper')} (${formatCurrency(PRICES.sekifudaMermaidPaper || 60)})`,
+    'label-price-sekifuda-kira': `${t('sekifudaKira')} (${formatCurrency(PRICES.sekifudaKira || 80)})`,
     'label-price-pose-card': `${t('poseCard')} (${formatCurrency(PRICES.poseCard)})`,
     'label-price-hofucho-mermaid': `${t('hofuchoMermaid')} (${formatCurrency(PRICES.hofuchoMermaid2)}/枕 min.2)`,
     'label-price-hofucho-gayo': `${t('hofuchoGayo')} (${formatCurrency(PRICES.hofuchoGayo2)}/枕 min.2)`,

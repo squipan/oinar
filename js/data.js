@@ -11,12 +11,17 @@ const DEFAULT_PRICES = {
   coloredEnvelope: 100,
   washi: 55,
   atsugami: 100,
+  atsugamiCreema: 200,
   // Stickers
   sealA: 20,
   sealB: 10,
-  // A4 Items
+  // A4 Items (Sekifuda — legacy keys kept for backward compat with old orders)
   sekifudaNoLogo: 50,
   sekifudaWithLogo: 55,
+  // A4 Items (Sekifuda — new paper-type options)
+  sekifudaJosshitsu: 40,
+  sekifudaMermaidPaper: 60,
+  sekifudaKira: 80,
   hofuchoMermaid2: 190,
   hofuchoGayo2: 160,
   uketsukeSign1: 320,
@@ -26,6 +31,7 @@ const DEFAULT_PRICES = {
   poseCard: 60,
   // Shipping
   shippingStandard: 310,
+  shippingPoseCard: 320,
   shippingA4: 400,
   shipping350: 350,
   shippingExpress: 300,
